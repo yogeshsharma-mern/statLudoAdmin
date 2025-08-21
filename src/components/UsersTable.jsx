@@ -15,27 +15,31 @@ import UserFormModal from "./UserFormModel";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers, userBlocked, userUnBlocked } from "@/redux/features/userSlice";
 import toast from "react-hot-toast";
-import {updateUsers} from "@/redux/features/userSlice";
+import { updateUsers } from "@/redux/features/userSlice";
 import { FaEye } from "react-icons/fa6";
+import Modal from "./Modal";
+import { userDetails } from "@/redux/features/userSlice";
 
 export default function UsersTable() {
   const dispatch = useDispatch();
-const { items: users, status, error, totalPages: rawTotalPages } = useSelector((state) => state.user);
-console.log("totalpages",rawTotalPages);
-const totalPages = Number(rawTotalPages) || 1; // ✅ take users directly from Redux
- const [currentPage, setCurrentPage] = useState(1);
- const [pageSize, setPageSize] = useState(5); // 👈 local limit
+  const { items: users, status, error, totalPages: rawTotalPages } = useSelector((state) => state.user);
+  console.log("totalpages", rawTotalPages);
+  const totalPages = Number(rawTotalPages) || 1; // ✅ take users directly from Redux
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5); // 👈 local limit
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModal, setViewModal] = useState(false);
+  const [userDetail, setUserDetails] = useState([]);
 
   const [editing, setEditing] = useState("");
 
   // fetch users initially
   useEffect(() => {
-    dispatch(fetchUsers({page:currentPage,limit:pageSize,search:query}));
-  }, [dispatch,currentPage,pageSize,query]);
-console.log("gg",{page:currentPage,limit:pageSize,search:query})
+    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: query }));
+  }, [dispatch, currentPage, pageSize, query]);
+  console.log("gg", { page: currentPage, limit: pageSize, search: query })
   // Search filter
   // const filtered = useMemo(() => {
   //   if (!query) return users;
@@ -60,13 +64,12 @@ console.log("gg",{page:currentPage,limit:pageSize,search:query})
           const val = getValue();
           return (
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                val === "Approved"
-                  ? "bg-green-100 text-green-700"
-                  : val === "Pending"
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${val === "Approved"
+                ? "bg-green-100 text-green-700"
+                : val === "Pending"
                   ? "bg-yellow-100 text-yellow-700"
                   : "bg-red-100 text-red-700"
-              }`}
+                }`}
             >
               {val}
             </span>
@@ -103,10 +106,10 @@ console.log("gg",{page:currentPage,limit:pageSize,search:query})
             </button>
             <button
               className="rounded-md cursor-pointer bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
-              onClick={() => removeUser(row.original._id)}
+              onClick={() => handleView(row.original._id)}
               title="viewuser"
             >
-              <FaEye /> 
+              <FaEye />
             </button>
             <button
               className="rounded-md bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
@@ -129,39 +132,39 @@ console.log("gg",{page:currentPage,limit:pageSize,search:query})
     []
   );
 
-const table = useReactTable({
-  data: users,
-  columns,
-  manualPagination: true,       // we handle pagination on server
-  pageCount: totalPages ?? -1,  // backend tells total pages
-  getCoreRowModel: getCoreRowModel(), 
-  getSortedRowModel: getSortedRowModel(),
-  getPaginationRowModel: getPaginationRowModel(),
-  state: {
-    pagination: {
-      pageIndex: currentPage - 1, // react-table is 0-based
-      pageSize: pageSize,
+  const table = useReactTable({
+    data: users,
+    columns,
+    manualPagination: true,       // we handle pagination on server
+    pageCount: totalPages ?? -1,  // backend tells total pages
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination: {
+        pageIndex: currentPage - 1, // react-table is 0-based
+        pageSize: pageSize,
+      },
+      sorting: sort,
     },
-    sorting: sort,
-  },
-  onSortingChange: setSort,
-});
+    onSortingChange: setSort,
+  });
 
 
-const updateUser = async (formData) => {
-  console.log("Updated Data:", formData); // ✅ yaha aa gaya pura data
+  const updateUser = async (formData) => {
+    console.log("Updated Data:", formData); // ✅ yaha aa gaya pura data
 
-  // API / Redux call karna hai
-  const id = editing;  
-const res = await dispatch(updateUsers({ id, data: formData }));
-console.log("resssssss",res)
+    // API / Redux call karna hai
+    const id = editing;
+    const res = await dispatch(updateUsers({ id, data: formData }));
+    console.log("resssssss", res)
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User updated successfully");
       setModalOpen(false);
     } else {
       toast.error("Failed to update user");
     }
-};
+  };
 
 
   // CRUD actions
@@ -185,6 +188,13 @@ console.log("resssssss",res)
       toast.error("Failed to block user");
     }
   };
+  const handleView = async (_id) => {
+    setViewModal(true);
+    const res = await dispatch(userDetails(_id));
+    // console.log("userdetails",res.payload.data);
+    setUserDetails(res.payload.data);
+
+  }
 
   const handleUnblock = async (_id) => {
     const res = await dispatch(userUnBlocked(_id));
@@ -266,37 +276,37 @@ console.log("resssssss",res)
           <span className="font-semibold">{table.getState().pagination.pageIndex + 1}</span>{" "}
           of <span className="font-semibold">{table.getPageCount() || 1}</span>
         </div>
-<div className="flex items-center gap-2">
-  <button
-    className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
-    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-    disabled={currentPage === 1}
-  >
-    <FiChevronLeft className="inline" /> Prev
-  </button>
-  <span className="text-sm">Page {currentPage} of {totalPages}</span>
-  <button
-    className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
-    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-    disabled={currentPage === totalPages}
-  >
-    Next <FiChevronRight className="inline" />
-  </button>
-  <select
-    className="ml-2 rounded-lg border px-2 py-1 text-sm"
-    value={pageSize}
-    onChange={(e) => {
-      setPageSize(Number(e.target.value));
-      setCurrentPage(1); // reset to first page when size changes
-    }}
-  >
-    {[5, 10, 20, 50].map((n) => (
-      <option key={n} value={n}>
-        {n} / page
-      </option>
-    ))}
-  </select>
-</div>
+        <div className="flex items-center gap-2">
+          <button
+            className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            <FiChevronLeft className="inline" /> Prev
+          </button>
+          <span className="text-sm">Page {currentPage} of {totalPages}</span>
+          <button
+            className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next <FiChevronRight className="inline" />
+          </button>
+          <select
+            className="ml-2 rounded-lg border px-2 py-1 text-sm"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1); // reset to first page when size changes
+            }}
+          >
+            {[5, 10, 20, 50].map((n) => (
+              <option key={n} value={n}>
+                {n} / page
+              </option>
+            ))}
+          </select>
+        </div>
 
       </div>
 
@@ -306,6 +316,84 @@ console.log("resssssss",res)
         onClose={() => setModalOpen(false)}
         onSubmit={updateUser}
       />
+      <Modal
+        open={viewModal}
+        onClose={() => setViewModal(false)}
+        title="User Details"
+      >
+        <div className="space-y-3 text-gray-700">
+          <div>
+            <strong>Full Name:</strong> {userDetail.fullName}
+          </div>
+          <div>
+            <strong>Username:</strong> {userDetail.username}
+          </div>
+          <div>
+            <strong>Email:</strong> {userDetail.email}
+          </div>
+          <div>
+            <strong>Phone:</strong> {userDetail.phone}
+          </div>
+          <div>
+            <strong>Date of Birth:</strong> {new Date(userDetail.dob).toLocaleDateString()}
+          </div>
+          <div>
+            <strong>Gender:</strong> {userDetail.gender}
+          </div>
+          <div>
+            <strong>Address:</strong> {userDetail.address}
+          </div>
+          <div>
+            <strong>Aadhaar Number:</strong> {userDetail.aadhaarNumber}
+          </div>
+          <div>
+            <strong>Referral Code:</strong> {userDetail.referCode}
+          </div>
+          <div>
+            <strong>Referral Rank:</strong> {userDetail.referRank}
+          </div>
+          <div>
+            <strong>Referral Earning:</strong> ₹{userDetail.referralEarning}
+          </div>
+          <div>
+            <strong>Completed Games:</strong> {userDetail.completedGames}
+          </div>
+          <div>
+            <strong>Battle Played:</strong> {userDetail.battlePlayed}
+          </div>
+          <div>
+            <strong>Cash Won:</strong> ₹{userDetail.cashWon}
+          </div>
+          <div>
+            <strong>Winning Amount:</strong> ₹{userDetail.winningAmount}
+          </div>
+          <div>
+            <strong>KYC Status:</strong> {userDetail.kycStatus}
+          </div>
+          <div>
+            <strong>Is Active:</strong> {userDetail.isActive ? "Yes" : "No"}
+          </div>
+          <div>
+            <strong>Is Banned:</strong> {userDetail.isBanned ? "Yes" : "No"}
+          </div>
+          <div>
+            <strong>Created At:</strong> {new Date(userDetail.createdAt).toLocaleString()}
+          </div>
+          <div>
+            <strong>Updated At:</strong> {new Date(userDetail.updatedAt).toLocaleString()}
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            onClick={() => setViewModal(false)}
+            className="rounded-lg border px-4 py-2 hover:bg-gray-100 transition"
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+
     </div>
   );
 }

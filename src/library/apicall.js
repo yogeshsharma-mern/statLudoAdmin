@@ -48,6 +48,18 @@ export const userUnBlock = async(id)=>
     }
 }
 
+export const UserDetail = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.get(`/users/${id}`);
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
+
+
 export const updateUser = async(data,id)=>
 {
     try {

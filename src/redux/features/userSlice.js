@@ -4,6 +4,7 @@ import {getUsersData} from "@/library/apicall";
 import {userBlock} from "@/library/apicall";
 import {userUnBlock} from "@/library/apicall";
 import {updateUser} from "@/library/apicall";
+import {UserDetail} from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
 export const fetchUsers = createAsyncThunk(
@@ -60,7 +61,14 @@ export const userUnBlocked = createAsyncThunk("users/unblock", async (id, thunkA
     return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
   }
 });
-
+export const userDetails = createAsyncThunk("users/details", async (id, thunkAPI) => {
+  try {
+   const res = await  UserDetail(id);
+    return res;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
 // ------- Slice -------
 const usersSlice = createSlice({
   name: "users",
