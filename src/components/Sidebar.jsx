@@ -23,7 +23,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     const handleLogout=()=>
     {
 Cookies.remove("adminToken");
-router.push("/login");
+router.push("/admin/login");
     }
 
     const toggleMenu = (menu) => {
@@ -38,7 +38,7 @@ router.push("/login");
             <h2 className="text-2xl font-bold text-white mb-6">🎰 Admin Panel</h2>
 
             <nav className="space-y-2">
-                <Link href="/dashboard">
+                <Link href="/admin/dashboard">
                     <SidebarItem
                         icon={<FaTachometerAlt />}
                         label="Dashboard"
@@ -68,7 +68,7 @@ router.push("/login");
 
                     {openMenus.users && (
                         <div className="ml-8 mt-2 space-y-2">
-                            <Link href="/dashboard/users">
+                            <Link href="/admin/dashboard/users">
                                 <SubMenuItem
                                     label="Ludo Users"
                                     active={activeTab === "ludo-users"}

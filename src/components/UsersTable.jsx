@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -9,65 +9,118 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { MdBlock } from "react-icons/md";
+import { CgUnblock } from "react-icons/cg";
 import UserFormModal from "./UserFormModel";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers, userBlocked, userUnBlocked } from "@/redux/features/userSlice";
+import toast from "react-hot-toast";
+import {updateUsers} from "@/redux/features/userSlice";
+import { FaEye } from "react-icons/fa6";
 
-export default function UsersTable({ initialUsers = [] }) {
-  // --- Local state (replace with Redux or API later) ---
-  const [users, setUsers] = useState(initialUsers);
+export default function UsersTable() {
+  const dispatch = useDispatch();
+const { items: users, status, error, totalPages: rawTotalPages } = useSelector((state) => state.user);
+console.log("totalpages",rawTotalPages);
+const totalPages = Number(rawTotalPages) || 1; // ✅ take users directly from Redux
+ const [currentPage, setCurrentPage] = useState(1);
+ const [pageSize, setPageSize] = useState(5); // 👈 local limit
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState(null);
 
-  // Global (client-side) search
-  const filtered = useMemo(() => {
-    if (!query) return users;
-    const q = query.toLowerCase();
-    return users.filter((u) =>
-      [u.name, u.email, u.role, u.status].some((v) => String(v).toLowerCase().includes(q))
-    );
-  }, [users, query]);
+  const [editing, setEditing] = useState("");
 
+  // fetch users initially
+  useEffect(() => {
+    dispatch(fetchUsers({page:currentPage,limit:pageSize,search:query}));
+  }, [dispatch,currentPage,pageSize,query]);
+console.log("gg",{page:currentPage,limit:pageSize,search:query})
+  // Search filter
+  // const filtered = useMemo(() => {
+  //   if (!query) return users;
+  //   const q = query.toLowerCase();
+  //   return users.filter((u) =>
+  //     [u.username, u.phone, u.kycStatus].some((v) =>
+  //       String(v || "").toLowerCase().includes(q)
+  //     )
+  //   );
+  // }, [users, query]);
+
+  // Table columns
   const columns = useMemo(
     () => [
-      { accessorKey: "name", header: "Name", cell: (info) => info.getValue() },
-      { accessorKey: "email", header: "Email", cell: (info) => info.getValue() },
-      { accessorKey: "role", header: "Role", cell: (info) => info.getValue() },
+      { accessorKey: "username", header: "Username" },
+      { accessorKey: "phone", header: "Phone" },
+      { accessorKey: "referCode", header: "Refer Code" },
       {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ getValue }) => (
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-              getValue() === "Active"
-                ? "bg-green-100 text-green-700"
-                : getValue() === "Blocked"
-                ? "bg-red-100 text-red-700"
-                : "bg-yellow-100 text-yellow-700"
-            }`}
-          >
-            {getValue()}
-          </span>
-        ),
+        accessorKey: "kycStatus",
+        header: "KYC Status",
+        cell: ({ getValue }) => {
+          const val = getValue();
+          return (
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                val === "Approved"
+                  ? "bg-green-100 text-green-700"
+                  : val === "Pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {val}
+            </span>
+          );
+        },
       },
+      {
+        accessorKey: "isBanned",
+        header: "Banned",
+        cell: ({ getValue }) =>
+          getValue() ? (
+            <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+              Yes
+            </span>
+          ) : (
+            <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
+              No
+            </span>
+          ),
+      },
+      { accessorKey: "battlePlayed", header: "Battles" },
+      { accessorKey: "cashWon", header: "Cash Won" },
       {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <button
-              className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
-              onClick={() => openEdit(row.original)}
+              className="rounded-md bg-indigo-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
+              onClick={() => openEdit(row.original._id)}
               title="Edit"
             >
               <FiEdit2 />
             </button>
             <button
-              className="rounded-md bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
-              onClick={() => removeUser(row.original.id)}
-              title="Delete"
+              className="rounded-md cursor-pointer bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+              onClick={() => removeUser(row.original._id)}
+              title="viewuser"
             >
-              <FiTrash2 />
+              <FaEye /> 
+            </button>
+            <button
+              className="rounded-md bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+              onClick={() => handleBlock(row.original._id)}
+              title="Block"
+            >
+              <MdBlock />
+            </button>
+            <button
+              className="rounded-md bg-green-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
+              onClick={() => handleUnblock(row.original._id)}
+              title="Unblock"
+            >
+              <CgUnblock />
             </button>
           </div>
         ),
@@ -76,40 +129,77 @@ export default function UsersTable({ initialUsers = [] }) {
     []
   );
 
-  const table = useReactTable({
-    data: filtered,
-    columns,
-    state: { sorting: sort },
-    onSortingChange: setSort,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageIndex: 0, pageSize: 8 } },
-  });
+const table = useReactTable({
+  data: users,
+  columns,
+  manualPagination: true,       // we handle pagination on server
+  pageCount: totalPages ?? -1,  // backend tells total pages
+  getCoreRowModel: getCoreRowModel(), 
+  getSortedRowModel: getSortedRowModel(),
+  getPaginationRowModel: getPaginationRowModel(),
+  state: {
+    pagination: {
+      pageIndex: currentPage - 1, // react-table is 0-based
+      pageSize: pageSize,
+    },
+    sorting: sort,
+  },
+  onSortingChange: setSort,
+});
 
-  // --- CRUD handlers (swap these with API calls/Redux later) ---
-  const openAdd = () => {
-    setEditing(null);
+
+const updateUser = async (formData) => {
+  console.log("Updated Data:", formData); // ✅ yaha aa gaya pura data
+
+  // API / Redux call karna hai
+  const id = editing;  
+const res = await dispatch(updateUsers({ id, data: formData }));
+console.log("resssssss",res)
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("User updated successfully");
+      setModalOpen(false);
+    } else {
+      toast.error("Failed to update user");
+    }
+};
+
+
+  // CRUD actions
+  // const openAdd = () => {
+  //   setEditing(null);
+  //   setModalOpen(true);
+  // };
+  const openEdit = (_id) => {
+    setEditing(_id);
     setModalOpen(true);
   };
-  const openEdit = (user) => {
-    setEditing(user);
-    setModalOpen(true);
+  const removeUser = (_id) => {
+    toast("Delete action not wired yet"); // placeholder
   };
-  const upsertUser = (payload) => {
-    setUsers((list) => {
-      if (payload.id) {
-        return list.map((u) => (u.id === payload.id ? payload : u));
-      }
-      const id = crypto.randomUUID();
-      return [{ ...payload, id }, ...list];
-    });
-    setModalOpen(false);
+
+  const handleBlock = async (_id) => {
+    const res = await dispatch(userBlocked(_id));
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("User blocked successfully");
+    } else {
+      toast.error("Failed to block user");
+    }
   };
-  const removeUser = (id) => setUsers((list) => list.filter((u) => u.id !== id));
+
+  const handleUnblock = async (_id) => {
+    const res = await dispatch(userUnBlocked(_id));
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("User unblocked successfully");
+    } else {
+      toast.error("Failed to unblock user");
+    }
+  };
 
   return (
-    <div className="rounded-2xl w-full  p-6 shadow">
+    <div className="rounded-2xl w-full p-6 shadow">
+      {status === "loading" && <p>Loading users...</p>}
+      {status === "failed" && <p className="text-red-400">{error}</p>}
+
       {/* Header row */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-xs">
@@ -121,13 +211,12 @@ export default function UsersTable({ initialUsers = [] }) {
             className="w-full rounded-xl border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </div>
-
-        <button
+        {/* <button
           onClick={openAdd}
           className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
         >
           <FiPlus /> Add User
-        </button>
+        </button> */}
       </div>
 
       {/* Table */}
@@ -143,10 +232,7 @@ export default function UsersTable({ initialUsers = [] }) {
                     className="cursor-pointer px-4 py-3 font-semibold"
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                      asc: " ▲",
-                      desc: " ▼",
-                    }[header.column.getIsSorted()] ?? null}
+                    {{ asc: " ▲", desc: " ▼" }[header.column.getIsSorted()] ?? null}
                   </th>
                 ))}
               </tr>
@@ -154,7 +240,7 @@ export default function UsersTable({ initialUsers = [] }) {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-500">
+              <tr key={row.id} className="border-b hover:bg-gray-700">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -176,45 +262,49 @@ export default function UsersTable({ initialUsers = [] }) {
       {/* Pagination */}
       <div className="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
         <div className="text-sm text-gray-600">
-          Page <span className="font-semibold">{table.getState().pagination.pageIndex + 1}</span> of{" "}
-          <span className="font-semibold">{table.getPageCount() || 1}</span>
+          Page{" "}
+          <span className="font-semibold">{table.getState().pagination.pageIndex + 1}</span>{" "}
+          of <span className="font-semibold">{table.getPageCount() || 1}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <FiChevronLeft className="inline" /> Prev
-          </button>
-          <button
-            className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next <FiChevronRight className="inline" />
-          </button>
+<div className="flex items-center gap-2">
+  <button
+    className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
+    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+    disabled={currentPage === 1}
+  >
+    <FiChevronLeft className="inline" /> Prev
+  </button>
+  <span className="text-sm">Page {currentPage} of {totalPages}</span>
+  <button
+    className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
+    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+    disabled={currentPage === totalPages}
+  >
+    Next <FiChevronRight className="inline" />
+  </button>
+  <select
+    className="ml-2 rounded-lg border px-2 py-1 text-sm"
+    value={pageSize}
+    onChange={(e) => {
+      setPageSize(Number(e.target.value));
+      setCurrentPage(1); // reset to first page when size changes
+    }}
+  >
+    {[5, 10, 20, 50].map((n) => (
+      <option key={n} value={n}>
+        {n} / page
+      </option>
+    ))}
+  </select>
+</div>
 
-          <select
-            className="ml-2 rounded-lg border px-2 py-1 text-sm"
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-          >
-            {[5, 8, 10, 20, 50].map((n) => (
-              <option key={n} value={n}>
-                {n} / page
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
 
-      {/* Modal */}
       <UserFormModal
         open={modalOpen}
         initial={editing}
         onClose={() => setModalOpen(false)}
-        onSubmit={upsertUser}
+        onSubmit={updateUser}
       />
     </div>
   );

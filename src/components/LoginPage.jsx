@@ -53,7 +53,7 @@ const handleSubmit = async (e) => {
 
       if (loginAdmin.fulfilled.match(res)) {
         toast.success("Login successful!");
-        router.push("/dashboard");
+        router.push("/admin/dashboard");
       } else {
         toast.error(res.payload || "Login failed");
       }

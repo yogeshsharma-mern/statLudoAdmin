@@ -6,14 +6,14 @@ export function middleware(req) {
   const url = req.nextUrl.clone();
 
   // If accessing /dashboard without a token → redirect to login
-  // if (url.pathname.startsWith("/dashboard") && !token) {
-  //   url.pathname = "/login";
-  //   return NextResponse.redirect(url);
-  // }
+  if (url.pathname.startsWith("/admin/dashboard") && !token) {
+    url.pathname = "/admin/login";
+    return NextResponse.redirect(url);
+  }
 
   // If accessing /login but already logged in → redirect to dashboard
-  if (url.pathname.startsWith("/login") && token) {
-    url.pathname = "/dashboard";
+  if (url.pathname.startsWith("/admin/login") && token) {
+    url.pathname = "/admin/dashboard";
     return NextResponse.redirect(url);
   }
 
@@ -21,5 +21,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login"], // apply to dashboard + login
+  matcher: ["/admin/dashboard/:path*", "/admin/login"], // apply to dashboard + login
 };
