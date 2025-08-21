@@ -83,7 +83,7 @@ useEffect(() => {
 
 if (loading) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed  inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="rounded-2xl bg-white p-6 shadow-xl">
         <p>Loading user data...</p>
       </div>

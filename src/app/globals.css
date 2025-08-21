@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+--color-primary: #6C5CE7;
+  --color-secondary: #FF6B81;
+  --color-accent1: #00C49F;
+  --color-accent2: #0088FE;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+
+  --color-neutral-light: #F8FAFC;
+  --color-neutral: #F5F9FF;
+  --color-neutral-medium: #6B7280;
+  --color-neutral-dark: #111827;
 }
 
 @theme inline {
@@ -24,3 +34,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+
+
+/* Background: #F5F9FF → very soft bluish white
+
+Card: #FFFFFF → clean neutral card surface
+
+Primary: #4C9AFF → bright azure blue
+
+Primary Hover: #1D7AFC → deep but elegant blue
+
+Accent: #6FD6FF → aqua-inspired light accent
+
+Accent Hover: #00B8D9 → vivid turquoise
+
+Success: #36B37E → fresh green (for status)
+
+Warning: #FFAB00 → golden amber
+
+Danger: #FF5630 → coral red
+
+Text Primary: #172B4D → dark navy for readability
+
+Text Secondary: #5E6C84 → muted gray-blue
+
+Border: #DFE1E6 → subtle gray border */

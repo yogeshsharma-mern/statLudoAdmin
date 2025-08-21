@@ -105,26 +105,30 @@ export default function UsersTable() {
               <FiEdit2 />
             </button>
             <button
-              className="rounded-md cursor-pointer bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+              className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
               onClick={() => handleView(row.original._id)}
               title="viewuser"
             >
               <FaEye />
             </button>
-            <button
-              className="rounded-md bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
-              onClick={() => handleBlock(row.original._id)}
-              title="Block"
-            >
-              <MdBlock />
-            </button>
-            <button
-              className="rounded-md bg-green-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
-              onClick={() => handleUnblock(row.original._id)}
-              title="Unblock"
-            >
-              <CgUnblock />
-            </button>
+          {row.original.isBanned ? (
+  <button
+    className="rounded-md bg-green-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
+    onClick={() => handleUnblock(row.original._id)}
+    title="Unblock"
+  >
+    <CgUnblock />
+  </button>
+) : (
+  <button
+    className="rounded-md bg-rose-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+    onClick={() => handleBlock(row.original._id)}
+    title="Block"
+  >
+    <MdBlock />
+  </button>
+)}
+
           </div>
         ),
       },
@@ -191,7 +195,7 @@ export default function UsersTable() {
   const handleView = async (_id) => {
     setViewModal(true);
     const res = await dispatch(userDetails(_id));
-    // console.log("userdetails",res.payload.data);
+    console.log("userdetails",res.payload.data);
     setUserDetails(res.payload.data);
 
   }
@@ -218,7 +222,7 @@ export default function UsersTable() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search users…"
-            className="w-full rounded-xl border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full rounded-xl border border-gray-400 py-2 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </div>
         {/* <button

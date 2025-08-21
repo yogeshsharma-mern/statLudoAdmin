@@ -34,10 +34,10 @@ router.push("/admin/login");
     };
 
     return (
-        <aside className="w-full h-screen bg-gray-800 flex flex-col p-5 space-y-4">
-            <h2 className="text-2xl font-bold text-white mb-6">🎰 Admin Panel</h2>
+        <aside className="w-full h-screen bg-(--color-neutral)  border-r border-gray-200 flex flex-col p-5 space-y-4">
+            <h2 className="text-2xl font-bold text-(--color-neutral-dark) mb-6">🎰 Admin Panel</h2>
 
-            <nav className="space-y-2">
+            <nav className="space-y-2 ">
                 <Link href="/admin/dashboard">
                     <SidebarItem
                         icon={<FaTachometerAlt />}
@@ -53,10 +53,10 @@ router.push("/admin/login");
                         onClick={() => toggleMenu("users")}
                         className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${openMenus.users
                                 ? "bg-indigo-600 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                                : "text-black hover:bg-(--color-neutral)"
                             }`}
                     >
-                        <span className="flex items-center space-x-3">
+                        <span className="flex items-center cursor-pointer  space-x-3">
                             <FaUsers />
                             <span>User Management</span>
                         </span>
@@ -67,7 +67,7 @@ router.push("/admin/login");
                     </button>
 
                     {openMenus.users && (
-                        <div className="ml-8 mt-2 space-y-2">
+                        <div className="ml-8 text-(--color-neutral-dark) mt-2 space-y-2">
                             <Link href="/admin/dashboard/users">
                                 <SubMenuItem
                                     label="Ludo Users"
@@ -75,7 +75,7 @@ router.push("/admin/login");
                                     onClick={() => setActiveTab("ludo-users")}
                                 />
                             </Link>
-                            <SubMenuItem
+                            {/* <SubMenuItem
                                 label="Snake Game Users"
                                 active={activeTab === "snake-users"}
                                 onClick={() => setActiveTab("snake-users")}
@@ -84,7 +84,7 @@ router.push("/admin/login");
                                 label="Poker Users"
                                 active={activeTab === "poker-users"}
                                 onClick={() => setActiveTab("poker-users")}
-                            />
+                            /> */}
                         </div>
                     )}
                 </div>
@@ -93,11 +93,11 @@ router.push("/admin/login");
                     <button
                         onClick={() => toggleItems("management")}
                         className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${opengameMangement.management
-                                ? "bg-indigo-600 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                                ? "bg-indigo-600 text-white "
+                                : " text-black hover:bg-(--color-neutral) "
                             }`}
                     >
-                        <span className="flex items-center space-x-3">
+                        <span className="flex  cursor-pointer items-center space-x-3">
                             <FaUsers />
                             <span>Game Management</span>
                         </span>
@@ -146,13 +146,13 @@ router.push("/admin/login");
             </nav>
 
             <div className="mt-auto space-y-2">
-                <button className="flex w-full items-center space-x-2 rounded-lg bg-gray-700 px-4 py-2 hover:bg-gray-600">
+                <button   className="flex w-full text-secondary items-center bg-(--color-primary) text-white  space-x-2 rounded-lg px-4 py-2 ">
                     <FaLock />
                     <span>Change Password</span>
                 </button>
-                <button onClick={handleLogout} className="flex cursor-pointer w-full items-center space-x-2 rounded-lg bg-red-600 px-4 py-2 hover:bg-red-500">
+                <button onClick={handleLogout} className="flex cursor-pointer w-full items-center space-x-2 bg-(--color-primary)  text-white rounded-lg  px-4 py-2">
                     <FaSignOutAlt />
-                    <span>Logout</span>
+                    <span className="text-white">Logout</span>
                 </button>
             </div>
         </aside>
@@ -164,8 +164,8 @@ function SidebarItem({ icon, label, active, onClick }) {
         <button
             onClick={onClick}
             className={`flex w-full items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium transition ${active
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    ? "bg-indigo-600 text-(--color-neutral-dark)"
+                    : "text-(--color-neutral-dark)hover:bg-gray-200 cursor-pointer"
                 }`}
         >
             {icon}
@@ -179,8 +179,8 @@ function SubMenuItem({ label, active, onClick }) {
         <button
             onClick={onClick}
             className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${active
-                    ? "bg-indigo-500 text-white"
-                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                    ? "bg-red-500 text-white"
+                    : "text-(--color-neutral-dark) hover:bg-gray-100 hover:text-black"
                 }`}
         >
             {label}

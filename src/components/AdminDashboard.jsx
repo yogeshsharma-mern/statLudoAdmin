@@ -7,12 +7,12 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-gray-200">
+    <div className="flex min-h-screen bg-(--color-neutral) text-gray-200">
       {/* Sidebar */}
 
       {/* Main content */}
       <main className="flex-1 p-8">
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-3xl  text-(--color-neutral-dark) font-bold mb-6">
           {activeTab === "dashboard" && "Welcome to Admin Panel!"}
           {activeTab === "users" && "Manage Users"}
           {activeTab === "tree" && "User Tree"}
