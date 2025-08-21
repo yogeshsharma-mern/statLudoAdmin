@@ -79,7 +79,7 @@ export default function UsersTable() {
       },
       {
         accessorKey: "isBanned",
-        header: "Banned",
+        header: "Blocked",
         cell: ({ getValue }) =>
           getValue() ? (
             <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
@@ -112,23 +112,23 @@ export default function UsersTable() {
             >
               <FaEye />
             </button>
-          {row.original.isBanned ? (
-  <button
-    className="rounded-md bg-green-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
-    onClick={() => handleUnblock(row.original._id)}
-    title="Unblock"
-  >
-    <CgUnblock />
-  </button>
-) : (
-  <button
-    className="rounded-md bg-rose-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
-    onClick={() => handleBlock(row.original._id)}
-    title="Block"
-  >
-    <MdBlock />
-  </button>
-)}
+            {row.original.isBanned ? (
+              <button
+                className="rounded-md bg-green-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
+                onClick={() => handleUnblock(row.original._id)}
+                title="Unblock"
+              >
+                <CgUnblock />
+              </button>
+            ) : (
+              <button
+                className="rounded-md bg-rose-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+                onClick={() => handleBlock(row.original._id)}
+                title="Block"
+              >
+                <MdBlock />
+              </button>
+            )}
 
           </div>
         ),
@@ -196,7 +196,7 @@ export default function UsersTable() {
   const handleView = async (_id) => {
     setViewModal(true);
     const res = await dispatch(userDetails(_id));
-    console.log("userdetails",res.payload.data);
+    console.log("userdetails", res.payload.data);
     setUserDetails(res.payload.data);
 
   }
@@ -212,13 +212,13 @@ export default function UsersTable() {
 
   return (
     <div className="rounded-2xl w-full p-6 shadow">
-            <div className="text-xl font-semibold">Users</div>
-      {status === "loading" && <Loader/>}
+      <div className="text-xl font-semibold ">Users</div>
+      {status === "loading" && <Loader />}
       {/* {status === "failed" && <p className="text-red-400">{error}</p>} */}
 
       {/* Header row */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative max-w-xs">
+      <div className="mb-4 flex justify-end  gap-3 sm:flex-row w-full ">
+        <div className="relative max-w-xs ">
           <FiSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             value={query}
@@ -237,8 +237,8 @@ export default function UsersTable() {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b bg-gray-50 text-gray-700">
+        <table className="min-w-full text-left bg-white text-sm">
+          <thead className="border-b border-gray-200 bg-gray-50 text-gray-700">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => (
@@ -256,7 +256,7 @@ export default function UsersTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-blue-100">
+              <tr key={row.id} className="border-b border-gray-200 hover:bg-(--color-neutral)">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
