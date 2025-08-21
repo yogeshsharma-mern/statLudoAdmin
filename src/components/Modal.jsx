@@ -20,12 +20,12 @@ export default function Modal({ open, onClose, children, title }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-black/50  transition-opacity"
         onClick={onClose}
       ></div>
 
       {/* Modal */}
-      <div className="relative z-50 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl shadow-gray-300 transition-all transform scale-100 animate-fadeIn">
+      <div className="relative z-50 w-full max-w-lg rounded-2xl bg-white p-6  transition-all transform scale-100 animate-fadeIn">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between border-b pb-2">
           {title && <h3 className="text-lg font-semibold">{title}</h3>}

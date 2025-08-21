@@ -19,6 +19,7 @@ import { updateUsers } from "@/redux/features/userSlice";
 import { FaEye } from "react-icons/fa6";
 import Modal from "./Modal";
 import { userDetails } from "@/redux/features/userSlice";
+import Loader from "@/components/Loader";
 
 export default function UsersTable() {
   const dispatch = useDispatch();
@@ -211,8 +212,9 @@ export default function UsersTable() {
 
   return (
     <div className="rounded-2xl w-full p-6 shadow">
-      {status === "loading" && <p>Loading users...</p>}
-      {status === "failed" && <p className="text-red-400">{error}</p>}
+            <div className="text-xl font-semibold">Users</div>
+      {status === "loading" && <Loader/>}
+      {/* {status === "failed" && <p className="text-red-400">{error}</p>} */}
 
       {/* Header row */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -254,7 +256,7 @@ export default function UsersTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-700">
+              <tr key={row.id} className="border-b hover:bg-blue-100">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

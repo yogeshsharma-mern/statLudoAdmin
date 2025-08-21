@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <StoreProvider>
-<div className="grid grid-cols-5">
+<div className="md:grid md:grid-cols-5">
 <div className="col-span-1 ">
 <Sidebar/>
 </div>
