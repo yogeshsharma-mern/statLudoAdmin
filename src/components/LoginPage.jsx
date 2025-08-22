@@ -87,11 +87,11 @@ const handleSubmit = async (e) => {
   
 
   return (
-   <div className="grid grid-cols-2 h-screen">
-    <div className="my-auto">
+   <div className="grid md:grid-cols-2 h-screen">
+    <div className="my-auto ">
       <img src="https://img.freepik.com/free-vector/cyber-data-security-online-concept-illustration-internet-security-information-privacy-protection_1150-37328.jpg?t=st=1755620978~exp=1755624578~hmac=0d692ff39f72163a21a3ff96b72b78850f204e40cc458c21d344af44033c265b&w=2000" alt="" />
     </div>
- <div className="flex h-[720px] my-auto items-center justify-center bg-gray-100">
+ <div className="flex md:h-[720px] my-auto items-center justify-center bg-gray-100">
       <div className="w-full max-w-md rounded-2xl  p-8 ">
         <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
           Admin Login
