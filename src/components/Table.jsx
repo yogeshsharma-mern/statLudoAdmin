@@ -1,168 +1,215 @@
-import React, { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from "lucide-react";
+"use client";
 
-const ServerDataTable = ({ columns, fetchData }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+import { useMemo, useState, useEffect } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+import Loader from "./Loader";
+import { useDispatch } from "react-redux";
+
+export default function DataTable({
+  title,
+  fetchData,      // function to fetch data
+  columnsDef,     // array of column definitions
+  pageSizeOptions = [5, 10, 20],
+  initialPageSize = 5,
+  actions = {},   // object { view: fn, edit: fn, delete: fn, add: fn }
+}) {
+  const dispatcher = useDispatch();
+  const [data, setData] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(initialPageSize);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState([]);
 
-  const [rows, setRows] = useState([]);
-  const [total, setTotal] = useState(0);
+  // Fetch data
+// DataTable.jsx
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      // thunk dispatch karna hai
+      const res = await dispatcher(
+        fetchData({
+          page: currentPage,
+          limit: pageSize,
+          search: query,
+          sort,
+        })
+      );
 
-  // Fetch from backend whenever filters change
-  useEffect(() => {
-    const loadData = async () => {
-      const response = await fetchData({
-        page: currentPage,
-        limit: itemsPerPage,
-        search: searchTerm,
-        sortKey: sortConfig.key,
-        sortDirection: sortConfig.direction,
-      });
-      setRows(response.data);
-      setTotal(response.total);
-    };
-    loadData();
-  }, [currentPage, itemsPerPage, searchTerm, sortConfig, fetchData]);
-
-  const totalPages = Math.ceil(total / itemsPerPage);
-
-  const handleSort = (key) => {
-    setSortConfig((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
+      if (res.payload) {
+        setData(res.payload.users || []);
+        setTotalPages(res.payload.pages || 1);
+      }
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+    }
   };
 
+  loadData();
+}, [dispatcher, fetchData, currentPage, pageSize, query, sort]);
+
+
+
+  const columns = useMemo(() => columnsDef, [columnsDef]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    manualPagination: true,
+    pageCount: totalPages,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination: { pageIndex: currentPage - 1, pageSize },
+      sorting: sort,
+    },
+    onSortingChange: setSort,
+  });
+
   return (
-    <div className="p-4 bg-white rounded-2xl shadow-md">
-      {/* Search & Controls */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
-        <div className="relative w-full md:w-1/3">
-          <Search className="absolute left-2 top-2.5 w-4 h-4 text-gray-400" />
+    <div className="rounded-2xl w-full p-6 shadow">
+      <div className="text-xl font-semibold mb-4">{title}</div>
+
+      {/* Search + Add */}
+      <div className="mb-4 flex justify-between gap-3 flex-wrap">
+        <div className="relative max-w-xs">
           <input
-            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1); // reset to first page
-            }}
-            className="w-full pl-8 pr-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-xl border border-gray-400 py-2 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </div>
-
-        <select
-          value={itemsPerPage}
-          onChange={(e) => {
-            setItemsPerPage(Number(e.target.value));
-            setCurrentPage(1); // reset to first page
-          }}
-          className="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          {[5, 10, 20, 50].map((num) => (
-            <option key={num} value={num}>
-              {num} per page
-            </option>
-          ))}
-        </select>
+        {actions.add && (
+          <button
+            onClick={actions.add}
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Add
+          </button>
+        )}
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border rounded-xl overflow-hidden">
-          <thead className="bg-gray-100">
-            <tr>
-              {columns.map((col) => (
-                <th
-                  key={col.accessor}
-                  onClick={() => handleSort(col.accessor)}
-                  className="px-4 py-2 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:text-indigo-600"
-                >
-                  {col.label}
-                  {sortConfig.key === col.accessor && (
-                    <span>{sortConfig.direction === "asc" ? " ▲" : " ▼"}</span>
-                  )}
-                </th>
+      {loading ? (
+      //  <Loader />
+      ""
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left bg-white text-sm">
+            <thead className="border-b border-gray-200 bg-gray-50 text-gray-700">
+              {table.getHeaderGroups().map((hg) => (
+                <tr key={hg.id}>
+                  {hg.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className="cursor-pointer px-4 py-3 font-semibold"
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {{ asc: " ▲", desc: " ▼" }[header.column.getIsSorted()] ?? null}
+                    </th>
+                  ))}
+                  {actions.view || actions.edit || actions.delete ? (
+                    <th className="px-4 py-3">Actions</th>
+                  ) : null}
+                </tr>
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={idx} className="border-t hover:bg-gray-50">
-                {columns.map((col) => (
-                  <td key={col.accessor} className="px-4 py-2 text-sm text-gray-700">
-                    {row[col.accessor]}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-3">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                  {(actions.view || actions.edit || actions.delete) && (
+                    <td className="px-4 py-3 flex gap-2">
+                      {actions.view && (
+                        <button
+                          onClick={() => actions.view(row.original)}
+                          className="text-green-600 hover:text-green-800"
+                        >
+                          View
+                        </button>
+                      )}
+                      {actions.edit && (
+                        <button
+                          onClick={() => actions.edit(row.original)}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {actions.delete && (
+                        <button
+                          onClick={() => actions.delete(row.original)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </td>
+                  )}
+                </tr>
+              ))}
+              {table.getRowModel().rows.length === 0 && (
+                <tr>
+                  <td colSpan={columns.length + 1} className="px-4 py-10 text-center text-gray-500">
+                    No data found.
                   </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-4 text-sm">
-        <span>
-          Showing {(currentPage - 1) * itemsPerPage + 1}-
-          {Math.min(currentPage * itemsPerPage, total)} of {total}
-        </span>
+      <div className="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+        <div className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setCurrentPage(1)}
+            className="rounded-lg border px-2 py-1 text-sm disabled:opacity-40"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-50"
           >
-            <ChevronsLeft size={18} />
+            Prev
           </button>
           <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-50"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className="rounded-lg border px-2 py-1 text-sm disabled:opacity-40"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-50"
           >
-            <ChevronRight size={18} />
+            Next
           </button>
-          <button
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-50"
+          <select
+            className="ml-2 rounded-lg border px-2 py-1 text-sm"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1);
+            }}
           >
-            <ChevronsRight size={18} />
-          </button>
+            {pageSizeOptions.map((n) => (
+              <option key={n} value={n}>
+                {n} / page
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
   );
-};
-
-export default ServerDataTable;
-
-/* ================== USAGE EXAMPLE ==================
-
-const columns = [
-  { label: "Name", accessor: "name" },
-  { label: "Email", accessor: "email" },
-  { label: "Role", accessor: "role" },
-];
-
-async function fetchUsers({ page, limit, search, sortKey, sortDirection }) {
-  const res = await fetch(
-    `/api/users?page=${page}&limit=${limit}&search=${search}&sortKey=${sortKey}&sortDir=${sortDirection}`
-  );
-  return await res.json(); // { data: [], total: number }
 }
-
-<ServerDataTable columns={columns} fetchData={fetchUsers} />
-
-=================================================== */

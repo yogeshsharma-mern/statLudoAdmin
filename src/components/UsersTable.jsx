@@ -57,26 +57,31 @@ export default function UsersTable() {
     () => [
       { accessorKey: "username", header: "Username" },
       { accessorKey: "phone", header: "Phone" },
-      { accessorKey: "referCode", header: "Refer Code" },
-      {
-        accessorKey: "kycStatus",
-        header: "KYC Status",
-        cell: ({ getValue }) => {
-          const val = getValue();
-          return (
-            <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${val === "Approved"
-                ? "bg-green-100 text-green-700"
-                : val === "Pending"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-red-100 text-red-700"
-                }`}
-            >
-              {val}
-            </span>
-          );
-        },
+      // { accessorKey: "referCode", header: "Refer Code" },
+        {
+        accessorKey:"credit",header:"Credit"
       },
+      {accessorKey:"penalty", header:"Penalty"},
+      // {
+      //   accessorKey: "kycStatus",
+      //   header: "KYC Status",
+      //   cell: ({ getValue }) => {
+      //     const val = getValue();
+      //     return (
+      //       <span
+      //         className={`rounded-full px-2.5 py-1 text-xs font-semibold ${val === "Approved"
+      //           ? "bg-green-100 text-green-700"
+      //           : val === "Pending"
+      //             ? "bg-yellow-100 text-yellow-700"
+      //             : "bg-red-100 text-red-700"
+      //           }`}
+      //       >
+      //         {val}
+      //       </span>
+      //     );
+      //   },
+      // },
+    
       {
         accessorKey: "isBanned",
         header: "Blocked",
@@ -212,7 +217,7 @@ export default function UsersTable() {
 
   return (
     <div className="rounded-2xl w-full p-6 shadow">
-      <div className="text-xl font-semibold ">Users</div>
+      <div className="text-xl font-semibold mt-8 md:mt-auto ">Users</div>
       {status === "loading" && <Loader />}
       {/* {status === "failed" && <p className="text-red-400">{error}</p>} */}
 
@@ -284,7 +289,7 @@ export default function UsersTable() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
+            className="rounded-lg border px-2 md:px-3 py-1 text-sm disabled:opacity-40"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
@@ -292,7 +297,7 @@ export default function UsersTable() {
           </button>
           <span className="text-sm">Page {currentPage} of {totalPages}</span>
           <button
-            className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40"
+            className="rounded-lg border px-2 md:px-3 py-1 text-sm disabled:opacity-40"
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
@@ -335,7 +340,10 @@ export default function UsersTable() {
             <strong>Username:</strong> {userDetail.username}
           </div>
           <div>
-            <strong>Email:</strong> {userDetail.email}
+            <strong>Credit:</strong> {userDetail.credit}
+          </div>
+           <div>
+            <strong>Penalty:</strong> {userDetail.penalty}
           </div>
           <div>
             <strong>Phone:</strong> {userDetail.phone}

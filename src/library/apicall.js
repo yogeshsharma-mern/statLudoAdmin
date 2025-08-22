@@ -70,3 +70,21 @@ export const updateUser = async(data,id)=>
         return null;
     }
 }
+export const getTransactiion = async ({ page = 1, limit = 5, search="", isBanned, isActive}) => {
+  
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+    const response = await axiosApiInstance.get(`/users?${params.toString()}`);
+    return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+}; 

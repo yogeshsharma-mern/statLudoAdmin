@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
 --color-primary: #6C5CE7;
@@ -13,6 +14,7 @@
   --color-neutral: #F5F9FF;
   --color-neutral-medium: #6B7280;
   --color-neutral-dark: #111827;
+  --color-text:#000000
 }
 
 @theme inline {
@@ -26,7 +28,15 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --color-neutral: #111827;
   }
+}
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --color-neutral: #1f2940;
+  --color-neutral-dark: #181717;
+    --color-text:#FFFFFF
 }
 
 body {
