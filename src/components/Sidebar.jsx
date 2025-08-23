@@ -242,15 +242,22 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   active={activeTab === "dispute"}
                   onClick={() => setActiveTab("dispute")}
                 />
+               
               </div>
+              
             )}
+             <Link href="/admin/dashboard/scanner">
+            <SidebarItem
+              icon={<FaTachometerAlt />}
+              label="Upload Scanner"
+              active={activeTab === "scanner"}
+              onClick={() => setActiveTab("scanner")}
+            />
+          </Link>
           </div>
-          {/* <SidebarItem
-            icon={<FaHistory />}
-            label="Transactions"
-            active={activeTab === "transactions"}
-            onClick={() => setActiveTab("transactions")}
-          /> */}
+          
+            
+              
         </nav>
 
         {/* Bottom buttons */}

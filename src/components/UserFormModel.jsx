@@ -1,49 +1,58 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function UserFormModal({ open, onClose, onSubmit, initial }) {
+export default function UserFormModal({ open, onClose, onSubmit, initial ,userDetail}) {
+  console.log("initaildata",userDetail);
   const [form, setForm] = useState({
     fullName: "",
-    dob: "",
-    gender: "",
-    aadhaarNumber: "",
-    address: "",
-    email: "",
+    username: "",
+    phone: "",
+    profile: "",
     isBanned: false,
     isActive: true,
+    cashWon: "",
+    battlePlayed: "",
+    referralEarning: "",
+    penalty: "",
+    winningAmount: "",
+    completedGames: "",
+    referRank: "",
+    isRegistered: true,
+    credit: "",
+    referCode: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
 
-useEffect(() => {
-  if (open && initial?._id) {
-    // fetch data if needed
-    setForm(initial); // prefills with existing user
-  }
-}, [initial, open]);
-
-
+  useEffect(() => {
+    if (open && initial?._id) {
+      setForm(initial); // Prefill existing data
+    }
+  }, [initial, open]);
 
   if (!open) return null;
 
+  // Validation rules
   const validateField = (name, value) => {
     switch (name) {
       case "fullName":
-        return value.trim() ? "" : "Full name is required";
-      case "email":
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "" : "Invalid email";
-      case "dob":
-        if (!value) return "Date of birth is required";
-        if (value >= new Date().toISOString().split("T")[0])
-          return "Date of birth cannot be today or in the future";
-        return "";
-      case "aadhaarNumber":
-        return /^\d{12}$/.test(value) ? "" : "Aadhaar must be exactly 12 digits";
-      case "gender":
-        return value ? "" : "Gender is required";
-      case "address":
-        return value.trim() ? "" : "Address is required";
+      case "username":
+        return value.trim() ? "" : `${name} is required`;
+      case "phone":
+        return /^\d{10}$/.test(value) ? "" : "Phone must be 10 digits";
+      case "profile":
+        return value.startsWith("http") ? "" : "Profile must be a valid URL";
+      case "cashWon":
+      case "battlePlayed":
+      case "referralEarning":
+      case "penalty":
+      case "winningAmount":
+      case "completedGames":
+      case "referRank":
+      case "credit":
+        return /^\d+$/.test(value) ? "" : "Must be a number";
+      case "referCode":
+        return value.trim() ? "" : "Refer code is required";
       default:
         return "";
     }
@@ -60,18 +69,13 @@ useEffect(() => {
   };
 
   const handleChange = (e) => {
-    
     const { name, value, type, checked } = e.target;
-    const newValue = type === "checkbox" ? checked : value;
-
     setForm((f) => ({
       ...f,
-      [name]: newValue,
+      [name]: type === "checkbox" ? checked : value,
     }));
 
-    // Live error removal
-    const error = validateField(name, newValue);
-    setErrors((prev) => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
   };
 
   const handleSubmit = (e) => {
@@ -79,26 +83,15 @@ useEffect(() => {
     if (!validate()) return;
     onSubmit(form);
   };
-  if (!open) return null;
-
-if (loading) {
-  return (
-    <div className="fixed  inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="rounded-2xl bg-white p-6 shadow-xl">
-        <p>Loading user data...</p>
-      </div>
-    </div>
-  );
-}
-
 
   const errorClass = "text-red-600 text-sm mt-1";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl overflow-y-auto max-h-[90vh]">
+        {/* Header */}
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-xl text-black font-semibold">Edit User</h3>
+          <h3 className="text-xl font-semibold text-black">Edit User</h3>
           <button
             onClick={onClose}
             className="rounded-lg px-2 py-1 text-gray-500 hover:bg-gray-100"
@@ -107,101 +100,105 @@ if (loading) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           {/* Full Name */}
-          <div>
+          <div className="col-span-2">
             <label className="block text-sm font-medium text-black">Full Name</label>
             <input
               name="fullName"
               value={form.fullName}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-              placeholder="Amit Sharma"
+              className="w-full rounded-lg border px-3 py-2 text-black"
             />
             {errors.fullName && <p className={errorClass}>{errors.fullName}</p>}
           </div>
 
-          {/* Email */}
+          {/* Username */}
           <div>
-            <label className="block text-sm font-medium text-black">Email</label>
+            <label className="block text-sm font-medium text-black">Username</label>
             <input
-              type="email"
-              name="email"
-              value={form.email}
+              name="username"
+              value={form.username}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-              placeholder="amit.sharma@example.com"
+              className="w-full rounded-lg border px-3 py-2 text-black"
             />
-            {errors.email && <p className={errorClass}>{errors.email}</p>}
+            {errors.username && <p className={errorClass}>{errors.username}</p>}
           </div>
 
-          {/* Date of Birth */}
+          {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-black">Date of Birth</label>
+            <label className="block text-sm font-medium text-black">Phone</label>
             <input
-              type="date"
-              name="dob"
-              value={form.dob}
+              name="phone"
+              value={form.phone}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-              max={new Date().toISOString().split("T")[0]}
+              className="w-full rounded-lg border px-3 py-2 text-black"
+              maxLength={10}
             />
-            {errors.dob && <p className={errorClass}>{errors.dob}</p>}
+            {errors.phone && <p className={errorClass}>{errors.phone}</p>}
           </div>
 
-          {/* Gender */}
-          <div>
-            <label className="block text-sm font-medium text-black">Gender</label>
-            <select
-              name="gender"
-              value={form.gender}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-            >
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-            {errors.gender && <p className={errorClass}>{errors.gender}</p>}
-          </div>
-
-          {/* Aadhaar Number */}
-          <div>
-            <label className="block text-sm font-medium text-black">Aadhaar Number</label>
+          {/* Profile */}
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-black">Profile URL</label>
             <input
-              name="aadhaarNumber"
-              value={form.aadhaarNumber}
+              name="profile"
+              value={form.profile}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-              placeholder="123456789012"
-              maxLength={12}
+              className="w-full rounded-lg border px-3 py-2 text-black"
             />
-            {errors.aadhaarNumber && <p className={errorClass}>{errors.aadhaarNumber}</p>}
+            {errors.profile && <p className={errorClass}>{errors.profile}</p>}
           </div>
 
-          {/* Address */}
+          {/* Numeric fields */}
+          {[
+            "cashWon",
+            "battlePlayed",
+            "referralEarning",
+            "penalty",
+            "winningAmount",
+            "completedGames",
+            "referRank",
+            "credit",
+          ].map((field) => (
+            <div key={field}>
+              <label className="block text-sm font-medium text-black">
+                {field}
+              </label>
+              <input
+                name={field}
+                value={form[field]}
+                onChange={handleChange}
+                className="w-full rounded-lg border px-3 py-2 text-black"
+              />
+              {errors[field] && <p className={errorClass}>{errors[field]}</p>}
+            </div>
+          ))}
+
+          {/* Refer Code */}
           <div>
-            <label className="block text-sm font-medium text-black">Address</label>
-            <textarea
-              name="address"
-              value={form.address}
+            <label className="block text-sm font-medium text-black">Refer Code</label>
+            <input
+              name="referCode"
+              value={form.referCode}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-              placeholder="456 Rose Garden Colony, Kota"
+              className="w-full rounded-lg border px-3 py-2 text-black"
             />
-            {errors.address && <p className={errorClass}>{errors.address}</p>}
+            {errors.referCode && <p className={errorClass}>{errors.referCode}</p>}
           </div>
 
-          {/* Status Radio */}
-          <div className="flex items-center gap-4">
+          {/* Status */}
+          <div className="col-span-2 flex gap-6">
             <label className="flex items-center gap-2 text-black">
               <input
                 type="radio"
                 name="status"
                 value="Active"
-                checked={form.isActive === true}
-                onChange={() => setForm((f) => ({ ...f, isActive: true, isBanned: false }))}
+                checked={form.isActive}
+                onChange={() =>
+                  setForm((f) => ({ ...f, isActive: true, isBanned: false }))
+                }
               />
               Active
             </label>
@@ -210,15 +207,26 @@ if (loading) {
                 type="radio"
                 name="status"
                 value="Banned"
-                checked={form.isActive === false}
-                onChange={() => setForm((f) => ({ ...f, isActive: false, isBanned: true }))}
+                checked={form.isBanned}
+                onChange={() =>
+                  setForm((f) => ({ ...f, isActive: false, isBanned: true }))
+                }
               />
               Banned
+            </label>
+            <label className="flex items-center gap-2 text-black">
+              <input
+                type="checkbox"
+                name="isRegistered"
+                checked={form.isRegistered}
+                onChange={handleChange}
+              />
+              Registered
             </label>
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="col-span-2 flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}

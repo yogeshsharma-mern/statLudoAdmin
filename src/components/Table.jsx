@@ -17,7 +17,11 @@ export default function DataTable({
   columnsDef,     // array of column definitions
   pageSizeOptions = [5, 10, 20],
   initialPageSize = 5,
-  actions = {},   // object { view: fn, edit: fn, delete: fn, add: fn }
+  actions = {},
+   filters = {},    
+   filtersUI = null,    
+  
+     // object { view: fn, edit: fn, delete: fn, add: fn }
 }) {
   const dispatcher = useDispatch();
   const [data, setData] = useState([]);
@@ -27,7 +31,7 @@ export default function DataTable({
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState([]);
-
+console.log("pagesize",pageSize);
   // Fetch data
 // DataTable.jsx
 useEffect(() => {
@@ -40,11 +44,13 @@ useEffect(() => {
           limit: pageSize,
           search: query,
           sort,
+        
+          ...filters, 
         })
       );
-
+console.log("resyyyyy",res);
       if (res.payload) {
-        setData(res.payload.users || []);
+        setData(res.payload || []);
         setTotalPages(res.payload.pages || 1);
       }
     } catch (err) {
@@ -53,7 +59,7 @@ useEffect(() => {
   };
 
   loadData();
-}, [dispatcher, fetchData, currentPage, pageSize, query, sort]);
+}, [dispatcher, currentPage, pageSize,query]);
 
 
 
@@ -75,7 +81,7 @@ useEffect(() => {
   });
 
   return (
-    <div className="rounded-2xl w-full p-6 shadow">
+    <div className="rounded-2xl w-full p-6 shadow bg-[var(--color-neutral)] h-screen">
       <div className="text-xl font-semibold mb-4">{title}</div>
 
       {/* Search + Add */}
@@ -87,6 +93,7 @@ useEffect(() => {
             placeholder="Search..."
             className="w-full rounded-xl border border-gray-400 py-2 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
+          {filtersUI}
         </div>
         {actions.add && (
           <button
@@ -104,7 +111,7 @@ useEffect(() => {
       ""
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full text-left bg-white text-sm">
+          <table className="min-w-full text-left bg-[--color-neutral] text-sm ">
             <thead className="border-b border-gray-200 bg-gray-50 text-gray-700">
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>

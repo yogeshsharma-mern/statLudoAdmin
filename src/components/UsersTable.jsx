@@ -20,6 +20,7 @@ import { FaEye } from "react-icons/fa6";
 import Modal from "./Modal";
 import { userDetails } from "@/redux/features/userSlice";
 import Loader from "@/components/Loader";
+import ConfirmBox from "./ConfirmBox";
 
 export default function UsersTable() {
   const dispatch = useDispatch();
@@ -31,8 +32,11 @@ export default function UsersTable() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+   const [openConfirm, setOpenConfirm] = useState(false);
   const [viewModal, setViewModal] = useState(false);
   const [userDetail, setUserDetails] = useState([]);
+  const [blockId,setBlockId]= useState(null);
+  console.log("blockid",blockId);
 
   const [editing, setEditing] = useState("");
 
@@ -103,13 +107,13 @@ export default function UsersTable() {
         header: "Actions",
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <button
+            {/* <button
               className="rounded-md bg-indigo-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
               onClick={() => openEdit(row.original._id)}
               title="Edit"
             >
               <FiEdit2 />
-            </button>
+            </button> */}
             <button
               className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
               onClick={() => handleView(row.original._id)}
@@ -128,7 +132,9 @@ export default function UsersTable() {
             ) : (
               <button
                 className="rounded-md bg-rose-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
-                onClick={() => handleBlock(row.original._id)}
+                onClick={() => (setOpenConfirm(true),
+                setBlockId(row.original._id)
+                )}
                 title="Block"
               >
                 <MdBlock />
@@ -190,10 +196,11 @@ export default function UsersTable() {
     toast("Delete action not wired yet"); // placeholder
   };
 
-  const handleBlock = async (_id) => {
-    const res = await dispatch(userBlocked(_id));
+  const handleBlock = async (blockId) => {
+    const res = await dispatch(userBlocked(blockId));
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User blocked successfully");
+      setOpenConfirm(false);
     } else {
       toast.error("Failed to block user");
     }
@@ -217,8 +224,21 @@ export default function UsersTable() {
 
   return (
     <div className="rounded-2xl w-full p-6 shadow">
+       <ConfirmBox
+        isOpen={openConfirm}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={()=>handleBlock(blockId)}
+        title="Are you sure?"
+        message="This action cannot be undone. Do you really want to block this user?"
+      />
       <div className="text-xl font-semibold mt-8 md:mt-auto ">Users</div>
-      {status === "loading" && <Loader />}
+      {status === "loading" && <div className="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
+      <div className="flex space-x-2">
+        <span className="w-4 h-4 rounded-full bg-blue-500 animate-bounce"></span>
+        <span className="w-4 h-4 rounded-full bg-blue-400 animate-bounce [animation-delay:-0.2s]"></span>
+        <span className="w-4 h-4 rounded-full bg-blue-300 animate-bounce [animation-delay:-0.4s]"></span>
+      </div>
+    </div>}
       {/* {status === "failed" && <p className="text-red-400">{error}</p>} */}
 
       {/* Header row */}
@@ -324,6 +344,7 @@ export default function UsersTable() {
       <UserFormModal
         open={modalOpen}
         initial={editing}
+            userDetail={userDetail}
         onClose={() => setModalOpen(false)}
         onSubmit={updateUser}
       />
@@ -331,8 +352,9 @@ export default function UsersTable() {
         open={viewModal}
         onClose={() => setViewModal(false)}
         title="User Details"
+        userDetail={userDetail}
       >
-        <div className="space-y-3 text-gray-700">
+        {/* <div className="space-y-3 text-gray-700">
           <div>
             <strong>Full Name:</strong> {userDetail.fullName}
           </div>
@@ -405,7 +427,8 @@ export default function UsersTable() {
           >
             Close
           </button>
-        </div>
+         
+        </div> */}
       </Modal>
 
     </div>
