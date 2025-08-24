@@ -10,13 +10,13 @@ import { getGameLogs } from "@/library/apicall";
 // ------- Thunks (redux-thunk via RTK) -------
 export const fetchGameLogs = createAsyncThunk(
   "users/fetchAllTransactions",
-  async ({ page = 1, limit = 5, search = "", isBanned, isActive } = {}, thunkAPI) => {
+  async ({ page = 1, limit = 5, search = "", isBanned, isActive ,filters={}} = {}, thunkAPI) => {
         console.log("hh", { page, limit, search });
   
-
+console.log("filters",filters);
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-      const res = await getGameLogs({ page, limit, search, isBanned, isActive });
+      const res = await getGameLogs({ page, limit, search, isBanned, isActive,filters });
 
       return res.data.games; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
     } catch (err) {

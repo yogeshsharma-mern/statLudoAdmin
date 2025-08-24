@@ -37,7 +37,7 @@ export const loginAdmin = createAsyncThunk(
   "auth/loginAdmin",
   async ({ email, password }, thunkAPI) => {
     try {
-      const res = await axiosApiInstance.post("/login", { email, password });
+      const res = await axiosApiInstance.post("/admin/login", { email, password });
       // Expecting { token, user }
       const { token } = res.data.data;
 

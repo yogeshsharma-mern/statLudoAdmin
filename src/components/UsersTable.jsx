@@ -36,14 +36,19 @@ export default function UsersTable() {
   const [viewModal, setViewModal] = useState(false);
   const [userDetail, setUserDetails] = useState([]);
   const [blockId,setBlockId]= useState(null);
+    const [filters, setFilters] = useState({
+      status: "",
+      
+    });
   console.log("blockid",blockId);
+  console.log("filters",filters);
 
   const [editing, setEditing] = useState("");
 
   // fetch users initially
   useEffect(() => {
-    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: query }));
-  }, [dispatch, currentPage, pageSize, query]);
+    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: query,filters }));
+  }, [dispatch, currentPage, pageSize, query,filters]);
   console.log("gg", { page: currentPage, limit: pageSize, search: query })
   // Search filter
   // const filtered = useMemo(() => {
@@ -251,7 +256,41 @@ export default function UsersTable() {
             placeholder="Search users…"
             className="w-full rounded-xl border border-gray-400 py-2 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
+       
         </div>
+            <>
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            className="rounded-lg border px-2 py-1 text-sm"
+          >
+            <option value="">All Users</option>
+            <option value="banned">Blocked Users</option>
+            <option value="unbanned">Unblocked Users</option>
+            <option value="active">Active Users</option>
+            <option value="inactive">Inactive Users</option>
+
+          </select>
+
+          {/* <input
+            type="number"
+            placeholder="Min Bet"
+            value={filters.betAmountMin}
+            onChange={(e) =>
+              setFilters({ ...filters, betAmountMin: e.target.value })
+            }
+            className="w-24 rounded-lg border px-2 py-1 text-sm"
+          /> */}
+          {/* <input
+            type="number"
+            placeholder="Max Bet"
+            value={filters.betAmountMax}
+            onChange={(e) =>
+              setFilters({ ...filters, betAmountMax: e.target.value })
+            }
+            className="w-24 rounded-lg border px-2 py-1 text-sm"
+          /> */}
+        </>
         {/* <button
           onClick={openAdd}
           className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"

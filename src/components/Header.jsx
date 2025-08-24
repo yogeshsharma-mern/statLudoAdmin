@@ -41,7 +41,7 @@ export default function Header() {
             {/* Logout Button */}
             <button
               onClick={() => alert("Logged out!")}
-              className="flex items-center cursor-pointer gap-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-300"
+              className="flex items-center md:flex hidden cursor-pointer gap-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-300"
             >
               {/* <LogoutIcon className="h-5 w-5" /> */}
               Logout

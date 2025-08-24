@@ -74,9 +74,9 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-4 bg-white left-4 flex items-center justiy-center cursor-pointer z-50 w-[20px] h-[20px] rounded-full text-black text-[20px] p-3 rounded-md"
+        className="lg:hidden absolute top-4  right-20 flex items-center justiy-center cursor-pointer z-50 w-[22px] h-[22px] rounded-full text-black text-[20px] p-3 rounded-md"
       >
-        {isMobileOpen ? "✖" : "☰"}
+        {isMobileOpen ? "" : "☰"}
       </button>
 
       {/* Sidebar */}
@@ -151,7 +151,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {opengameMangement.management && (
               <div className="ml-8 mt-2 space-y-2">
-                <Link href="/dashboard/users">
+                <Link href="/admin/dashboard/active-completed-games">
                   <SubMenuItem
                     label="Active/Completed Games"
                     active={activeTab === "Active/completed Games"}
@@ -230,18 +230,20 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {report.report && (
               <div className="ml-8 mt-2 space-y-2">
-                <Link href="/dashboard/users">
+                <Link href="/admin/dashboard/player-report">
                   <SubMenuItem
                     label="Player Reports"
                     active={activeTab === "player-report"}
                     onClick={() => setActiveTab("player-report")}
                   />
                 </Link>
+               <Link href="/admin/dashboard/dispute-report">
                 <SubMenuItem
                   label="Dispute Resolution"
                   active={activeTab === "dispute"}
                   onClick={() => setActiveTab("dispute")}
                 />
+               </Link>
                
               </div>
               

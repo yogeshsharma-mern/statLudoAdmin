@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import StoreProvider from "@/components/StoreProvider";
 import Sidebar from "@/components/Sidebar";
 import Header from '@/components/Header';
+import RouteLoaderWrapper from "@/components/RouteLoaderWrapper";
 // import { ST } from 'next/dist/shared/lib/utils';
 
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <RouteLoaderWrapper>
         <StoreProvider>
 <div className="md:grid md:grid-cols-5">
 <div className="col-span-1 ">
@@ -30,6 +32,7 @@ export default function RootLayout({ children }) {
 </div>
     
         </StoreProvider>
+         </RouteLoaderWrapper>
       </body>
     </html>
   )

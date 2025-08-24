@@ -23,6 +23,7 @@ export default function DataTable({
   
      // object { view: fn, edit: fn, delete: fn, add: fn }
 }) {
+  
   const dispatcher = useDispatch();
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -45,21 +46,37 @@ useEffect(() => {
           search: query,
           sort,
         
-          ...filters, 
+          filters, 
         })
       );
-console.log("resyyyyy",res);
+
+      // if (res.payload) {
+      //   setData(res.payload || []);
+      //   setTotalPages(res.payload.pages || 1);
+      // }
       if (res.payload) {
-        setData(res.payload || []);
-        setTotalPages(res.payload.pages || 1);
-      }
+  if (Array.isArray(res.payload)) {
+    // agar API directly array bhejti hai
+    setData(res.payload);
+    setTotalPages(1);
+  } else {
+    // agar API object bhejti hai {games: [], pages: 5}
+    setData(res.payload.games || []);
+    setTotalPages(res.payload.pages || 1);
+  }
+} else {
+  // agar kuch bhi data nahi aaya
+  setData([]);
+  setTotalPages(1);
+}
+
     } catch (err) {
       console.error("Failed to fetch data:", err);
     }
   };
 
   loadData();
-}, [dispatcher, currentPage, pageSize,query]);
+}, [dispatcher, currentPage, pageSize,query,filters]);
 
 
 
@@ -86,14 +103,18 @@ console.log("resyyyyy",res);
 
       {/* Search + Add */}
       <div className="mb-4 flex justify-between gap-3 flex-wrap">
-        <div className="relative max-w-xs">
+        <div className="relative md:flex justify-between w-full ">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search..."
-            className="w-full rounded-xl border border-gray-400 py-2 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-xs  mb-3 md:mb-auto rounded-xl border border-gray-400 py-2 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          {filtersUI}
+        
+         <div className="w-full flex gap-3 justify-end mr-10">
+            {filtersUI}
+         </div>
+       
         </div>
         {actions.add && (
           <button
@@ -143,7 +164,7 @@ console.log("resyyyyy",res);
                     <td className="px-4 py-3 flex gap-2">
                       {actions.view && (
                         <button
-                          onClick={() => actions.view(row.original)}
+                          onClick={() => actions.view(row?.original)}
                           className="text-green-600 hover:text-green-800"
                         >
                           View
@@ -151,7 +172,7 @@ console.log("resyyyyy",res);
                       )}
                       {actions.edit && (
                         <button
-                          onClick={() => actions.edit(row.original)}
+                          onClick={() => actions.edit(row?.original)}
                           className="text-blue-600 hover:text-blue-800"
                         >
                           Edit
@@ -159,7 +180,7 @@ console.log("resyyyyy",res);
                       )}
                       {actions.delete && (
                         <button
-                          onClick={() => actions.delete(row.original)}
+                          onClick={() => actions.delete(row?.original)}
                           className="text-red-600 hover:text-red-800"
                         >
                           Delete

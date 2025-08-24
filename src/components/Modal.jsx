@@ -158,7 +158,7 @@ const fetchUserGames = (params = {}) => {
     if (!validate()) return;
     try {
       setLoading(true);
-      const res = await axiosApiInstance.put(`/users/${userDetail._id}`, form);
+      const res = await axiosApiInstance.put(`/admin/users/${userDetail._id}`, form);
     console.log("profileres",res);
       console.log("Updated user:", res.data);
       if(res.data.status===200)
