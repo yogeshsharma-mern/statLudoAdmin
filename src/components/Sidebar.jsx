@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { IoGameController } from "react-icons/io5";
 import { FaWallet } from "react-icons/fa";
 import { TbReport } from "react-icons/tb";
+import { TbLockPassword } from "react-icons/tb";
 
 export default function Sidebar({ activeTab, setActiveTab }) {
   const sidebarRef = useRef(null);
@@ -189,23 +190,26 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {wallet.wallet && (
               <div className="ml-8 mt-2 space-y-2">
-                <Link href="/dashboard/users">
+                <Link href="/admin/dashboard/coin-balance">
                   <SubMenuItem
                     label="Coin Balance"
                     active={activeTab === "coin-balance"}
                     onClick={() => setActiveTab("coin-balance")}
                   />
                 </Link>
+               <Link href="/admin/dashboard/transactions">
                 <SubMenuItem
                   label="Transactions"
                   active={activeTab === "Transactions"}
                   onClick={() => setActiveTab("Transactions")}
-                />
+                /></Link>
+              <Link href="/admin/dashboard/withdraw-request">
                 <SubMenuItem
                   label="Withdraw Request"
                   active={activeTab === "withdraw-request"}
                   onClick={() => setActiveTab("withdraw-request")}
                 />
+              </Link>
               </div>
             )}
           </div>
@@ -254,6 +258,14 @@ export default function Sidebar({ activeTab, setActiveTab }) {
               label="Upload Scanner"
               active={activeTab === "scanner"}
               onClick={() => setActiveTab("scanner")}
+            />
+          </Link>
+                 <Link href="/admin/dashboard/update-password">
+            <SidebarItem
+              icon={<TbLockPassword />}
+              label="Update Password"
+              active={activeTab === "updatepassword"}
+              onClick={() => setActiveTab("updatepassword")}
             />
           </Link>
           </div>

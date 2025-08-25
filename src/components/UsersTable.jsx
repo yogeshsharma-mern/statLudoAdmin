@@ -21,6 +21,7 @@ import Modal from "./Modal";
 import { userDetails } from "@/redux/features/userSlice";
 import Loader from "@/components/Loader";
 import ConfirmBox from "./ConfirmBox";
+import GlobalLoading from "@/components/GlobalLoading";
 
 export default function UsersTable() {
   const dispatch = useDispatch();
@@ -237,13 +238,7 @@ export default function UsersTable() {
         message="This action cannot be undone. Do you really want to block this user?"
       />
       <div className="text-xl font-semibold mt-8 md:mt-auto ">Users</div>
-      {status === "loading" && <div className="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
-      <div className="flex space-x-2">
-        <span className="w-4 h-4 rounded-full bg-blue-500 animate-bounce"></span>
-        <span className="w-4 h-4 rounded-full bg-blue-400 animate-bounce [animation-delay:-0.2s]"></span>
-        <span className="w-4 h-4 rounded-full bg-blue-300 animate-bounce [animation-delay:-0.4s]"></span>
-      </div>
-    </div>}
+ 
       {/* {status === "failed" && <p className="text-red-400">{error}</p>} */}
 
       {/* Header row */}
@@ -319,6 +314,11 @@ export default function UsersTable() {
             ))}
           </thead>
           <tbody>
+                 {status === "loading" && <div className="flex items-center justify-center w-[70vw] h-[30vh]">
+                  <div className="flex w-full justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+                  </div>}
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-200 hover:bg-(--color-neutral)">
                 {row.getVisibleCells().map((cell) => (

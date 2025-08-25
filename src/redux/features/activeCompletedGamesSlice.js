@@ -1,4 +1,3 @@
-"use client";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { activeComplteGames } from "@/library/apicall";
 

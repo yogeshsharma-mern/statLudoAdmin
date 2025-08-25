@@ -1,16 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {axiosApiInstance} from "@/library/helper";
-import { getTransactiion } from "@/library/apicall";
+import { getCoinsData } from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
-export const fetchTransactions = createAsyncThunk(
-  "users/fetchAllTransactions",
+export const fetchCoins = createAsyncThunk(
+  "users/fetchcoins",
   async ({ page = 1, limit = 5, search = "" ,filters={}} = {}, thunkAPI) => {
   
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-      const res = await getTransactiion({ page, limit, search,filters });
+      const res = await getCoinsData({ page, limit, search,filters });
 
       return res.data; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
     } catch (err) {
@@ -21,9 +20,9 @@ export const fetchTransactions = createAsyncThunk(
 
 // ------- Slice -------
 const transactionSlice = createSlice({
-  name: "transactions",
+  name: "coins",
   initialState: {
-    transactions: [],
+    coinbalance: [],
 totalPages: 1,
     totalDocs: 0,
     page: 1,
@@ -37,21 +36,21 @@ totalPages: 1,
   extraReducers: (builder) => {
     builder
       // fetch
-      .addCase(fetchTransactions.pending, (state) => {
+      .addCase(fetchCoins.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchTransactions.fulfilled, (state, action) => {
+      .addCase(fetchCoins.fulfilled, (state, action) => {
         console.log("action",action);
         console.log("first",action.payload)
         state.status = "succeeded";
-        state.transactions = action.payload.users;
+        state.coinbalance = action.payload.coins;
         state.totalPages = action.payload.pages;
         state.totalDocs = action.payload.totalDocs;
         state.page = action.payload.page;
         state.limit = action.payload.limit ?? state.limit;
       })
-      .addCase(fetchTransactions.rejected, (state, action) => {
+      .addCase(fetchCoins.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
       })

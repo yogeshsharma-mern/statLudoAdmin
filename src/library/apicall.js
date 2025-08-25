@@ -75,13 +75,16 @@ export const updateUser = async(data,id)=>
         return null;
     }
 }
-export const getTransactiion = async ({ page = 1, limit = 5, search="", isBanned, isActive}) => {
+export const getTransactiion = async ({ page = 1, limit = 5, search="", filters}) => {
   
   try {
     const params = new URLSearchParams();
 
     params.append("page", page);
     params.append("limit", limit);
+        params.append("status",filters.status);
+    params.append("betAmountMin",filters.betAmountMin);
+    params.append("betAmountMax",filters.betAmountMax);
 
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
@@ -233,6 +236,79 @@ export const getDisputeReport = async ({ page = 1, limit = 5, search="",filters=
     }
     const response = await axiosApiInstance.get(`/admin/users?${params.toString()}`);
     return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+}; 
+
+
+
+
+
+export const getCoinsData = async ({ page = 1, limit = 5, search="",filters={}}) => {
+  console.log("getlogfilter",filters);
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("status",filters.status);
+    params.append("betAmountMin",filters.betAmountMin);
+    params.append("betAmountMax",filters.betAmountMax);
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+    const response = await axiosApiInstance.get(`/admin/games?${params.toString()}`);
+    return response.data;
+// ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+}; 
+
+
+export const getwithdrawdet = async ({ page = 1, limit = 5, search="",filters={}}) => {
+  console.log("getlogfilter",filters);
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("status",filters.status);
+    params.append("betAmountMin",filters.betAmountMin);
+    params.append("betAmountMax",filters.betAmountMax);
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+    const response = await axiosApiInstance.get(`/admin/games?${params.toString()}`);
+    return response.data;
+// ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+}; 
+
+
+export const getScanner = async () => {
+  // console.log("getlogfilter",filters);
+  try {
+    const params = new URLSearchParams();
+
+    // params.append("page", page);
+    // params.append("limit", limit);
+// params.append("isActive",true);
+
+    // if (search && search.trim() !== "") {
+    //   params.append("search", search.trim());
+    // }
+    const response = await axiosApiInstance.get(`/assets/scanners?${params.toString()}`);
+    return response.data;
+// ✅ returns API response data
   } catch (error) {
     console.error("Error fetching users:", error);
     return null; // or throw error if you want to handle it in component

@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-table";
 import Loader from "./Loader";
 import { useDispatch } from "react-redux";
+import GlobalLoading from "@/components/GlobalLoading";
 
 export default function DataTable({
   title,
@@ -128,8 +129,7 @@ useEffect(() => {
 
       {/* Table */}
       {loading ? (
-      //  <Loader />
-      ""
+     <GlobalLoading/>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-left bg-[--color-neutral] text-sm ">

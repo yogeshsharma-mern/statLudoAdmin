@@ -1,18 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {axiosApiInstance} from "@/library/helper";
-import { getTransactiion } from "@/library/apicall";
+import { getwithdrawdet } from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
-export const fetchTransactions = createAsyncThunk(
-  "users/fetchAllTransactions",
+export const fetchWithdrawDet = createAsyncThunk(
+  "users/fetchwithdraw",
   async ({ page = 1, limit = 5, search = "" ,filters={}} = {}, thunkAPI) => {
   
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-      const res = await getTransactiion({ page, limit, search,filters });
+      const res = await getwithdrawdet({ page, limit, search,filters });
 
-      return res.data; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
+      return res.data; 
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -20,10 +19,10 @@ export const fetchTransactions = createAsyncThunk(
 );
 
 // ------- Slice -------
-const transactionSlice = createSlice({
-  name: "transactions",
+const withdrawSlice = createSlice({
+  name: "widhdraw",
   initialState: {
-    transactions: [],
+    withdrawbalance: [],
 totalPages: 1,
     totalDocs: 0,
     page: 1,
@@ -37,21 +36,21 @@ totalPages: 1,
   extraReducers: (builder) => {
     builder
       // fetch
-      .addCase(fetchTransactions.pending, (state) => {
+      .addCase(fetchWithdrawDet.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchTransactions.fulfilled, (state, action) => {
+      .addCase(fetchWithdrawDet.fulfilled, (state, action) => {
         console.log("action",action);
         console.log("first",action.payload)
         state.status = "succeeded";
-        state.transactions = action.payload.users;
+        state.withdrawbalance = action.payload.withdrawbalance;
         state.totalPages = action.payload.pages;
         state.totalDocs = action.payload.totalDocs;
         state.page = action.payload.page;
         state.limit = action.payload.limit ?? state.limit;
       })
-      .addCase(fetchTransactions.rejected, (state, action) => {
+      .addCase(fetchWithdrawDet.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
       })
@@ -60,4 +59,4 @@ totalPages: 1,
   },
 });
 
-export default transactionSlice.reducer;
+export default withdrawSlice.reducer;
