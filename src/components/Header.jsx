@@ -1,10 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+
 // import { SunIcon, MoonIcon, LogoutIcon } from "@heroicons/react/outline";
 
 export default function Header() {
+  const router = useRouter();
   const [darkMode, setDarkMode] = useState(false);
-
+  const handleLogout = () => {
+    Cookies.remove("adminToken");
+    router.push("/admin/login");
+  };
   // Apply dark mode class to the body
   useEffect(() => {
     const root = window.document.documentElement;
@@ -40,7 +47,7 @@ export default function Header() {
 
             {/* Logout Button */}
             <button
-              onClick={() => alert("Logged out!")}
+              onClick={handleLogout}
               className="flex items-center md:flex hidden cursor-pointer gap-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-300"
             >
               {/* <LogoutIcon className="h-5 w-5" /> */}

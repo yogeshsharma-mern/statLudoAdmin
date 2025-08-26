@@ -7,15 +7,15 @@ import { getUsergameData } from "@/library/apicall";
 
 export const fetchuserGameData = createAsyncThunk(
     "users/gamedata",
-    async ({ page = 1, limit = 5, search = "", id} = {}, thunkAPI) => {
+    async ({ page = 1, limit = 5, search = "", id,filters={}} = {}, thunkAPI) => {
         console.log("hh", { page, limit, search });
 
         try {
             // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-            const res = await getUsergameData({ page, limit, search, id });
+            const res = await getUsergameData({ page, limit, search, id ,filters});
             console.log("resofactions",res)
 
-            return res.data.games; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
+            return res.data; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
         } catch (err) {
             return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
         }

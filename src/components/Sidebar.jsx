@@ -96,6 +96,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
               label="Dashboard"
               active={activeTab === "dashboard"}
               onClick={() => setActiveTab("dashboard")}
+               closeSidebar={() => setIsMobileOpen(false)} 
             />
           </Link>
 
@@ -125,6 +126,8 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     label="Users"
                     active={activeTab === "ludo-users"}
                     onClick={() => setActiveTab("ludo-users")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                   />
                 </Link>
               </div>
@@ -152,18 +155,21 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {opengameMangement.management && (
               <div className="ml-8 mt-2 space-y-2">
-                <Link href="/admin/dashboard/active-completed-games">
+                {/* <Link href="/admin/dashboard/active-completed-games">
                   <SubMenuItem
                     label="Active/Completed Games"
                     active={activeTab === "Active/completed Games"}
-                    // onClick={() => setActiveTab("Active/completed Games")}
+                    onClick={() => setActiveTab("Active/completed Games")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                   />
-                </Link>
+                </Link> */}
               <Link href="/admin/dashboard/game-logs">
                 <SubMenuItem
                   label="Game Logs"
                   active={activeTab === "Game-Logs"}
-                  // onClick={() => setActiveTab("Game-Logs")}
+                  onClick={() => setActiveTab("Game-Logs")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
                 />
               </Link>
               </div>
@@ -174,7 +180,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
             <button
               onClick={() => togglewallet("wallet")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${wallet.wallet
-                  ? "bg-blue-600 text-[var( --color-text)]"
+                  ? "bg-gray-200 text-[var( --color-text)]"
                   : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
                 }`}
             >
@@ -195,6 +201,8 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     label="Coin Balance"
                     active={activeTab === "coin-balance"}
                     onClick={() => setActiveTab("coin-balance")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                   />
                 </Link>
                <Link href="/admin/dashboard/transactions">
@@ -202,12 +210,16 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   label="Transactions"
                   active={activeTab === "Transactions"}
                   onClick={() => setActiveTab("Transactions")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                 /></Link>
               <Link href="/admin/dashboard/withdraw-request">
                 <SubMenuItem
                   label="Withdraw Request"
                   active={activeTab === "withdraw-request"}
                   onClick={() => setActiveTab("withdraw-request")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                 />
               </Link>
               </div>
@@ -218,7 +230,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
             <button
               onClick={() => toggleReport("report")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${report.report
-                  ? "bg-blue-600 text-[var( --color-text)]"
+                  ? "bg-gray-200 text-[var( --color-text)]"
                   : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
                 }`}
             >
@@ -239,6 +251,8 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     label="Player Reports"
                     active={activeTab === "player-report"}
                     onClick={() => setActiveTab("player-report")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                   />
                 </Link>
                <Link href="/admin/dashboard/dispute-report">
@@ -246,6 +260,8 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   label="Dispute Resolution"
                   active={activeTab === "dispute"}
                   onClick={() => setActiveTab("dispute")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
                 />
                </Link>
                
@@ -258,15 +274,19 @@ export default function Sidebar({ activeTab, setActiveTab }) {
               label="Upload Scanner"
               active={activeTab === "scanner"}
               onClick={() => setActiveTab("scanner")}
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
             />
           </Link>
                  <Link href="/admin/dashboard/update-password">
-            <SidebarItem
+            {/* <SidebarItem
               icon={<TbLockPassword />}
               label="Update Password"
               active={activeTab === "updatepassword"}
               onClick={() => setActiveTab("updatepassword")}
-            />
+                   closeSidebar={() => setIsMobileOpen(false)} 
+
+            /> */}
           </Link>
           </div>
           
@@ -276,13 +296,15 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
         {/* Bottom buttons */}
         <div className="mt-auto space-y-2">
-          <button className="flex w-full items-center space-x-2 rounded-lg px-4 py-2 bg-blue-600 text-[var( --color-text)]">
+         <Link href="/admin/dashboard/update-password">
+          <button className="flex cursor-pointer w-full items-center space-x-2 rounded-lg px-4 py-2 bg-blue-500 text-[var( --color-text)]">
             <FaLock />
             <span>Change Password</span>
           </button>
+         </Link>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center space-x-2 rounded-lg px-4 py-2 bg-red-500 text-[var( --color-text)]"
+            className="flex w-full mt-2 cursor-pointer items-center space-x-2 rounded-lg px-4 py-2 bg-red-500 text-[var( --color-text)]"
           >
             <FaSignOutAlt />
             <span>Logout</span>
@@ -293,14 +315,18 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   );
 }
 
-function SidebarItem({ icon, label, active, onClick }) {
+function SidebarItem({ icon, label, active, onClick, closeSidebar }) {
   return (
     <button
-      onClick={onClick}
-      className={`flex w-full items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium transition ${active
-          ? "bg-blue-600 text-[var( --color-text)]"
+      onClick={() => {
+        onClick?.();
+        closeSidebar?.(); // 👈 sidebar close hoga
+      }}
+      className={`flex w-full items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium transition ${
+        active
+          ? "bg-gray-200 text-[var( --color-text)]"
           : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black cursor-pointer"
-        }`}
+      }`}
     >
       {icon}
       <span>{label}</span>
@@ -308,14 +334,18 @@ function SidebarItem({ icon, label, active, onClick }) {
   );
 }
 
-function SubMenuItem({ label, active, onClick }) {
+function SubMenuItem({ label, active, onClick, closeSidebar }) {
   return (
     <button
-      onClick={onClick}
-      className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${active
-          ? "bg-blue-500 text-white"
-          : "text-[var( --color-text)] hover:bg-gray-100  hover:text-black"
-        }`}
+      onClick={() => {
+        onClick?.();
+        closeSidebar?.(); // 👈 sidebar close hoga
+      }}
+      className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${
+        active
+          ? "bg-gray-100"
+          : "text-[var( --color-text)] hover:bg-gray-100 hover:text-black"
+      }`}
     >
       {label}
     </button>

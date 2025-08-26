@@ -9,6 +9,9 @@ import playerreportReducer from "@/redux/features/playerReportSlice";
 import disputereportReducer from "@/redux/features/disputeSlice";
 import coinReducer from "@/redux/features/coinBalanceSlice";
 import widhdrawReducer from "@/redux/features/withdrawSlice";
+import usercreditslice from "@/redux/features/userCreditSlice";
+import userwithdrawslice from "@/redux/features/userWithdrawSlice";
+import userTransactiionReducer from "@/redux/features/userTransactionSlice";
 
 
 
@@ -23,8 +26,10 @@ const store = configureStore({
         playerreport:playerreportReducer,
         disputereport:disputereportReducer,
         coin:coinReducer,
-        withdraw:widhdrawReducer
-        
+        withdraw:widhdrawReducer,
+        usercreditdetails:usercreditslice,
+        userwithdrawdetails:userwithdrawslice,
+        usertransaction:userTransactiionReducer
     }
 })
 

@@ -11,6 +11,9 @@ import {
 import Loader from "./Loader";
 import { useDispatch } from "react-redux";
 import GlobalLoading from "@/components/GlobalLoading";
+import { useDebounce } from "@/library/hooks/useDebounce";
+import GlobalLoader from "@/components/GlobalLoading";
+
 
 export default function DataTable({
   title,
@@ -18,9 +21,11 @@ export default function DataTable({
   columnsDef,     // array of column definitions
   pageSizeOptions = [5, 10, 20],
   initialPageSize = 5,
+  totalpages,
   actions = {},
    filters = {},    
-   filtersUI = null,    
+   filtersUI = null,  
+   pending  
   
      // object { view: fn, edit: fn, delete: fn, add: fn }
 }) {
@@ -33,6 +38,7 @@ export default function DataTable({
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState([]);
+  const debounceSearch = useDebounce(query,1000);
 console.log("pagesize",pageSize);
   // Fetch data
 // DataTable.jsx
@@ -44,9 +50,8 @@ useEffect(() => {
         fetchData({
           page: currentPage,
           limit: pageSize,
-          search: query,
-          sort,
-        
+          search: debounceSearch,
+          sort,    
           filters, 
         })
       );
@@ -59,7 +64,7 @@ useEffect(() => {
   if (Array.isArray(res.payload)) {
     // agar API directly array bhejti hai
     setData(res.payload);
-    setTotalPages(1);
+    setTotalPages(res.payload.pages || 1);
   } else {
     // agar API object bhejti hai {games: [], pages: 5}
     setData(res.payload.games || []);
@@ -77,7 +82,7 @@ useEffect(() => {
   };
 
   loadData();
-}, [dispatcher, currentPage, pageSize,query,filters]);
+}, [dispatcher, currentPage, pageSize,debounceSearch,filters]);
 
 
 
@@ -99,7 +104,7 @@ useEffect(() => {
   });
 
   return (
-    <div className="rounded-2xl w-full p-6 shadow bg-[var(--color-neutral)] h-screen">
+    <div className="rounded-2xl w-full p-6 shadow bg-[var(--color-neutral)] h-[90vh] overflow-auto">
       <div className="text-xl font-semibold mb-4">{title}</div>
 
       {/* Search + Add */}
@@ -153,6 +158,12 @@ useEffect(() => {
               ))}
             </thead>
             <tbody>
+              {pending === "loading" && <div className="flex items-center justify-center w-[70vw] h-[30vh]">
+                  <div className="flex w-full justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+                  </div>}
+
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="border-b border-gray-200 hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (
@@ -215,6 +226,7 @@ useEffect(() => {
           >
             Prev
           </button>
+            <span className="text-sm">Page {currentPage} of {totalPages}</span>
           <button
             className="rounded-lg border px-2 py-1 text-sm disabled:opacity-40"
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
@@ -229,6 +241,9 @@ useEffect(() => {
               setPageSize(Number(e.target.value));
               setCurrentPage(1);
             }}
+
+
+            
           >
             {pageSizeOptions.map((n) => (
               <option key={n} value={n}>

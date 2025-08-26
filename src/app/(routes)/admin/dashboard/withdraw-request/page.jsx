@@ -84,7 +84,7 @@ export default function Page() {
   );
 
   return (
-    <div className=" bg-[--color-neutral] ">
+    <div className=" bg-[--color-neutral] h-[90vh] overflow-auto">
       <Table 
       fetchData={fetchWithdrawDet} 
       columnsDef={columns} 

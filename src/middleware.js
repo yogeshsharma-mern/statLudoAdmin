@@ -6,10 +6,10 @@ export function middleware(req) {
   const url = req.nextUrl.clone();
 
   // If accessing /dashboard without a token → redirect to login
-  // if (url.pathname.startsWith("/admin/dashboard") && !token) {
-  //   url.pathname = "/admin/login";
-  //   return NextResponse.redirect(url);
-  // }
+  if (url.pathname.startsWith("/admin/dashboard") && !token) {
+    url.pathname = "/admin/login";
+    return NextResponse.redirect(url);
+  }
 
   // If accessing /login but already logged in → redirect to dashboard
   if (url.pathname.startsWith("/admin/login") && token) {

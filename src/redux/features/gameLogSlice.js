@@ -18,7 +18,7 @@ console.log("filters",filters);
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
       const res = await getGameLogs({ page, limit, search, isBanned, isActive,filters });
 
-      return res.data.games; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
+      return res.data; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }

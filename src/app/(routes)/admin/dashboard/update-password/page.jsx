@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { RiLockPasswordLine } from "react-icons/ri";
+// import ToggleButton from "@/components/ToggleButton";
 
 export default function UpdatePasswordPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -20,7 +22,10 @@ export default function UpdatePasswordPage() {
     const hasSymbol = /[^A-Za-z0-9]/.test(password);
     return minLength && hasUpper && hasLower && hasNumber && hasSymbol;
   };
-
+// const handleToggleChange=(state)=>
+// {
+// console.log("seconoddddd",state);
+// }
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validatePassword(newPassword)) {
@@ -47,9 +52,10 @@ export default function UpdatePasswordPage() {
       className="min-h-[90vh] flex items-center justify-center px-6"
       style={{ backgroundColor: "var(--color-neutral)" }}
     >
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-8">
+      {/* <ToggleButton initial={false} onChange={handleToggleChange}/> */}
+      <div className="w-full max-w-md  backdrop-blur-lg rounded-2xl shadow-xl p-8">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          🔐 Update Password
+          Update Password
         </h1>
 
         {error && (
@@ -139,7 +145,10 @@ export default function UpdatePasswordPage() {
             type="submit"
             className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-lg"
           >
-            💾 Update Password
+    <div className="flex items-center gap-2 justify-center">
+          Update Password
+     <div><RiLockPasswordLine /></div>
+    </div>
           </button>
         </form>
       </div>

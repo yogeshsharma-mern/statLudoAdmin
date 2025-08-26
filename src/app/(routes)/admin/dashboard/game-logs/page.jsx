@@ -220,7 +220,11 @@ export default function Page() {
     betAmountMin: "",
     betAmountMax: "",
   });
+  const {  status } = useSelector((state) => state.gameLog);
+
+
   const { totalPages } = useSelector((state) => state.gameLog);
+  console.log("totalpagesssssx",totalPages);
 
   const columns = useMemo(
     () => [
@@ -292,8 +296,9 @@ export default function Page() {
   );
 
   return (
-    <div className=" bg-[--color-neutral] ">
+    <div className=" bg-[--color-neutral]   h-[90vh] overflow-auto">
       <Table 
+      pending={status}
       fetchData={fetchGameLogs} 
       columnsDef={columns} 
       filters={filters}
@@ -307,6 +312,13 @@ export default function Page() {
             <option value="">All Status</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
+            <option value="requested">requested</option>
+            <option value="started">started</option>
+            <option value="cancelled">cancelled</option>
+            <option value="expired">expired</option>
+            <option value="quit">quit</option>
+
+
           </select>
 
           <input

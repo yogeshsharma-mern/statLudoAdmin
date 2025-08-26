@@ -22,6 +22,8 @@ import { userDetails } from "@/redux/features/userSlice";
 import Loader from "@/components/Loader";
 import ConfirmBox from "./ConfirmBox";
 import GlobalLoading from "@/components/GlobalLoading";
+import { useDebounce } from "@/library/hooks/useDebounce";
+import { MdDashboard } from "react-icons/md";
 
 export default function UsersTable() {
   const dispatch = useDispatch();
@@ -41,6 +43,8 @@ export default function UsersTable() {
       status: "",
       
     });
+     const debouncedSearch = useDebounce(query, 1000);
+
   console.log("blockid",blockId);
   console.log("filters",filters);
 
@@ -48,8 +52,8 @@ export default function UsersTable() {
 
   // fetch users initially
   useEffect(() => {
-    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: query,filters }));
-  }, [dispatch, currentPage, pageSize, query,filters]);
+    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: debouncedSearch,filters }));
+  }, [dispatch, currentPage, pageSize, debouncedSearch,filters]);
   console.log("gg", { page: currentPage, limit: pageSize, search: query })
   // Search filter
   // const filtered = useMemo(() => {
@@ -125,7 +129,8 @@ export default function UsersTable() {
               onClick={() => handleView(row.original._id)}
               title="viewuser"
             >
-              <FaEye />
+           <span className="hidden md:block" >User Dashboard</span>
+           <MdDashboard className="md:hidden" />
             </button>
             {row.original.isBanned ? (
               <button
@@ -229,12 +234,12 @@ export default function UsersTable() {
   };
 
   return (
-    <div className="rounded-2xl w-full p-6 shadow">
+    <div className="rounded-2xl w-full p-6 h-[90vh] overflow-auto shadow">
        <ConfirmBox
         isOpen={openConfirm}
         onClose={() => setOpenConfirm(false)}
         onConfirm={()=>handleBlock(blockId)}
-        title="Are you sure?"
+        title="Are you sure you want to block this user?"
         message="This action cannot be undone. Do you really want to block this user?"
       />
       <div className="text-xl font-semibold mt-8 md:mt-auto ">Users</div>

@@ -29,7 +29,7 @@ useEffect(() => {
 }, [dispatcher]);
 
   return (
-    <div className="flex min-h-screen bg-(--color-neutral) text-(--color-text)">
+    <div className="flex h-[90vh] overflow-auto bg-(--color-neutral) text-(--color-text)">
 
       {open && <UserFormModal open={true} onClose={() => setOpen(false)} />}
       <UsersTable initialUsers={users} />

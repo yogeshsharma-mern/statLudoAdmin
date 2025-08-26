@@ -1,12 +1,14 @@
+
+import React from 'react'
+
 export default function Loading() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
-      <div className="relative flex items-center justify-center">
-        {/* Outer Ring */}
-        <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
-        {/* Inner Pulse */}
-        <div className="absolute w-8 h-8 bg-blue-500 rounded-full animate-ping"></div>
+    <div>
+        <div className="flex inset-0 flex items-center justify-center bg-white z-50">
+                  <div className="flex w-full justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     </div>
-  );
+    </div>
+  )
 }

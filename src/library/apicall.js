@@ -37,6 +37,30 @@ export const userBlock = async(id)=>
     }
 }
 
+export const transactionApprove = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.patch(`/admin/payments/${id}/approve`,{
+            "status":"approved"
+        });
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
+export const transactionReject = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.patch(`/admin/payments/${id}/approve`,{
+            "status":"rejected"
+        });
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
 
 
 
@@ -75,21 +99,21 @@ export const updateUser = async(data,id)=>
         return null;
     }
 }
-export const getTransactiion = async ({ page = 1, limit = 5, search="", filters}) => {
+export const getTransactiion = async ({ page = 1, limit = 5, search=""}) => {
   
   try {
     const params = new URLSearchParams();
 
     params.append("page", page);
     params.append("limit", limit);
-        params.append("status",filters.status);
-    params.append("betAmountMin",filters.betAmountMin);
-    params.append("betAmountMax",filters.betAmountMax);
+    //     params.append("status",filters.status);
+    // params.append("betAmountMin",filters.betAmountMin);
+    // params.append("betAmountMax",filters.betAmountMax);
 
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
     }
-    const response = await axiosApiInstance.get(`/admin/users?${params.toString()}`);
+    const response = await axiosApiInstance.get(`/admin/payments?${params.toString()}`);
     return response.data; // ✅ returns API response data
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -132,25 +156,157 @@ export const addcredit = async (id, data) => {
 };
 
 
-export const getUsergameData = async ({ page = 1, limit = 5, search="",id}) => {
-  
+export const getUsergameData = async ({
+  page = 1,
+  limit = 5,
+  search = "",
+  id,
+  filters = {}
+}) => {
+  console.log("filters", filters);
   try {
     const params = new URLSearchParams();
 
     params.append("page", page);
     params.append("limit", limit);
+    params.append("filter",filters.status);
+
+
+    // status mapping (frontend → backend filter values)
+ 
+
+    // if (filters.status && statusMap[filters.status]) {
+    //   params.append("filter", statusMap[filters.status]);
+    // }
 
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
     }
-    const response = await axiosApiInstance.get(`/admin/users/${id}/games?${params.toString()}`);
+
+    const response = await axiosApiInstance.get(
+      `/admin/users/${id}/games?${params.toString()}`
+    );
+
     return response.data; // ✅ returns API response data
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching user games:", error);
     return null; // or throw error if you want to handle it in component
   }
-}; 
+};
 
+
+export const getUserCreditData = async ({
+  page = 1,
+  limit = 5,
+  search = "",
+  id,
+  filters = {}
+}) => {
+  console.log("filters", filters);
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("filter",filters.status);
+
+
+    // status mapping (frontend → backend filter values)
+ 
+
+    // if (filters.status && statusMap[filters.status]) {
+    //   params.append("filter", statusMap[filters.status]);
+    // }
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+
+    const response = await axiosApiInstance.get(
+      `/admin/users/${id}/games?${params.toString()}`
+    );
+
+    return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching user games:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+};
+
+export const getUserTransactionData = async ({
+  page = 1,
+  limit = 5,
+  search = "",
+  id,
+  filters = {}
+}) => {
+  console.log("filters", filters);
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("filter",filters.status);
+
+
+    // status mapping (frontend → backend filter values)
+ 
+
+    // if (filters.status && statusMap[filters.status]) {
+    //   params.append("filter", statusMap[filters.status]);
+    // }
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+
+    const response = await axiosApiInstance.get(
+      `/admin/users/${id}/games?${params.toString()}`
+    );
+
+    return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching user games:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+};
+export const getUserWithdrawData = async ({
+  page = 1,
+  limit = 5,
+  search = "",
+  id,
+  filters = {}
+}) => {
+  console.log("filters", filters);
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("filter",filters.status);
+
+
+    // status mapping (frontend → backend filter values)
+ 
+
+    // if (filters.status && statusMap[filters.status]) {
+    //   params.append("filter", statusMap[filters.status]);
+    // }
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+
+    const response = await axiosApiInstance.get(
+      `/admin/users/${id}/games?${params.toString()}`
+    );
+
+    return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching user games:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+};
 export const getscanner = async () => {
   
   try {
