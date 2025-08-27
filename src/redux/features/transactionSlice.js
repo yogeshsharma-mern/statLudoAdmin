@@ -63,7 +63,7 @@ totalPages: 1,
         console.log("action",action);
         console.log("first",action.payload)
         state.status = "succeeded";
-        state.transactions = action.payload.users;
+        state.transactions = action.payload;
         state.totalPages = action.payload.pages;
         state.totalDocs = action.payload.totalDocs;
         state.page = action.payload.page;
@@ -74,20 +74,20 @@ totalPages: 1,
         state.error = action.payload || action.error.message;
       })
 
-      .addCase(transactionApproved.fulfilled, (state, action) => {
-        const updated = action.payload;
-        state.transactions = state.transactions.map((t) =>
-          t._id === updated._id ? updated : t
-        );
-      })
+      // .addCase(transactionApproved.fulfilled, (state, action) => {
+      //   const updated = action.payload;
+      //   state.transactions = state.transactions.map((t) =>
+      //     t._id === updated._id ? updated : t
+      //   );
+      // })
 
       // reject
-      .addCase(transactionRejected.fulfilled, (state, action) => {
-        const updated = action.payload;
-        state.transactions = state.transactions.map((t) =>
-          t._id === updated._id ? updated : t
-        );
-      });
+      // .addCase(transactionRejected.fulfilled, (state, action) => {
+      //   const updated = action.payload;
+      //   state.transactions = state.transactions.map((t) =>
+      //     t._id === updated._id ? updated : t
+      //   );
+      // });
   },
 });
 

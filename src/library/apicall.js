@@ -36,6 +36,30 @@ export const userBlock = async(id)=>
         return null;
     }
 }
+export const getuserWithdraw = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.patch(`/admin/withdraws/${id}/appprove`,{
+            "status":"paid"
+        });
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
+export const getuserReject = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.patch(`/admin/withdraws/${id}/approve`,{
+            "status":"unpaid"
+        });
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
 
 export const transactionApprove = async(id)=>
 {
@@ -261,7 +285,7 @@ export const getUserTransactionData = async ({
     }
 
     const response = await axiosApiInstance.get(
-      `/admin/users/${id}/games?${params.toString()}`
+      `/admin/users/${id}/payments?${params.toString()}`
     );
 
     return response.data; // ✅ returns API response data
@@ -298,7 +322,7 @@ export const getUserWithdrawData = async ({
     }
 
     const response = await axiosApiInstance.get(
-      `/admin/users/${id}/games?${params.toString()}`
+      `/admin/users/${id}/withdraws?${params.toString()}`
     );
 
     return response.data; // ✅ returns API response data

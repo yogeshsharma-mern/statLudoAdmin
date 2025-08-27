@@ -88,11 +88,3 @@ export default function DashboardCharts() {
 
 
 
-// export async function GET() {
-//   // TODO: yahan aap DB se real data laa sakte ho
-//   const data = {
-//     categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-//     values:     [500,   700,   900,   1200,  1500,  2000],
-//   };
-//   return Response.json(data);
-// }

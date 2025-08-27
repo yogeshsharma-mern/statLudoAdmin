@@ -196,7 +196,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {wallet.wallet && (
               <div className="ml-8 mt-2 space-y-2">
-                <Link href="/admin/dashboard/coin-balance">
+                {/* <Link href="/admin/dashboard/coin-balance">
                   <SubMenuItem
                     label="Coin Balance"
                     active={activeTab === "coin-balance"}
@@ -204,7 +204,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                    closeSidebar={() => setIsMobileOpen(false)} 
 
                   />
-                </Link>
+                </Link> */}
                <Link href="/admin/dashboard/transactions">
                 <SubMenuItem
                   label="Transactions"
@@ -227,7 +227,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           </div>
           {/* bet history */}
           <div>
-            <button
+            {/* <button
               onClick={() => toggleReport("report")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${report.report
                   ? "bg-gray-200 text-[var( --color-text)]"
@@ -242,9 +242,9 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                 className={`transition-transform ${report.report ? "rotate-180" : ""
                   }`}
               />
-            </button>
+            </button> */}
 
-            {report.report && (
+            {/* {report.report && (
               <div className="ml-8 mt-2 space-y-2">
                 <Link href="/admin/dashboard/player-report">
                   <SubMenuItem
@@ -267,7 +267,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                
               </div>
               
-            )}
+            )} */}
              <Link href="/admin/dashboard/scanner">
             <SidebarItem
               icon={<FaTachometerAlt />}

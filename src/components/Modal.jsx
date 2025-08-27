@@ -14,6 +14,9 @@ import { FaUserEdit } from "react-icons/fa";
 import {fetchUserWithdrawData} from "@/redux/features/userWithdrawSlice";
 import {fetchuserCreditData} from "@/redux/features/userCreditSlice";
 import {fetchuserTransactionData} from "@/redux/features/userTransactionSlice";
+import {userWithdrawApproved} from "@/redux/features/userWithdrawSlice";
+import {userWithdrawReject} from "@/redux/features/userWithdrawSlice";
+// import {fetchuserTransactionData}  from "@/redux/features/userTransactionSlice";
 
 
 
@@ -114,6 +117,230 @@ export default function Modal({ open, onClose, userDetail }) {
     ],
     []
   );
+const transactionColumns = useMemo(
+  () => [
+    {
+      accessorKey: "userId",
+      header: "User",
+      cell: ({ getValue }) => {
+        const user = getValue();
+        return (
+          <div>
+            <div className="font-medium">{user?.username ?? "—"}</div>
+            <div className="text-xs text-gray-500">{user?.phone ?? "—"}</div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "utrNumber",
+      header: "UTR Number",
+      cell: ({ getValue }) => getValue() || "—",
+    },
+    {
+      accessorKey: "amount",
+      header: "Amount",
+      cell: ({ getValue }) => `₹${getValue()}`,
+    },
+    {
+      accessorKey: "screenshot",
+      header: "Screenshot",
+      cell: ({ getValue }) =>
+        getValue() ? (
+          <a
+            href={process.env.NEXT_PUBLIC_API_BASE_URL_Image+getValue()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-600 underline"
+          >
+            View
+          </a>
+        ) : (
+          "—"
+        ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ getValue }) => {
+        const val = getValue();
+        return (
+          <span
+            className={`rounded-full px-2.5 py-1 text-xs font-semibold
+              ${
+                val === "approved"
+                  ? "bg-green-100 text-green-700"
+                  : val === "pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+          >
+            {val}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: ({ getValue }) =>
+        new Date(getValue()).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Updated At",
+      cell: ({ getValue }) =>
+        new Date(getValue()).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+    },
+  ],
+  []
+);
+
+
+  const handleApprovedWidhdraw=async(id)=>
+  {
+    const res = await dispatch(userWithdrawApproved(id));
+    console.log("ressssppp",res);
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("User withdraw paid");
+    } else {
+      toast.error("failed to  user withdraw ");
+    }
+  }
+
+  const handleRejectWidhdraw=async(id)=>
+  {
+    const res = await dispatch(userWithdrawReject(id));
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("User withdraw reject successfully");
+    } else {
+      toast.error("Failed to user withdraw reject");
+    }
+  }
+  const withdrawColumns = useMemo(
+  () => [
+    {
+      accessorKey: "userId",
+      header: "User",
+      cell: ({ getValue }) => {
+        const val = getValue();
+        return val?.username ?? "—"; // username show
+      },
+    },
+    {
+      accessorKey: "userId.phone",
+      header: "Phone",
+    },
+    {
+      accessorKey: "userId.credit",
+      header: "Credit",
+      cell: ({ getValue }) => `₹${getValue()}`,
+    },
+    {
+      accessorKey: "amount",
+      header: "Amount",
+      cell: ({ getValue }) => `₹${getValue()}`,
+    },
+    {
+      accessorKey: "bankAccount",
+      header: "Bank Account",
+    },
+    {
+      accessorKey: "ifsc",
+      header: "IFSC",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ getValue }) => {
+        const val = getValue();
+        return (
+          <span
+            className={`rounded-full px-2.5 py-1 text-xs font-semibold
+              ${val === "unpaid"
+                ? "bg-red-100 text-red-700"
+                : val === "paid"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+          >
+            {val}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: ({ getValue }) =>
+        new Date(getValue()).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Updated At",
+      cell: ({ getValue }) =>
+        new Date(getValue()).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+    },
+       {
+             id: "actions",
+             header: "Actions",
+             cell: ({ row }) => (
+               <div className="flex items-center gap-3">
+                 {/* <button
+                   className="rounded-md bg-indigo-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
+                   onClick={() => openEdit(row.original._id)}
+                   title="Edit"
+                 >
+                   <FiEdit2 />
+                 </button> */}
+                 <button
+                   className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
+                   onClick={() => handleApprovedWidhdraw(row.original._id)}
+                   title="viewuser"
+                 >
+                <span className="hidden md:block" >Approved</span>
+                {/* <MdDashboard className="md:hidden" /> */}
+                 </button>
+                     <button
+                   className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
+                   onClick={() => handleRejectWidhdraw(row.original._id)}
+                   title="viewuser"
+                 >
+                <span className="hidden md:block" >Reject</span>
+                {/* <MdDashboard className="md:hidden" /> */}
+                 </button>
+     
+               </div>
+             ),
+           },
+  ],
+  []
+);
+
   const fetchUserGames = (params = {}) => {
     return fetchuserGameData({ id: userDetail._id, ...params });
   };
@@ -428,32 +655,32 @@ export default function Modal({ open, onClose, userDetail }) {
               {
             activeTab == "transactions" && (
               <div>
-                <Table columnsDef={columns} fetchData={fetchTransaction} filters={filters}
+                <Table columnsDef={transactionColumns} fetchData={fetchTransaction} filters={filters}
                   filtersUI={
-                    <>
-                      <select
-                        value={filters.status}
-                        onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                        className="rounded-lg border px-2 py-1 text-sm"
-                      >
-                        <option value="">All Games</option>
-                        <option value="accepted">Accepted</option>
-                        <option value="quit">quit</option>
-                        <option value="lost">lost</option>
-                        <option value="created">created</option>
-                        <option value="played">played</option>
+                    // <>
+                    //   <select
+                    //     value={filters.status}
+                    //     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                    //     className="rounded-lg border px-2 py-1 text-sm"
+                    //   >
+                    //     <option value="">All Games</option>
+                    //     <option value="accepted">Accepted</option>
+                    //     <option value="quit">quit</option>
+                    //     <option value="lost">lost</option>
+                    //     <option value="created">created</option>
+                    //     <option value="played">played</option>
+                    //   </select>
 
-                      </select>
 
-
-                    </>
+                    // </>
+                    ""
                   } />
               </div>
             )}
              {
             activeTab == "withdraw" && (
               <div>
-                <Table columnsDef={columns} fetchData={fetchWithdraw} filters={filters}
+                <Table columnsDef={withdrawColumns} fetchData={fetchWithdraw} filters={filters}
                   filtersUI={
                     <>
                       <select

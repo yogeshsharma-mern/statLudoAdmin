@@ -104,7 +104,7 @@ const handleSubmit = async (e) => {
             <input
               // ❌ no type="email"
               type="text"
-              className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 ${
+              className={`mt-1 w-full text-[var( --color-text)] rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 ${
                 errors.email
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
@@ -128,7 +128,7 @@ const handleSubmit = async (e) => {
 
             <input
               type={`${toggle?"text":"password"}`}
-              className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 ${
+              className={`mt-1 w-full rounded-lg text-[var( --color-text)] border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 ${
                 errors.password
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"

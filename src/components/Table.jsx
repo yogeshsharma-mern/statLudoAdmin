@@ -22,6 +22,7 @@ export default function DataTable({
   pageSizeOptions = [5, 10, 20],
   initialPageSize = 5,
   totalpages,
+    reloadKey,       // 👈 new prop
   actions = {},
    filters = {},    
    filtersUI = null,  
@@ -82,7 +83,7 @@ useEffect(() => {
   };
 
   loadData();
-}, [dispatcher, currentPage, pageSize,debounceSearch,filters]);
+}, [dispatcher, currentPage, pageSize,debounceSearch,filters,reloadKey]);
 
 
 

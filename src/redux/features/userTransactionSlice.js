@@ -14,7 +14,7 @@ export const fetchuserTransactionData = createAsyncThunk(
             const res = await getUserTransactionData({ page, limit, search, id ,filters});
             console.log("resofactions",res)
 
-            return res.data; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
+            return res.data.items; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
         } catch (err) {
             return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
         }

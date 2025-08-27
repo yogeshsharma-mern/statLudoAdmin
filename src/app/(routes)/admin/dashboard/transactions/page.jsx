@@ -8,6 +8,7 @@ import Table from "@/components/Table";
 import socket from "@/library/socket";
 import { transactionApproved } from "@/redux/features/transactionSlice";
 import { transactionRejected } from "@/redux/features/transactionSlice";
+import ConfirmBox from "@/components/ConfirmBox";
 import toast from "react-hot-toast";
 import { MdBlock } from "react-icons/md";
 import { CgUnblock } from "react-icons/cg";
@@ -21,7 +22,12 @@ export default function Page() {
     betAmountMin: "",
     betAmountMax: "",
   });
-  const { status } = useSelector(store => store.transaction);
+  // const { status } = useSelector(store => store.transaction);
+  const { transactions, status, error, totalPages: rawTotalPages } = useSelector((state) => state.transaction);
+  console.log("transactionstate", transactions);
+  const [reloadKey, setReloadKey] = useState(0);
+const [openConfirm,setOpenConfirm] = useState(false);
+const [approveId,setApproveId] = useState(null);
   const [payments, setPayments] = useState([]);
   console.log("paymnents", payments);
   const { totalPages } = useSelector((state) => state.transaction);
@@ -42,54 +48,60 @@ export default function Page() {
     setPayments((prev) => prev.filter((p) => p._id !== id));
     dispatcher(fetchTransactions(filters));
   };
-  const handleApproveapi =async(id)=>
-  {
-        const res = await dispatcher(transactionApproved(id));
+  const handleApproveapi = async (id) => {
+    const res = await dispatcher(transactionApproved(id));
+    
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("transaction approved successfully");
-      dispatcher(fetchTransactions());
       setOpenConfirm(false);
+      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
+console.log("reloadkey",reloadKey)
+      const res = await dispatcher(
+        fetchData({
+          page: 1,
+          limit: 5,
+        })
+      );
     } else {
-      toast.error("Failed to block user");
+      toast.error("Failed to transaction approved");
+      setOpenConfirm(false);
     }
   }
-    const handleRejectedapi =async(id)=>
-  {
-        const res = await dispatcher(transactionRejected(id));
+  const handleRejectedapi = async (id) => {
+    const res = await dispatcher(transactionRejected(id));
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("transaction rejected successfully");
-      dispatcher(fetchTransactions());
-      setOpenConfirm(false);
+      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
     } else {
-      toast.error("Failed to block user");
+      toast.error("Failed to reject  transaction");
     }
   }
-useEffect(() => {
-  console.log("🔄 Connecting socket...");
-  socket.connect();
+  useEffect(() => {
+    console.log("🔄 Connecting socket...");
+    socket.connect();
 
-  socket.on("connect", () => console.log("✅ Connected:", socket.id));
-  socket.on("disconnect", () => console.log("❌ Disconnected"));
+    socket.on("connect", () => console.log("✅ Connected:", socket.id));
+    socket.on("disconnect", () => console.log("❌ Disconnected"));
 
-  socket.on("pending_payments_list", (data) => {
-    console.log("📩 Pending payments:", data);
-    setPayments(data);
-  });
+    socket.on("pending_payments_list", (data) => {
+      console.log("📩 Pending payments:", data);
+      setPayments(data);
+    });
 
-  socket.on("new_payment", (data) => {
-    console.log("📩 New payment:", data);
-    setPayments((prev) => [data, ...prev]);
-  });
+    socket.on("new_payment", (data) => {
+      console.log("📩 New payment:", data);
+      setPayments((prev) => [data, ...prev]);
+    });
 
-  return () => {
-    console.log("🧹 Cleaning up + disconnecting...");
-    socket.off("connect");
-    socket.off("disconnect");
-    socket.off("pending_payments_list");
-    socket.off("new_payment");
-    socket.disconnect(); // 👈 IMPORTANT
-  };
-}, []);
+    return () => {
+      console.log("🧹 Cleaning up + disconnecting...");
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("pending_payments_list");
+      socket.off("new_payment");
+      socket.disconnect(); // 👈 IMPORTANT
+    };
+  }, []);
 
 
 
@@ -216,53 +228,55 @@ useEffect(() => {
             minute: "2-digit",
           }),
       },
-    {
-  id: "actions",
-  header: "Actions",
-  cell: ({ row }) => {
-    const payment = row.original;
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const payment = row.original;
 
-    if (payment.status === "approved") {
-      return (
-        <button
-          disabled
-          className="rounded-md bg-blue-100 px-2.5 py-1.5 text-xs font-semibold text-blue-700 cursor-default"
-        >
-      Not Available
-        </button>
-      );
-    }
+          if (payment.status === "approved") {
+            return (
+              <button
+                disabled
+                className="rounded-md bg-blue-100 px-2.5 py-1.5 text-xs font-semibold text-blue-700 cursor-default"
+              >
+                Not Available
+              </button>
+            );
+          }
 
-    if (payment.status === "rejected") {
-      return (
-        <button
-          disabled
-          className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 cursor-default"
-        >
-          Rejected
-        </button>
-      );
-    }
+          if (payment.status === "rejected") {
+            return (
+              <button
+                disabled
+                className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 cursor-default"
+              >
+                Rejected
+              </button>
+            );
+          }
 
-    // ✅ if still pending → show both Approve & Reject
-    return (
-      <div className="flex items-center gap-3">
-        <button
-          className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
-          onClick={() => handleApproveapi(payment._id)}
-        >
-          Approve
-        </button>
-        <button
-          className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
-          onClick={() => handleRejectedapi(payment._id)}
-        >
-          Reject
-        </button>
-      </div>
-    );
-  },
-}
+          // ✅ if still pending → show both Approve & Reject
+          return (
+            <div className="flex items-center gap-3">
+              <button
+                className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
+                    onClick={() => (setOpenConfirm(true),
+                setApproveId(row.original._id)
+                )}
+              >
+                Approve
+              </button>
+              <button
+                className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
+                onClick={() => handleRejectedapi(payment._id)}
+              >
+                Reject
+              </button>
+            </div>
+          );
+        },
+      }
 
 
     ],
@@ -272,6 +286,13 @@ useEffect(() => {
 
   return (
     <div className=" bg-[--color-neutral] ">
+      <ConfirmBox
+              isOpen={openConfirm}
+              onClose={() => setOpenConfirm(false)}
+              onConfirm={()=>handleApproveapi(approveId)}
+              title="Are you sure you want to approve this transaction?"
+              message="This action cannot be undone. Do you really want to approve this transaction?"
+            />
       <div className="overflow-x-auto mt-10 p-8 rounded-lg shadow bg-white">
         <div className="mb-2 font-bold text-xl">Recent Transactions</div>
 
@@ -309,7 +330,7 @@ useEffect(() => {
                   </td>
                   <td className="px-4 py-2">
                     <a
-                      href={p.screenshot}
+                      href={process.env.NEXT_PUBLIC_API_BASE_URL_Image+p.screenshot}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
@@ -348,13 +369,15 @@ useEffect(() => {
           </tbody>
         </table>
       </div>
- 
+
       <Table
         pending={status}
         fetchData={fetchTransactions}
         columnsDef={columns}
         filters={filters}
-        title="All Transaction"
+        title="All Transactions"
+        reloadKey={reloadKey}   // 👈 pass here
+
         filtersUI={
           <>
             <select
