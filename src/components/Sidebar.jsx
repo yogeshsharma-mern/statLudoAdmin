@@ -155,7 +155,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {opengameMangement.management && (
               <div className="ml-8 mt-2 space-y-2">
-                {/* <Link href="/admin/dashboard/active-completed-games">
+                <Link href="/admin/dashboard/active-completed-games">
                   <SubMenuItem
                     label="Active/Completed Games"
                     active={activeTab === "Active/completed Games"}
@@ -163,7 +163,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                    closeSidebar={() => setIsMobileOpen(false)} 
 
                   />
-                </Link> */}
+                </Link>
               <Link href="/admin/dashboard/game-logs">
                 <SubMenuItem
                   label="Game Logs"
