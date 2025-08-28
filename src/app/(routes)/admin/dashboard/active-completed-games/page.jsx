@@ -269,6 +269,7 @@ export default function Page() {
   const [filters, setFilters] = useState({ status: "", betAmountMin: "", betAmountMax: "" });
   const [completedGames, setCompletedGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null); // 👈 modal state
+  const [selectedGameApi, setSelectedGameApi] = useState(null);
   console.log("selectedgame",selectedGame);
   const [winner, setWinner] = useState("");
 
@@ -302,14 +303,63 @@ export default function Page() {
 
   };
 
-  const columns = useMemo(() => [
-    { accessorKey: "acceptedBy", header: "Accepted By" },
-    { accessorKey: "status", header: "Status" },
-    { accessorKey: "betAmount", header: "Bet Amount" },
-    { accessorKey: "winningAmount", header: "Winning Amount" },
-    { accessorKey: "createdAt", header: "Created At" },
-    { accessorKey: "updatedAt", header: "Updated At" },
-  ], []);
+const columns = useMemo(() => [
+    {
+      accessorKey: "roomId",
+      header: "Room ID",
+    },
+    {
+      accessorFn: (row) => row.createdBy?.username ?? "—",
+      id: "createdByUsername",
+      header: "Created By",
+    },
+    {
+      accessorFn: (row) => row.acceptedBy?.username ?? "—",
+      id: "acceptedByUsername",
+      header: "Accepted By",
+    },
+    {
+      accessorKey: "betAmount",
+      header: "Bet Amount",
+      cell: (info) => `₹${info.getValue()}`,
+    },
+    {
+      accessorKey: "winningAmount",
+      header: "Winning Amount",
+      cell: (info) => `₹${info.getValue()}`,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
+      accessorKey: "adminstatus",
+      header: "Admin Status",
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: (info) => new Date(info.getValue()).toLocaleString(),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Updated At",
+      cell: (info) => new Date(info.getValue()).toLocaleString(),
+    },
+    {
+      header: "Actions",
+      cell: ({ row }) => (
+        <button
+          onClick={() => setSelectedGameApi(row.original)}
+          className="px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600"
+        >
+          View
+        </button>
+      ),
+   }
+  ])
+
+
 
   return (
     <div className="bg-[--color-neutral]">
@@ -443,6 +493,47 @@ export default function Page() {
 
 
       <Table fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
+        {selectedGameApi && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">Game Details</h2>
+
+            <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>/
+            <p><strong>Created By:</strong> {selectedGameApi.createdBy?.username}</p>
+            <p><strong>Accepted By:</strong> {selectedGameApi.acceptedBy?.username}</p>
+            <p><strong>Status:</strong> {selectedGameApi.status}</p>
+            <p><strong>Bet Amount:</strong> ₹{selectedGameApi.betAmount}</p>
+            <p><strong>Winning Amount:</strong> ₹{selectedGameApi.winningAmount}</p>
+
+            <div className="mt-4">
+              <h3 className="font-medium">Winning Screenshots</h3>
+              {selectedGameApi.winningScreenshots?.length > 0 ? (
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {selectedGameApi.winningScreenshots.map((shot) => (
+                    <img
+                      key={shot._id}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}${shot.screenshot}`}
+                      alt="Winning Screenshot"
+                      className="w-full h-32 object-cover rounded border"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No screenshots uploaded</p>
+              )}
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setSelectedGameApi(null)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

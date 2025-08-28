@@ -360,7 +360,7 @@ export const activeComplteGames = async ({ page = 1, limit = 5, search="",filter
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
     }
-    const response = await axiosApiInstance.get(`/admin/games?${params.toString()}`);
+    const response = await axiosApiInstance.get(`/admin/games-compleated?${params.toString()}`);
     return response.data;
 // ✅ returns API response data
   } catch (error) {
