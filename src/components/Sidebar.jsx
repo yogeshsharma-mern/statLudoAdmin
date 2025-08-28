@@ -19,6 +19,7 @@ import { FaWallet } from "react-icons/fa";
 import { TbReport } from "react-icons/tb";
 import { TbLockPassword } from "react-icons/tb";
 
+
 export default function Sidebar({ activeTab, setActiveTab }) {
   const sidebarRef = useRef(null);
   const [openMenus, setOpenMenus] = useState({ users: false });
@@ -31,26 +32,35 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   })
   const [report, setReport] = useState({ report: false });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+const handleCloseSidebar = () => {
+  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+    setIsMobileOpen(false); // Sirf mobile pe close hoga
+  }
+};
   const router = useRouter();
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        // Close all menus
-        setOpenMenus({ users: false });
-        setOpenGameManagement({ management: false });
-        setwallet({ wallet: false })
-        setIsMobileOpen(false);
-        setReport({ report: false });
-      }
-    };
+//  useEffect(() => {
+//   const handleClickOutside = (event) => {
+//     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+//       // Close all menus
+//       setOpenMenus({ users: false });
+//       setOpenGameManagement({ management: false });
+//       setwallet({ wallet: false });
+//       setReport({ report: false });
 
-    document.addEventListener("mousedown", handleClickOutside);
+//       if (window.innerWidth < 1024) {   // 👈 only close sidebar on mobile
+//         setIsMobileOpen(false);
+//       }
+//     }
+//   };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+//   document.addEventListener("mousedown", handleClickOutside);
+
+//   return () => {
+//     document.removeEventListener("mousedown", handleClickOutside);
+//   };
+// }, []);
+
 
   const handleLogout = () => {
     Cookies.remove("adminToken");
@@ -126,7 +136,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     label="Users"
                     active={activeTab === "ludo-users"}
                     onClick={() => setActiveTab("ludo-users")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+                   closeSidebar={handleCloseSidebar} 
 
                   />
                 </Link>
@@ -160,7 +170,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     label="Active/Completed Games"
                     active={activeTab === "Active/completed Games"}
                     onClick={() => setActiveTab("Active/completed Games")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+                   closeSidebar={handleCloseSidebar} 
 
                   />
                 </Link>
@@ -169,7 +179,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   label="Game Logs"
                   active={activeTab === "Game-Logs"}
                   onClick={() => setActiveTab("Game-Logs")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+                   closeSidebar={handleCloseSidebar} 
                 />
               </Link>
               </div>
@@ -210,7 +220,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   label="Transactions"
                   active={activeTab === "Transactions"}
                   onClick={() => setActiveTab("Transactions")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+                   closeSidebar={handleCloseSidebar} 
 
                 /></Link>
               <Link href="/admin/dashboard/withdraw-request">
@@ -218,7 +228,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   label="Withdraw Request"
                   active={activeTab === "withdraw-request"}
                   onClick={() => setActiveTab("withdraw-request")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+                   closeSidebar={handleCloseSidebar} 
 
                 />
               </Link>
@@ -274,7 +284,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
               label="Upload Scanner"
               active={activeTab === "scanner"}
               onClick={() => setActiveTab("scanner")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+                   closeSidebar={handleCloseSidebar} 
 
             />
           </Link>
@@ -296,12 +306,12 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
         {/* Bottom buttons */}
         <div className="mt-auto space-y-2">
-         <Link href="/admin/dashboard/update-password">
+         {/* <Link href="/admin/dashboard/update-password">
           <button className="flex cursor-pointer w-full items-center space-x-2 rounded-lg px-4 py-2 bg-blue-500 text-[var( --color-text)]">
             <FaLock />
             <span>Change Password</span>
           </button>
-         </Link>
+         </Link> */}
           <button
             onClick={handleLogout}
             className="flex w-full mt-2 cursor-pointer items-center space-x-2 rounded-lg px-4 py-2 bg-red-500 text-[var( --color-text)]"

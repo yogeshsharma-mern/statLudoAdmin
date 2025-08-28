@@ -43,7 +43,8 @@ export default function Header() {
           
           {/* Logo */}
           <div className="flex-shrink-0 text-2xl font-bold text-gray-800 dark:text-white">
-            StarLudo
+            {/* StarLudo */}
+            <img src={'/images/image.png'} alt="" width={100} />
           </div>
 
           {/* Right Section */}

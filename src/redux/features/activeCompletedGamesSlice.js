@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { activeComplteGames } from "@/library/apicall";
+import {submitWinnderResult} from '@/library/apicall';
 
 // ------- Thunks -------
 export const fetchActiveCompltedGames = createAsyncThunk(
@@ -21,6 +22,14 @@ export const fetchActiveCompltedGames = createAsyncThunk(
     }
   }
 );
+export const gameresult = createAsyncThunk("game/result", async (payload, thunkAPI) => {
+  try {
+   const res = await  submitWinnderResult(payload);
+    return res;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
 
 // ------- Slice -------
 const activeCompltedGameSlice = createSlice({

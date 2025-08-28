@@ -260,18 +260,28 @@
 // }
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchActiveCompltedGames } from "@/redux/features/activeCompletedGamesSlice";
 import Table from "@/components/Table";
 import socket from "@/library/socket";
+import {gameresult} from "@/redux/features/activeCompletedGamesSlice";
+import toast from "react-hot-toast";
+
 
 export default function Page() {
   const [filters, setFilters] = useState({ status: "", betAmountMin: "", betAmountMax: "" });
+  const {status} = useSelector(state=>state.activecompltedgame);
   const [completedGames, setCompletedGames] = useState([]);
+  const dispatcher = useDispatch();
+  console.log("completedgames",completedGames);
   const [selectedGame, setSelectedGame] = useState(null); // 👈 modal state
   const [selectedGameApi, setSelectedGameApi] = useState(null);
+  const [gameId,setgameId] = useState("");
+  console.log("gameid",gameId);
   console.log("selectedgame",selectedGame);
   const [winner, setWinner] = useState("");
+  const [winnderapi,setWinnderApi]= useState("");
+  console.log("winnderapi",winnderapi);
 
   const { totalPages } = useSelector((state) => state.gameLog);
 
@@ -283,6 +293,7 @@ export default function Page() {
     socket.on("game_over", (data) => {
       console.log("📩 completed games:", data);
       setCompletedGames((prev) => [data, ...prev]);
+      
     });
 
     return () => {
@@ -294,14 +305,52 @@ export default function Page() {
 
   const handleWinnerSubmit = () => {
     if (!winner) return alert("⚠ Please select a winner first!");
+    console.log("admin_winnder",selectedGame._id,winner);
     socket.emit("admin_winner_decision", {
       gameId: selectedGame._id,
       winner,
     });
+setCompletedGames((prev) => {
+  const index = prev.findIndex((g) => g._id === selectedGame._id);
+  if (index === -1) return prev;
+  return [...prev.slice(0, index), ...prev.slice(index + 1)];
+});
+
+
+
     setSelectedGame(null); // close modal
     setWinner("");
 
   };
+
+    const handleWinnerSubmitApi = async () => {
+      
+  const payload = {
+    gameId: selectedGameApi._id,
+    winnerId: winnderapi,
+  };
+
+      console.log("Gammeeeeeid",gameId);
+      console.log("winnder",winnderapi);
+    const res = await dispatcher(gameresult(payload));
+    
+    if (res.meta.requestStatus === "fulfilled") {
+      setSelectedGameApi(null);
+      toast.success("game result successfully delivered");
+
+      // setReloadKey(prev => prev + 1); // 🔄 table reload trigger
+console.log("reloadkey",reloadKey)
+      // const res = await dispatcher(
+      //   fetchData({
+      //     page: 1,
+      //     limit: 5,
+      //   })
+      // );
+    } else {
+      toast.error("Failed to deliver the game result");
+
+    }
+  }
 
 const columns = useMemo(() => [
     {
@@ -350,7 +399,9 @@ const columns = useMemo(() => [
       header: "Actions",
       cell: ({ row }) => (
         <button
-          onClick={() => setSelectedGameApi(row.original)}
+          onClick={() => {setSelectedGameApi(row.original)
+            setgameId(row.original._id);
+          }}
           className="px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600"
         >
           View
@@ -362,9 +413,10 @@ const columns = useMemo(() => [
 
 
   return (
-    <div className="bg-[--color-neutral]">
-      <div className="p-8">
-        <table className="min-w-full mt-20 text-sm text-left text-gray-600">
+    <div className="bg-[var(--color-neutral)]">
+      <div className="p-7 pt-14 overflow-scroll">
+        <div className="mb-3 text-xl font-bold">Recent Completed Games</div>
+        <table className="min-w-full  text-sm text-left text-gray-600">
           <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
             <tr>
               <th className="px-4 py-2">Room ID</th>
@@ -492,13 +544,13 @@ const columns = useMemo(() => [
 )}
 
 
-      <Table fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
+      <Table pending={status} title="All Completed Games" fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
         {selectedGameApi && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center  bg-opacity-40 z-50">
           <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
-            <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>/
+            <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>
             <p><strong>Created By:</strong> {selectedGameApi.createdBy?.username}</p>
             <p><strong>Accepted By:</strong> {selectedGameApi.acceptedBy?.username}</p>
             <p><strong>Status:</strong> {selectedGameApi.status}</p>
@@ -523,12 +575,37 @@ const columns = useMemo(() => [
               )}
             </div>
 
-            <div className="flex justify-end mt-6">
+            {/* Select Winner */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium">Select Winner</label>
+              <select
+                value={winnderapi}
+                onChange={(e) => setWinnderApi(e.target.value)}
+                className="mt-1 w-full border rounded px-2 py-1"
+              >
+                <option value="">-- Select Winner --</option>
+                <option value={selectedGameApi.createdBy?._id}>
+                  Created By ({selectedGameApi.createdBy?.username})
+                </option>
+                <option value={selectedGameApi.acceptedBy?._id}>
+                  Accepted By ({selectedGameApi.acceptedBy?.username})
+                </option>
+              </select>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-2 mt-6">
               <button
                 onClick={() => setSelectedGameApi(null)}
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
               >
-                Close
+                Cancel
+              </button>
+              <button
+                onClick={()=>handleWinnerSubmitApi()}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Submit Winner
               </button>
             </div>
           </div>

@@ -1,7 +1,24 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getwithdrawdet } from "@/library/apicall";
+import {withdrawApproved,withdrawRejectd} from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
+export const withdrawApprove = createAsyncThunk("withdraw/apprvoed", async (id, thunkAPI) => {
+  try {
+   const res = await  withdrawApproved(id);
+    return res;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
+export const withdrawReject = createAsyncThunk("withdraw/reject", async (id, thunkAPI) => {
+  try {
+   const res = await  withdrawRejectd(id);
+    return res;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
 export const fetchWithdrawDet = createAsyncThunk(
   "users/fetchwithdraw",
   async ({ page = 1, limit = 5, search = "" ,filters={}} = {}, thunkAPI) => {
@@ -11,12 +28,13 @@ export const fetchWithdrawDet = createAsyncThunk(
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
       const res = await getwithdrawdet({ page, limit, search,filters });
 
-      return res.data; 
+      return res.data.withdraws; 
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
+
 
 // ------- Slice -------
 const withdrawSlice = createSlice({

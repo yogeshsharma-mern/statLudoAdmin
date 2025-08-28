@@ -298,6 +298,7 @@ export default function Page() {
   return (
     <div className=" bg-[--color-neutral]   h-[90vh] overflow-auto">
       <Table 
+      title="Game Logs"
       pending={status}
       fetchData={fetchGameLogs} 
       columnsDef={columns} 

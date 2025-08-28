@@ -11,6 +11,7 @@ import { transactionRejected } from "@/redux/features/transactionSlice";
 import ConfirmBox from "@/components/ConfirmBox";
 import toast from "react-hot-toast";
 import { MdBlock } from "react-icons/md";
+import { IoMdEye } from "react-icons/io";
 import { CgUnblock } from "react-icons/cg";
 import ToggleButton from "@/components/ToggleButton";
 // import socket from "@/library/socket";
@@ -27,7 +28,9 @@ export default function Page() {
   console.log("transactionstate", transactions);
   const [reloadKey, setReloadKey] = useState(0);
 const [openConfirm,setOpenConfirm] = useState(false);
+const [modalOpen,setmodalOpen] = useState(false);
 const [approveId,setApproveId] = useState(null);
+const [paymentInfo,setpaymentInfo] = useState({});
   const [payments, setPayments] = useState([]);
   console.log("paymnents", payments);
   const { totalPages } = useSelector((state) => state.transaction);
@@ -40,6 +43,14 @@ const [approveId,setApproveId] = useState(null);
     // remove only the approved payment from local state
     setPayments((prev) => prev.filter((p) => p._id !== id));
   };
+  const handleView = (payment) => {
+  console.log("Viewing payment:", payment);
+  // Example: open modal
+  setpaymentInfo(payment);
+  setmodalOpen(true);
+
+  // Or navigate: router.push(`/payments/${payment._id}`);
+};
   const handleRejected = (id) => {
     socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
     toast.error("Payment rejected");
@@ -228,55 +239,59 @@ console.log("reloadkey",reloadKey)
             minute: "2-digit",
           }),
       },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-          const payment = row.original;
+     {
+  id: "actions",
+  header: "Actions",
+  cell: ({ row }) => {
+    const payment = row.original;
 
-          if (payment.status === "approved") {
-            return (
-              <button
-                disabled
-                className="rounded-md bg-blue-100 px-2.5 py-1.5 text-xs font-semibold text-blue-700 cursor-default"
-              >
-                Not Available
-              </button>
-            );
-          }
+    return (
+      <div className="flex items-center gap-3">
+      
+        {/* ✅ View Button - Always Visible */}
+        <button
+          className="rounded-md cursor-pointer bg-blue-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-600"
+          onClick={() => handleView(payment)}  // 👈 define this function
+        >
+          View
+        </button>
 
-          if (payment.status === "rejected") {
-            return (
-              <button
-                disabled
-                className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 cursor-default"
-              >
-                Rejected
-              </button>
-            );
-          }
+        {/* ✅ Status-based buttons */}
+        {payment.status === "approved" ? (
+          <button
+            disabled
+            className="rounded-md bg-blue-100 px-2.5 py-1.5 text-xs font-semibold text-blue-700 cursor-default"
+          >
+            Not Available
+          </button>
+        ) : payment.status === "rejected" ? (
+          <button
+            disabled
+            className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 cursor-default"
+          >
+            Rejected
+          </button>
+        ) : (
+          <>
+            <button
+              className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
+              onClick={() => (setOpenConfirm(true), setApproveId(payment._id))}
+            >
+              Approve
+            </button>
+            <button
+              className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
+              onClick={() => handleRejectedapi(payment._id)}
+            >
+              Reject
+            </button>
+          </>
+        )}
+      </div>
+    );
+  },
+}
 
-          // ✅ if still pending → show both Approve & Reject
-          return (
-            <div className="flex items-center gap-3">
-              <button
-                className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
-                    onClick={() => (setOpenConfirm(true),
-                setApproveId(row.original._id)
-                )}
-              >
-                Approve
-              </button>
-              <button
-                className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
-                onClick={() => handleRejectedapi(payment._id)}
-              >
-                Reject
-              </button>
-            </div>
-          );
-        },
-      }
 
 
     ],
@@ -286,6 +301,26 @@ console.log("reloadkey",reloadKey)
 
   return (
     <div className=" bg-[--color-neutral] ">
+        {modalOpen && (
+        <div className="fixed inset-0 bg-black/20 bg-opacity-60 flex items-center justify-center z-50">
+          <div className="relative bg-white rounded-2xl shadow-lg p-4 max-w-lg w-full">
+            {/* Close button */}
+            <button
+              onClick={() => setmodalOpen(false)}
+              className="absolute top-3 right-3 text-gray-700 hover:text-black text-2xl"
+            >
+              &times;
+            </button>
+
+            {/* Image */}
+            <img
+              src={   paymentInfo.screenshot}
+              alt="screenshot"
+              className="rounded-lg max-h-[70vh] object-contain mx-auto"
+            />
+          </div>
+        </div>
+      )}
       <ConfirmBox
               isOpen={openConfirm}
               onClose={() => setOpenConfirm(false)}

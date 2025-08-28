@@ -73,6 +73,43 @@ export const transactionApprove = async(id)=>
         return null;
     }
 }
+export const withdrawApproved = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.patch(`/admin/withdraws/${id}/approve`,{
+            "status":"paid"
+        });
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
+export const withdrawRejectd = async(id)=>
+{
+    try {
+        const response = await axiosApiInstance.patch(`/admin/withdraws/${id}/approve`,{
+            "status":"rejected"
+        });
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
+export const submitWinnderResult = async({gameId,winnerId})=>
+{
+    try {
+        const response = await axiosApiInstance.post(`/admin/games/decide`,{
+  "gameId":gameId,
+  "winnerId": winnerId
+});
+        return response.data;
+        
+    } catch (error) {
+        return null;
+    }
+}
 export const transactionReject = async(id)=>
 {
     try {
@@ -464,7 +501,7 @@ export const getwithdrawdet = async ({ page = 1, limit = 5, search="",filters={}
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
     }
-    const response = await axiosApiInstance.get(`/admin/games?${params.toString()}`);
+    const response = await axiosApiInstance.get(`/admin/withdraws?${params.toString()}`);
     return response.data;
 // ✅ returns API response data
   } catch (error) {
