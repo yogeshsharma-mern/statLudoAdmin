@@ -24,23 +24,45 @@ export default function Page() {
   const {status} = useSelector(state=>state.userwithdrawdetails);
     const [reloadKey, setReloadKey] = useState(0);
   const { totalPages } = useSelector((state) => state.gameLog);
-    const handleApprove = (id) => {
-    socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
-    toast.success("Payment approved");
-    setWithdrawData((prev) => prev.filter((p) => p._id !== id));
-    dispatcher(fetchTransactions(filters));
+  //   const handleApprove = (id) => {
+  //   socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
+  //   toast.success("Payment approved");
+  //   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+  //   dispatcher(fetchTransactions(filters));
 
-    // remove only the approved payment from local state
-    setWithdrawData((prev) => prev.filter((p) => p._id !== id));
-  };
-    const handlereject = (id) => {
-    socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
-    toast.success("Payment approved");
-    dispatcher(fetchTransactions(filters));
+  //   // remove only the approved payment from local state
+  //   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+  // };
+  //   const handlereject = (id) => {
+  //   socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+  //   toast.success("Payment approved");
+  //   dispatcher(fetchTransactions(filters));
 
-    // remove only the approved payment from local state
-    setWithdrawData((prev) => prev.filter((p) => p._id !== id));
-  };
+  //   // remove only the approved payment from local state
+  //   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+  // };
+  const handleApprove = (id) => {
+  socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
+  toast.success("Payment approved");
+
+  // remove only the approved payment from local state
+  setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+
+  // refresh backend data if needed
+  // dispatcher(fetchTransactions(filters));
+};
+
+const handleReject = (id) => {
+  socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+  toast.success("Payment rejected");
+
+  // remove only the rejected payment from local state
+  setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+
+  // refresh backend data if needed
+  dispatcher(fetchTransactions(filters));
+};
+
 const handleApproveapi = async (id) => {
   const res = await dispatcher(withdrawApprove(id));
 
