@@ -300,7 +300,7 @@ console.log("reloadkey",reloadKey)
 
 
   return (
-    <div className=" bg-[--color-neutral] ">
+    <div className=" bg-[var(--color-neutral)] ">
         {modalOpen && (
         <div className="fixed inset-0 bg-black/20 bg-opacity-60 flex items-center justify-center z-50">
           <div className="relative bg-white rounded-2xl shadow-lg p-4 max-w-lg w-full">
@@ -314,7 +314,7 @@ console.log("reloadkey",reloadKey)
 
             {/* Image */}
             <img
-              src={   paymentInfo.screenshot}
+              src={ process.env.NEXT_PUBLIC_API_BASE_URL_Image+  paymentInfo.screenshot}
               alt="screenshot"
               className="rounded-lg max-h-[70vh] object-contain mx-auto"
             />

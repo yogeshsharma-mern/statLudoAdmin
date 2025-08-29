@@ -43,7 +43,7 @@ export const loginAdmin = createAsyncThunk(
 
       // Persist (keep side-effects inside thunk, not reducers)
       if (typeof window !== "undefined") {
-            Cookies.set("adminToken", res.data.data.token, { expires: 7 });
+            Cookies.set("adminToken", res.data.data.token, { expires: 1 });
         // localStorage.setItem("token", token);
         // localStorage.setItem("user", JSON.stringify(user));
     
