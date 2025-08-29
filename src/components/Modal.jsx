@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import { axiosApiInstance } from "@/library/helper";
 import { addcredits } from "@/redux/features/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchuserGameData } from "@/redux/features/userGameSlice";
 import Table from "@/components/Table";
 import toast from "react-hot-toast";
@@ -21,6 +21,9 @@ import {userWithdrawReject} from "@/redux/features/userWithdrawSlice";
 
 
 export default function Modal({ open, onClose, userDetail }) {
+  const {status:gamestatus} = useSelector(state=>state.usergamedetails);
+  const {status:withdrawStatus} = useSelector(state=>state.userwithdrawdetails);
+  const {status:transactionStatus} = useSelector(state=>state.usertransaction);
   const [activeTab, setActiveTab] = useState("details");
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [creditValue, setCreditValue] = useState("");
@@ -601,7 +604,7 @@ const transactionColumns = useMemo(
           {
             activeTab == "games" && (
               <div>
-                <Table columnsDef={columns} fetchData={fetchUserGames} filters={filters}
+                <Table columnsDef={columns} fetchData={fetchUserGames} pending={gamestatus} filters={filters}
                   filtersUI={
                     <>
 
@@ -655,7 +658,7 @@ const transactionColumns = useMemo(
               {
             activeTab == "transactions" && (
               <div>
-                <Table columnsDef={transactionColumns} fetchData={fetchTransaction} filters={filters}
+                <Table columnsDef={transactionColumns} fetchData={fetchTransaction} pending={transactionStatus} filters={filters}
                   filtersUI={
                     // <>
                     //   <select
@@ -680,7 +683,7 @@ const transactionColumns = useMemo(
              {
             activeTab == "withdraw" && (
               <div>
-                <Table columnsDef={withdrawColumns} fetchData={fetchWithdraw} filters={filters}
+                <Table columnsDef={withdrawColumns} pending={withdrawStatus} fetchData={fetchWithdraw} filters={filters}
                   filtersUI={
                     <>
                       <select
