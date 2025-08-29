@@ -30,7 +30,19 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {axiosApiInstance} from "@/library/helper";
 import axios from "axios";
 import Cookies from "js-cookie";
+import socket from "@/library/socket";
 // --- Thunks ---
+
+ 
+  const handleLogin = (id) => {
+    console.log("helo",id);
+        if (!socket.connected) socket.connect();
+
+    socket.emit("register_user", { id });
+
+
+    // remove only the approved payment from local sta
+  };
 
 // Login: send credentials, receive { token, user }
 export const loginAdmin = createAsyncThunk(
@@ -38,8 +50,13 @@ export const loginAdmin = createAsyncThunk(
   async ({ email, password }, thunkAPI) => {
     try {
       const res = await axiosApiInstance.post("/admin/login", { email, password });
+     const adminid=res.data.data.id;
+      handleLogin(adminid);
+      console.log("yuyuyu",res.data);
       // Expecting { token, user }
       const { token } = res.data.data;
+      const {id} = res.data.data.id;
+      console.log("IDDDD",id);
 
       // Persist (keep side-effects inside thunk, not reducers)
       if (typeof window !== "undefined") {

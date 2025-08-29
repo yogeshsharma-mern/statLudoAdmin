@@ -269,6 +269,7 @@ import toast from "react-hot-toast";
 
 
 export default function Page() {
+
   const [filters, setFilters] = useState({ status: "" });
   const {status} = useSelector(state=>state.activecompltedgame);
   const [completedGames, setCompletedGames] = useState([]);
@@ -284,7 +285,13 @@ export default function Page() {
   console.log("winnderapi",winnderapi);
 
   const { totalPages } = useSelector((state) => state.gameLog);
+  // useEffect(() => {
+        
+  //           console.log("✅ Registering user:");
+  //           socket.emit("register_user", "68aeb1424102a546fd781973");
+       
 
+  //   }, []);
   useEffect(() => {
     socket.connect();
     socket.on("connect", () => console.log("✅ Connected:", socket.id));

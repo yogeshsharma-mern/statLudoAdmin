@@ -26,7 +26,8 @@ export default function DataTable({
   actions = {},
    filters = {},    
    filtersUI = null,  
-   pending  
+   pending ,
+   flag
   
      // object { view: fn, edit: fn, delete: fn, add: fn }
 }) {
@@ -43,48 +44,84 @@ export default function DataTable({
 console.log("pagesize",pageSize);
   // Fetch data
 // DataTable.jsx
+// useEffect(() => {
+//   const loadData = async () => {
+//     try {
+//       // thunk dispatch karna hai
+//       const res = await dispatcher(
+//         fetchData({
+//           page: currentPage,
+//           limit: pageSize,
+//           search: debounceSearch,
+//           sort,    
+//           filters, 
+//         })
+//       );
+//       console.log("respppppp",res);
+
+//       // if (res.payload) {
+//       //   setData(res.payload || []);
+//       //   setTotalPages(res.payload.pages || 1);
+//       // }
+//       if (res.payload) {
+//   if (Array.isArray(res.payload)) {
+//     // agar API directly array bhejti hai
+//     setData(res.payload);
+//     setTotalPages(res.payload.pages || 1);
+//   } else {
+//     // agar API object bhejti hai {games: [], pages: 5}
+//     setData(res.payload.games || []);
+//     setTotalPages(res.payload.pages || 1);
+//   }
+// } else {
+//   // agar kuch bhi data nahi aaya
+//   setData([]);
+//   setTotalPages(1);
+// }
+
+//     } catch (err) {
+//       console.error("Failed to fetch data:", err);
+//     }
+//   };
+
+//   loadData();
+// }, [dispatcher, currentPage, pageSize,debounceSearch,filters,reloadKey]);
+
 useEffect(() => {
   const loadData = async () => {
     try {
-      // thunk dispatch karna hai
       const res = await dispatcher(
         fetchData({
           page: currentPage,
           limit: pageSize,
           search: debounceSearch,
-          sort,    
-          filters, 
+          sort,
+          filters,
         })
       );
 
-      // if (res.payload) {
-      //   setData(res.payload || []);
-      //   setTotalPages(res.payload.pages || 1);
-      // }
-      if (res.payload) {
-  if (Array.isArray(res.payload)) {
-    // agar API directly array bhejti hai
-    setData(res.payload);
-    setTotalPages(res.payload.pages || 1);
-  } else {
-    // agar API object bhejti hai {games: [], pages: 5}
-    setData(res.payload.games || []);
-    setTotalPages(res.payload.pages || 1);
-  }
-} else {
-  // agar kuch bhi data nahi aaya
-  setData([]);
-  setTotalPages(1);
-}
+      console.log("respppppp", res);
 
-    } catch (err) {
-      console.error("Failed to fetch data:", err);
+      if (res.payload) {
+        // 🔹 Normalize response
+        const data =
+          res.payload.payments || // if API gives { payments: [...] }
+          res.payload.games ||  
+          res.payload.withdraws ||  // if API gives { games: [...] }
+          (Array.isArray(res.payload) ? res.payload : []); // if API gives []
+
+        const totalPages = res.payload.pages || 1;
+
+        setData(data);
+        setTotalPages(totalPages);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
     }
   };
 
   loadData();
-}, [dispatcher, currentPage, pageSize,debounceSearch,filters,reloadKey]);
-
+}, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher]);
 
 
   const columns = useMemo(() => columnsDef, [columnsDef]);
@@ -110,7 +147,9 @@ useEffect(() => {
 
       {/* Search + Add */}
       <div className="mb-4 flex justify-between gap-3 flex-wrap">
-        <div className="relative md:flex justify-between w-full ">
+      {
+        flag !==1 &&
+          <div className="relative md:flex justify-between w-full ">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -123,6 +162,7 @@ useEffect(() => {
          </div>
        
         </div>
+      }
         {actions.add && (
           <button
             onClick={actions.add}

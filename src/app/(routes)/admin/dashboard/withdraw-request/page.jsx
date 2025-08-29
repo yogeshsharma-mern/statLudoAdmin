@@ -21,7 +21,10 @@ export default function Page() {
     betAmountMax: "",
   });
   const [withdrawData,setWithdrawData] = useState([]);
-  const {status} = useSelector(state=>state.userwithdrawdetails);
+  const [withdrawDetails,setWithdrawDetails] =useState({});
+  console.log("withdrawDetails",withdrawDetails);
+  const {status:withdrawStatus} = useSelector(state=>state.userwithdrawdetails);
+  console.log("withdrawstatus",withdrawStatus);
     const [reloadKey, setReloadKey] = useState(0);
   const { totalPages } = useSelector((state) => state.gameLog);
   //   const handleApprove = (id) => {
@@ -166,6 +169,26 @@ const columns = useMemo(
         const record = row.original;
 
         // ✅ Show Pay/Reject only if status === "unpaid"
+        return(
+        <div>
+       
+          {record.status === "unpaid" &&
+          <div>
+              <button
+                onClick={() => handleApproveapi(record._id)}
+                className="rounded-md bg-green-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-green-600"
+              >
+                Pay
+              </button>
+              <button
+                onClick={() => handleRejectapi(record._id)}
+                className="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
+              >
+                Reject
+              </button>
+            </div>}
+        </div>
+        )
         if (record.status === "unpaid") {
           return (
             <div className="flex gap-2">

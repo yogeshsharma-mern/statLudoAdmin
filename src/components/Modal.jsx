@@ -590,7 +590,7 @@ const transactionColumns = useMemo(
                   disabled={loading}
                   className="bg-blue-500 text-white px-6 py-2 cursor-pointer rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {loading ? "Saving..." : <div className="flex items-center gap-1"> <FaUserEdit />edit details</div>}
+                  {loading ? "Saving..." : <div className="flex items-center gap-1"> <FaUserEdit />Edit details</div>}
                 </button>
               </div>
             </div>
@@ -615,11 +615,14 @@ const transactionColumns = useMemo(
                         className="rounded-lg border px-2 py-1 text-sm"
                       >
                         <option value="">All Games</option>
-                        <option value="accepted">Accepted</option>
+                        <option value="pending">pending</option>
+                        <option value="requested">requested</option>
+                        <option value="started">started</option>
+                        <option value="completed">completed</option>
+                        <option value="cancelled">cancelled</option>
+                        <option value="expired">expired</option>
                         <option value="quit">quit</option>
-                        <option value="lost">lost</option>
-                        <option value="created">created</option>
-                        <option value="played">played</option>
+
 
                       </select>
 
@@ -658,7 +661,7 @@ const transactionColumns = useMemo(
               {
             activeTab == "transactions" && (
               <div>
-                <Table columnsDef={transactionColumns} fetchData={fetchTransaction} pending={transactionStatus} filters={filters}
+                <Table columnsDef={transactionColumns} flag={1} fetchData={fetchTransaction} pending={transactionStatus} filters={filters}
                   filtersUI={
                     // <>
                     //   <select
@@ -683,7 +686,7 @@ const transactionColumns = useMemo(
              {
             activeTab == "withdraw" && (
               <div>
-                <Table columnsDef={withdrawColumns} pending={withdrawStatus} fetchData={fetchWithdraw} filters={filters}
+                <Table columnsDef={withdrawColumns} flag={1} pending={withdrawStatus} fetchData={fetchWithdraw} filters={filters}
                   filtersUI={
                     <>
                       <select
@@ -691,12 +694,11 @@ const transactionColumns = useMemo(
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                         className="rounded-lg border px-2 py-1 text-sm"
                       >
-                        <option value="">All Games</option>
-                        <option value="accepted">Accepted</option>
-                        <option value="quit">quit</option>
-                        <option value="lost">lost</option>
-                        <option value="created">created</option>
-                        <option value="played">played</option>
+                        <option value="">All Withdraws</option>
+                        <option value="paid">Paid</option>
+                        <option value="unpaid">Unpaid</option>
+                        <option value="rejected">Rejected</option>
+    
 
                       </select>
 

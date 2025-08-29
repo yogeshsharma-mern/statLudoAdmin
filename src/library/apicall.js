@@ -230,7 +230,7 @@ export const getUsergameData = async ({
 
     params.append("page", page);
     params.append("limit", limit);
-    params.append("filter",filters.status);
+    params.append("status",filters.status);
 
 
     // status mapping (frontend → backend filter values)
@@ -344,7 +344,7 @@ export const getUserWithdrawData = async ({
 
     params.append("page", page);
     params.append("limit", limit);
-    params.append("filter",filters.status);
+    params.append("status",filters.status);
 
 
     // status mapping (frontend → backend filter values)

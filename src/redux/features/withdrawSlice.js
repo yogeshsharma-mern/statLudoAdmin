@@ -28,7 +28,7 @@ export const fetchWithdrawDet = createAsyncThunk(
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
       const res = await getwithdrawdet({ page, limit, search,filters });
 
-      return res.data.withdraws; 
+      return res.data; 
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }

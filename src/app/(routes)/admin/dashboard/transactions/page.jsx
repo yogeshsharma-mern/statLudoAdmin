@@ -61,7 +61,7 @@ const [paymentInfo,setpaymentInfo] = useState({});
   };
   const handleApproveapi = async (id) => {
     const res = await dispatcher(transactionApproved(id));
-    
+
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("transaction approved successfully");
       setOpenConfirm(false);
@@ -328,7 +328,7 @@ console.log("reloadkey",reloadKey)
               title="Are you sure you want to approve this transaction?"
               message="This action cannot be undone. Do you really want to approve this transaction?"
             />
-      <div className="overflow-x-auto mt-10 p-8 rounded-lg shadow bg-white">
+      <div className="overflow-x-auto pt-10 p-8 rounded-lg shadow">
         <div className="mb-2 font-bold text-xl">Recent Transactions</div>
 
         <table className="min-w-full text-sm text-left text-gray-600">
