@@ -5,7 +5,7 @@ const axiosApiInstance = axios.create({
     baseURL:process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 })
 
-
+console.log("tttttttt",process.env.NEXT_PUBLIC_API_BASE_URL);
 axiosApiInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("adminToken"); // client side cookie

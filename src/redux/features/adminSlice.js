@@ -52,7 +52,7 @@ export const loginAdmin = createAsyncThunk(
       const res = await axiosApiInstance.post("/admin/login", { email, password });
      const adminid=res.data.data.id;
       handleLogin(adminid);
-      console.log("yuyuyu",res.data);
+      // console.log("yuyuyu",res.data);
       // Expecting { token, user }
       const { token } = res.data.data;
       const {id} = res.data.data.id;

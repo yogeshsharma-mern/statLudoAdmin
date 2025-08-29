@@ -334,7 +334,7 @@ const columns = useMemo(
 </div>
 
       <Table 
-      pending={status}
+      pending={withdrawStatus}
       title="All Withdraw Requests"
       fetchData={fetchWithdrawDet} 
       columnsDef={columns} 
