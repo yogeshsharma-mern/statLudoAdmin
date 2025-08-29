@@ -37,7 +37,8 @@ import { io } from "socket.io-client";
 const socket = io(process.env.NEXT_PUBLIC_API_SOCKET_URL, {
   transports: ["websocket"],
   withCredentials: true,
-  autoConnect: false, // don't auto connect
+  autoConnect: false,
+  path:"/api/socket.io" // don't auto connect
 });
 
 export default socket;

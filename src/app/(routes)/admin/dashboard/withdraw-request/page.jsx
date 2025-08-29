@@ -27,6 +27,7 @@ export default function Page() {
     const handleApprove = (id) => {
     socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
     toast.success("Payment approved");
+    setWithdrawData((prev) => prev.filter((p) => p._id !== id));
     dispatcher(fetchTransactions(filters));
 
     // remove only the approved payment from local state
@@ -40,38 +41,33 @@ export default function Page() {
     // remove only the approved payment from local state
     setWithdrawData((prev) => prev.filter((p) => p._id !== id));
   };
-    const handleApproveapi = async (id) => {
-    const res = await dispatcher(withdrawApprove(id));
-    
-    if (res.meta.requestStatus === "fulfilled") {
-      toast.success("transaction paid successfully");
-      setOpenConfirm(false);
-      setReloadKey(prev => prev + 1);
-console.log("reloadkey",reloadKey)
-    } else {
-      toast.error("Failed to transaction paid");
-      setOpenConfirm(false);
-    }
+const handleApproveapi = async (id) => {
+  const res = await dispatcher(withdrawApprove(id));
+
+  if (res.type.endsWith("fulfilled")) {
+    toast.success("Transaction paid successfully");
+    setReloadKey(prev => prev + 1);
+  } else {
+    toast.error(res.payload || "Failed to pay transaction");
+    // setOpenConfirm(false);
   }
-      const handleRejectapi = async (id) => {
-    const res = await dispatcher(withdrawReject(id));
-    
-    if (res.meta.requestStatus === "fulfilled") {
-      toast.success("transaction reject successfully");
-      setOpenConfirm(false);
-      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
-console.log("reloadkey",reloadKey)
-      const res = await dispatcher(
-        fetchData({
-          page: 1,
-          limit: 5,
-        })
-      );
-    } else {
-      toast.error("Failed to reject the payment");
-      setOpenConfirm(false);
-    }
+};
+
+const handleRejectapi = async (id) => {
+  const res = await dispatcher(withdrawReject(id));
+
+  if (res.type.endsWith("fulfilled")) {
+    toast.success("Transaction rejected successfully")
+    setReloadKey(prev => prev + 1);
+
+    // 🔄 reload data
+    await dispatcher(fetchWithdrawDet({ page: 1, limit: 5 }));
+  } else {
+    toast.error(res.payload || "Failed to reject the payment");
+    // setOpenConfirm(false);
   }
+};
+
 const columns = useMemo(
   () => [
     {
@@ -91,6 +87,11 @@ const columns = useMemo(
       accessorKey: "amount",
       header: "Amount",
       cell: ({ getValue }) => `₹${getValue()}`,
+    },
+    {
+      accessorKey: "upiId",
+      header: "UPIId",
+      cell: ({ getValue }) => `${getValue()}`,
     },
     {
       accessorKey: "status",
@@ -201,17 +202,17 @@ const columns = useMemo(
     <div className=" bg-[var(--color-neutral)] h-[90vh] overflow-auto">
       <div className="overflow-x-auto p-4 mt-10">
         <div className="font-bold text-xl mb-3">Recent Withdraw Requests</div>
-  <table className="min-w-full border border-gray-300 rounded-lg shadow-sm">
+  <table className="min-w-full rounded-lg ">
     <thead className="bg-gray-100">
       <tr>
-        <th className="px-4 py-2 text-left">ID</th>
-        <th className="px-4 py-2 text-left">User ID</th>
-        <th className="px-4 py-2 text-left">UPI ID</th>
-        <th className="px-4 py-2 text-left">Amount</th>
-        <th className="px-4 py-2 text-left">Status</th>
-        <th className="px-4 py-2 text-left">Created At</th>
-        <th className="px-4 py-2 text-left">Updated At</th>
-        <th className="px-4 py-2 text-left">Actions</th>
+        <th className="px-4 py-1 text-left">ID</th>
+        <th className="px-4 py-1 text-left">User ID</th>
+        <th className="px-4 py-1 text-left">UPI ID</th>
+        <th className="px-4 py-1 text-left">Amount</th>
+        <th className="px-4 py-1 text-left">Status</th>
+        <th className="px-4 py-1 text-left">Created At</th>
+        <th className="px-4 py-1 text-left">Updated At</th>
+        <th className="px-4 py-1 text-left">Actions</th>
       </tr>
     </thead>
   <tbody>
@@ -293,6 +294,7 @@ const columns = useMemo(
       fetchData={fetchWithdrawDet} 
       columnsDef={columns} 
       filters={filters}
+       reloadKey={reloadKey} 
       filtersUI={
         <>
           <select

@@ -325,7 +325,7 @@ const transactionColumns = useMemo(
                    onClick={() => handleApprovedWidhdraw(row.original._id)}
                    title="viewuser"
                  >
-                <span className="hidden md:block" >Approved</span>
+                <span className="" >Approved</span>
                 {/* <MdDashboard className="md:hidden" /> */}
                  </button>
                      <button
@@ -333,7 +333,7 @@ const transactionColumns = useMemo(
                    onClick={() => handleRejectWidhdraw(row.original._id)}
                    title="viewuser"
                  >
-                <span className="hidden md:block" >Reject</span>
+                <span className="" >Reject</span>
                 {/* <MdDashboard className="md:hidden" /> */}
                  </button>
      
@@ -392,12 +392,12 @@ const transactionColumns = useMemo(
   // validation
   const validate = () => {
     const newErrors = {};
-    if (!form.fullName.trim()) newErrors.fullName = "Full name is required";
+    if (!form.fullName.trim()) newErrors.fullName = "Name is required";
     if (!form.referRank.trim()) newErrors.referRank = "Refer rank is required"
     if (!form.username.trim()) newErrors.username = "Username is required";
     if (form.credit < 0) newErrors.credit = "Credit cannot be negative";
     if (form.penalty < 0) newErrors.penalty = "Penalty cannot be negative";
-    if (!form.referCode.trim()) newErrors.referCode = "Referral code required";
+    // if (!form.referCode.trim()) newErrors.referCode = "Referral code required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -544,7 +544,7 @@ const transactionColumns = useMemo(
                             if (/[^a-zA-Z\s]/.test(val)) {
                               setErrors((prev) => ({
                                 ...prev,
-                                fullName: "Full name cannot contain numbers or special characters",
+                                fullName: "name cannot contain numbers or special characters",
                               }));
                               return;
                             } else {

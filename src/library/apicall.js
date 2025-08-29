@@ -390,9 +390,9 @@ export const activeComplteGames = async ({ page = 1, limit = 5, search="",filter
 
     params.append("page", page);
     params.append("limit", limit);
-    params.append("status",filters.status);
-    params.append("betAmountMin",filters.betAmountMin);
-    params.append("betAmountMax",filters.betAmountMax);
+    params.append("adminstatus",filters.status);
+    // params.append("betAmountMin",filters.betAmountMin);
+    // params.append("betAmountMax",filters.betAmountMax);
 
     if (search && search.trim() !== "") {
       params.append("search", search.trim());

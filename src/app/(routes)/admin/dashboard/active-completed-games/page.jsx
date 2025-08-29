@@ -269,7 +269,7 @@ import toast from "react-hot-toast";
 
 
 export default function Page() {
-  const [filters, setFilters] = useState({ status: "", betAmountMin: "", betAmountMax: "" });
+  const [filters, setFilters] = useState({ status: "" });
   const {status} = useSelector(state=>state.activecompltedgame);
   const [completedGames, setCompletedGames] = useState([]);
   const dispatcher = useDispatch();
@@ -544,7 +544,40 @@ const columns = useMemo(() => [
 )}
 
 
-      <Table pending={status} title="All Completed Games" fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
+      <Table pending={status} title="All Completed Games"  filtersUI={
+        <>
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            className="rounded-lg border px-2 py-1 text-sm"
+          >
+            <option value="">All Status</option>
+            <option value="decided">Decided</option>
+            <option value="notDecided">Not decided</option>
+
+
+          </select>
+
+          {/* <input
+            type="number"
+            placeholder="Min Bet"
+            value={filters.betAmountMin}
+            onChange={(e) =>
+              setFilters({ ...filters, betAmountMin: e.target.value })
+            }
+            className="w-24 rounded-lg border px-2 py-1 text-sm"
+          /> */}
+          {/* <input
+            type="number"
+            placeholder="Max Bet"
+            value={filters.betAmountMax}
+            onChange={(e) =>
+              setFilters({ ...filters, betAmountMax: e.target.value })
+            }
+            className="w-24 rounded-lg border px-2 py-1 text-sm"
+          /> */}
+        </>
+      } fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
         {selectedGameApi && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center  bg-opacity-40 z-50">
           <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
