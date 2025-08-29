@@ -160,14 +160,16 @@ export const updateUser = async(data,id)=>
         return null;
     }
 }
-export const getTransactiion = async ({ page = 1, limit = 5, search=""}) => {
-  
+export const getTransactiion = async ({ page = 1, limit = 5, search="",filters}) => {
+  console.log(
+  "filters",filters
+  )
   try {
     const params = new URLSearchParams();
 
     params.append("page", page);
     params.append("limit", limit);
-    //     params.append("status",filters.status);
+        params.append("status",filters.status);
     // params.append("betAmountMin",filters.betAmountMin);
     // params.append("betAmountMax",filters.betAmountMax);
 

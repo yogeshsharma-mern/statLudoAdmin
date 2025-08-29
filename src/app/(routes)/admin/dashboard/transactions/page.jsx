@@ -422,7 +422,9 @@ console.log("reloadkey",reloadKey)
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
-              <option value="completed">Completed</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+
             </select>
 
             <input

@@ -348,8 +348,10 @@ const columns = useMemo(
             className="rounded-lg border px-2 py-1 text-sm"
           >
             <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+            <option value="rejected">Rejected</option>
+
           </select>
 
           <input

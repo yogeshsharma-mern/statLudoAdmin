@@ -12,7 +12,7 @@ export const fetchTransactions = createAsyncThunk(
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-      const res = await getTransactiion({ page, limit, search });
+      const res = await getTransactiion({ page, limit, search,filters });
 console.log("paymentssss",res);
       return res.data;
        // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
