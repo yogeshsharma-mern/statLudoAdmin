@@ -121,7 +121,7 @@ useEffect(() => {
   };
 
   loadData();
-}, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher]);
+}, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher,reloadKey]);
 
 
   const columns = useMemo(() => columnsDef, [columnsDef]);
