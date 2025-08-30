@@ -109,7 +109,7 @@ useEffect(() => {
           res.payload.games ||  
           res.payload.withdraws ||  // if API gives { games: [...] }
           (Array.isArray(res.payload) ? res.payload : []); // if API gives []
-
+console.log("pagesactivegames",res.payload);
         const totalPages = res.payload.pages || 1;
 
         setData(data);
