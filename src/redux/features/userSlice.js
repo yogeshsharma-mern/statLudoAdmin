@@ -12,8 +12,6 @@ import {getUsergameData} from "@/library/apicall";
 export const fetchUsers = createAsyncThunk(
   "users/fetchAll",
   async ({ page = 1, limit = 5, search = "", isBanned, isActive ,filters={}} = {}, thunkAPI) => {
-    console.log("hh", { page, limit, search });
-    console.log("filterthunk",filters);
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
@@ -29,7 +27,6 @@ export const fetchUsers = createAsyncThunk(
 export const fetchuserGameData = createAsyncThunk(
   "users/gamedata",
   async ({ page = 1, limit = 5, search = "", isBanned, isActive } = {}, thunkAPI) => {
-    console.log("hh", { page, limit, search });
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
@@ -162,7 +159,6 @@ totalPages: 1,
       // })
       //block
 .addCase(userBlocked.fulfilled, (state, action) => {
-  console.log("payload", action.payload);
   const i = state.items.findIndex((u) => u._id === action.payload.data._id);
   if (i !== -1) {
     state.items[i] = { ...state.items[i], isBanned: true };
@@ -178,7 +174,6 @@ totalPages: 1,
 })
 .addCase(updateUsers.fulfilled, (state, action) => {
   const updatedUser = action.payload;  // ✅ direct user object
-  console.log("updatedUser", updatedUser);
 
   const i = state.items.findIndex((u) => u._id === updatedUser._id);
   if (i !== -1) {

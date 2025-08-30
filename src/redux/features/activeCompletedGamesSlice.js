@@ -9,7 +9,7 @@ export const fetchActiveCompltedGames = createAsyncThunk(
     { page = 1, limit = 5, search = "", filters = {} } = {}, 
     thunkAPI
   ) => {
-    console.log("hh", { page, limit, search, filters });
+
 
     try {
       const res = await activeComplteGames({ page, limit, search, filters });
@@ -51,7 +51,6 @@ const activeCompltedGameSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchActiveCompltedGames.fulfilled, (state, action) => {
-        console.log("fulfilled payload", action.payload);
         state.status = "succeeded";
         state.games = action.payload.games || [];
         state.totalPages = action.payload.pages || 1;

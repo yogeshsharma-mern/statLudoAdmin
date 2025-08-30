@@ -25,14 +25,12 @@ export default function Page() {
   });
   // const { status } = useSelector(store => store.transaction);
   const { transactions, status, error, totalPages: rawTotalPages } = useSelector((state) => state.transaction);
-  console.log("transactionstate", transactions);
   const [reloadKey, setReloadKey] = useState(0);
 const [openConfirm,setOpenConfirm] = useState(false);
 const [modalOpen,setmodalOpen] = useState(false);
 const [approveId,setApproveId] = useState(null);
 const [paymentInfo,setpaymentInfo] = useState({});
   const [payments, setPayments] = useState([]);
-  console.log("paymnents", payments);
   const { totalPages } = useSelector((state) => state.transaction);
   const dispatcher = useDispatch();
   const handleApprove = (id) => {
@@ -44,7 +42,6 @@ const [paymentInfo,setpaymentInfo] = useState({});
     setPayments((prev) => prev.filter((p) => p._id !== id));
   };
   const handleView = (payment) => {
-  console.log("Viewing payment:", payment);
   // Example: open modal
   setpaymentInfo(payment);
   setmodalOpen(true);
@@ -66,7 +63,6 @@ const [paymentInfo,setpaymentInfo] = useState({});
       toast.success("transaction approved successfully");
       setOpenConfirm(false);
       setReloadKey(prev => prev + 1); // 🔄 table reload trigger
-console.log("reloadkey",reloadKey)
       const res = await dispatcher(
         fetchData({
           page: 1,

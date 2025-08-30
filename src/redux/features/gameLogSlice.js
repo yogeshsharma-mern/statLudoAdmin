@@ -11,9 +11,6 @@ import { getGameLogs } from "@/library/apicall";
 export const fetchGameLogs = createAsyncThunk(
   "users/fetchAllTransactions",
   async ({ page = 1, limit = 5, search = "", isBanned, isActive ,filters={}} = {}, thunkAPI) => {
-        console.log("hh", { page, limit, search });
-  
-console.log("filters",filters);
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
       const res = await getGameLogs({ page, limit, search, isBanned, isActive,filters });
@@ -94,8 +91,6 @@ totalPages: 1,
         state.error = null;
       })
       .addCase(fetchGameLogs.fulfilled, (state, action) => {
-        console.log("action",action);
-        console.log("first",action.payload);
         state.status = "succeeded";
         state.logs = action.payload.games;
         state.totalPages = action.payload.pages;

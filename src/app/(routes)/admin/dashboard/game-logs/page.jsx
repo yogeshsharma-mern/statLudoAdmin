@@ -224,7 +224,6 @@ export default function Page() {
 
 
   const { totalPages } = useSelector((state) => state.gameLog);
-  console.log("totalpagesssssx",totalPages);
 
   const columns = useMemo(
     () => [

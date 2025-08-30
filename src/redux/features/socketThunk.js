@@ -1,21 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getTransactiion } from "@/library/apicall";
 import socket from "@/library/socket";
-import {transactionApprove} from "@/library/apicall";
-import {transactionReject} from "@/library/apicall";
+import { transactionApprove } from "@/library/apicall";
+import { transactionReject } from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
 export const fetchSocketTransactions = createAsyncThunk(
   "users/fetchAllTransactions",
-  async ({ page = 1, limit = 5, search = "" ,filters={}} = {}, thunkAPI) => {
-  
+  async ({ page = 1, limit = 5, search = "", filters = {} } = {}, thunkAPI) => {
+
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
       const res = await getTransactiion({ page, limit, search });
-console.log("paymentssss",res);
       return res.data.payments;
-       // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
+      // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -42,7 +41,7 @@ const fetchtran = createSlice({
   name: "sockettransactions",
   initialState: {
     socketTransactions: [],
-totalPages: 1,
+    totalPages: 1,
     totalDocs: 0,
     page: 1,
     limit: 5,          // 👈 default page size
@@ -60,8 +59,6 @@ totalPages: 1,
         state.error = null;
       })
       .addCase(fetchSocketTransactions.fulfilled, (state, action) => {
-        console.log("action",action);
-        console.log("first",action.payload)
         state.status = "succeeded";
         state.socketTransactions = action.payload.users;
         state.totalPages = action.payload.pages;
@@ -74,7 +71,7 @@ totalPages: 1,
         state.error = action.payload || action.error.message;
       })
 
-      
+
   },
 });
 

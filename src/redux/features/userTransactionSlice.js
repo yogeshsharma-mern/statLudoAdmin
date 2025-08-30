@@ -12,7 +12,6 @@ export const fetchuserTransactionData = createAsyncThunk(
         try {
             // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
             const res = await getUserTransactionData({ page, limit, search, id ,filters});
-            console.log("resofactions",res)
 
             return res.data.items; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
         } catch (err) {

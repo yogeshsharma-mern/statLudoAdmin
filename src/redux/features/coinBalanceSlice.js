@@ -41,8 +41,8 @@ totalPages: 1,
         state.error = null;
       })
       .addCase(fetchCoins.fulfilled, (state, action) => {
-        console.log("action",action);
-        console.log("first",action.payload)
+        // console.log("action",action);
+        // console.log("first",action.payload)
         state.status = "succeeded";
         state.coinbalance = action.payload.coins;
         state.totalPages = action.payload.pages;

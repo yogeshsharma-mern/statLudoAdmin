@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getwithdrawdet } from "@/library/apicall";
-import {withdrawApproved,withdrawRejectd} from "@/library/apicall";
+import { withdrawApproved, withdrawRejectd } from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
 export const withdrawApprove = createAsyncThunk("withdraw/apprvoed", async (id, thunkAPI) => {
   try {
-   const res = await  withdrawApproved(id);
+    const res = await withdrawApproved(id);
     return res;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
@@ -13,7 +13,7 @@ export const withdrawApprove = createAsyncThunk("withdraw/apprvoed", async (id, 
 });
 export const withdrawReject = createAsyncThunk("withdraw/reject", async (id, thunkAPI) => {
   try {
-   const res = await  withdrawRejectd(id);
+    const res = await withdrawRejectd(id);
     return res;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
@@ -21,14 +21,14 @@ export const withdrawReject = createAsyncThunk("withdraw/reject", async (id, thu
 });
 export const fetchWithdrawDet = createAsyncThunk(
   "users/fetchwithdraw",
-  async ({ page = 1, limit = 5, search = "" ,filters={}} = {}, thunkAPI) => {
-  
+  async ({ page = 1, limit = 5, search = "", filters = {} } = {}, thunkAPI) => {
+
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-      const res = await getwithdrawdet({ page, limit, search,filters });
+      const res = await getwithdrawdet({ page, limit, search, filters });
 
-      return res.data; 
+      return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -41,7 +41,7 @@ const withdrawSlice = createSlice({
   name: "widhdraw",
   initialState: {
     withdrawbalance: [],
-totalPages: 1,
+    totalPages: 1,
     totalDocs: 0,
     page: 1,
     limit: 5,          // 👈 default page size
@@ -59,8 +59,6 @@ totalPages: 1,
         state.error = null;
       })
       .addCase(fetchWithdrawDet.fulfilled, (state, action) => {
-        console.log("action",action);
-        console.log("first",action.payload)
         state.status = "succeeded";
         state.withdrawbalance = action.payload.withdrawbalance;
         state.totalPages = action.payload.pages;
@@ -73,7 +71,7 @@ totalPages: 1,
         state.error = action.payload || action.error.message;
       })
 
-      
+
   },
 });
 

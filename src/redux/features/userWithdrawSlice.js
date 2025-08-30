@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getUserWithdrawData } from "@/library/apicall";
-import {getuserWithdraw} from "@/library/apicall";
-import {getuserReject} from "@/library/apicall";
+import { getuserWithdraw } from "@/library/apicall";
+import { getuserReject } from "@/library/apicall";
 
 
 // ------- Thunks (redux-thunk via RTK) -------
@@ -9,13 +9,12 @@ import {getuserReject} from "@/library/apicall";
 
 export const fetchUserWithdrawData = createAsyncThunk(
     "users/gamedata",
-    async ({ page = 1, limit = 5, search = "", id,filters={}} = {}, thunkAPI) => {
-        console.log("hh", { page, limit, search });
+    async ({ page = 1, limit = 5, search = "", id, filters = {} } = {}, thunkAPI) => {
 
         try {
             // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-            const res = await getUserWithdrawData({ page, limit, search, id ,filters});
-            console.log("resofactions",res)
+            const res = await getUserWithdrawData({ page, limit, search, id, filters });
+            console.log("resofactions", res)
 
             return res.data.items; // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
         } catch (err) {
@@ -24,20 +23,20 @@ export const fetchUserWithdrawData = createAsyncThunk(
     }
 );
 export const userWithdrawApproved = createAsyncThunk("withdraw/approve", async (id, thunkAPI) => {
-  try {
-   const res = await  getuserWithdraw(id);
-    return res;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
-  }
+    try {
+        const res = await getuserWithdraw(id);
+        return res;
+    } catch (err) {
+        return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+    }
 });
 export const userWithdrawReject = createAsyncThunk("withdraw/reject", async (id, thunkAPI) => {
-  try {
-   const res = await  getuserReject(id);
-    return res;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
-  }
+    try {
+        const res = await getuserReject(id);
+        return res;
+    } catch (err) {
+        return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+    }
 });
 
 // ------- Slice -------
@@ -63,8 +62,6 @@ const userWithdrawSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchUserWithdrawData.fulfilled, (state, action) => {
-                console.log("action", action);
-                console.log("first", action.payload)
                 state.status = "succeeded";
                 state.usergamedata = action.payload.users;
                 state.totalPages = action.payload.pages;

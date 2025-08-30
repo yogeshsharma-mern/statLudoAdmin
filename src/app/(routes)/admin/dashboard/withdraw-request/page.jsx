@@ -173,7 +173,7 @@ const columns = useMemo(
         <div>
        
           {record.status === "unpaid" &&
-          <div>
+          <div className="flex gap-2 items-center">
               <button
                 onClick={() => handleApproveapi(record._id)}
                 className="rounded-md bg-green-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-green-600"
@@ -217,7 +217,6 @@ const columns = useMemo(
   []
 );
   useEffect(() => {
-    console.log("🔄 Connecting socket...");
     socket.connect();
 
     socket.on("connect", () => console.log("✅ Connected:", socket.id));

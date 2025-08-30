@@ -274,15 +274,12 @@ export default function Page() {
   const {status} = useSelector(state=>state.activecompltedgame);
   const [completedGames, setCompletedGames] = useState([]);
   const dispatcher = useDispatch();
-  console.log("completedgames",completedGames);
   const [selectedGame, setSelectedGame] = useState(null); // 👈 modal state
   const [selectedGameApi, setSelectedGameApi] = useState(null);
   const [gameId,setgameId] = useState("");
-  console.log("gameid",gameId);
-  console.log("selectedgame",selectedGame);
   const [winner, setWinner] = useState("");
   const [winnderapi,setWinnderApi]= useState("");
-  console.log("winnderapi",winnderapi);
+    const [reloadKey, setReloadKey] = useState(0);
 
   const { totalPages } = useSelector((state) => state.gameLog);
   // useEffect(() => {
@@ -298,7 +295,6 @@ export default function Page() {
     socket.on("disconnect", () => console.log("❌ Disconnected"));
 
     socket.on("game_over", (data) => {
-      console.log("📩 completed games:", data);
       setCompletedGames((prev) => [data, ...prev]);
       
     });
@@ -312,7 +308,6 @@ export default function Page() {
 
   const handleWinnerSubmit = () => {
     if (!winner) return alert("⚠ Please select a winner first!");
-    console.log("admin_winnder",selectedGame._id,winner);
     socket.emit("admin_winner_decision", {
       gameId: selectedGame._id,
       winner,
@@ -337,16 +332,15 @@ setCompletedGames((prev) => {
     winnerId: winnderapi,
   };
 
-      console.log("Gammeeeeeid",gameId);
-      console.log("winnder",winnderapi);
     const res = await dispatcher(gameresult(payload));
     
     if (res.meta.requestStatus === "fulfilled") {
       setSelectedGameApi(null);
+      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
+
       toast.success("game result successfully delivered");
 
       // setReloadKey(prev => prev + 1); // 🔄 table reload trigger
-console.log("reloadkey",reloadKey)
       // const res = await dispatcher(
       //   fetchData({
       //     page: 1,
@@ -392,11 +386,26 @@ const columns = useMemo(() => [
       accessorKey: "adminstatus",
       header: "Admin Status",
     },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: (info) => new Date(info.getValue()).toLocaleString(),
+{
+    accessorKey: "winner",
+    header: "Winner",
+    cell: ({ row }) => {
+      const winnerId = row.original.winner;
+      // find winner name
+      if (row.original.createdBy._id === winnerId) {
+        return row.original.createdBy.username;
+      }
+      if (row.original.acceptedBy._id === winnerId) {
+        return row.original.acceptedBy.username;
+      }
+      return "Unknown";
     },
+  },
+    // {
+    //   accessorKey: "createdAt",
+    //   header: "Created At",
+    //   cell: (info) => new Date(info.getValue()).toLocaleString(),
+    // },
     {
       accessorKey: "updatedAt",
       header: "Updated At",
@@ -404,8 +413,12 @@ const columns = useMemo(() => [
     },
     {
       header: "Actions",
-      cell: ({ row }) => (
-        <button
+      cell: ({ row }) => {
+        return(
+          <div>
+            {
+              row.original.adminstatus !="decided" &&
+                 <button
           onClick={() => {setSelectedGameApi(row.original)
             setgameId(row.original._id);
           }}
@@ -413,8 +426,31 @@ const columns = useMemo(() => [
         >
           View
         </button>
-      ),
-   }
+            }
+          </div>
+     
+        )
+      }
+    
+ 
+    
+
+    
+  }
+        // {
+        //   row.orignal.adminstatus!="decided" &&
+        //     <button
+        //   onClick={() => {setSelectedGameApi(row.original)
+        //     setgameId(row.original._id);
+        //   }}
+        //   className="px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600"
+        // >
+        //   View
+        // </button>
+        // }
+      
+  //     ),
+  //  }
   ])
 
 
@@ -551,7 +587,9 @@ const columns = useMemo(() => [
 )}
 
 
-      <Table pending={status} title="All Completed Games"  filtersUI={
+      <Table pending={status} title="All Completed Games" 
+        reloadKey={reloadKey}   // 👈 pass here
+      filtersUI={
         <>
           <select
             value={filters.status}

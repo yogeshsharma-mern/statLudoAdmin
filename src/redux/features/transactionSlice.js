@@ -1,21 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {axiosApiInstance} from "@/library/helper";
+import { axiosApiInstance } from "@/library/helper";
 import { getTransactiion } from "@/library/apicall";
-import {transactionApprove} from "@/library/apicall";
-import {transactionReject} from "@/library/apicall";
+import { transactionApprove } from "@/library/apicall";
+import { transactionReject } from "@/library/apicall";
 
 // ------- Thunks (redux-thunk via RTK) -------
 export const fetchTransactions = createAsyncThunk(
   "users/fetchAllTransactions",
-  async ({ page = 1, limit = 5, search = "" ,filters={}} = {}, thunkAPI) => {
-  
+  async ({ page = 1, limit = 5, search = "", filters = {} } = {}, thunkAPI) => {
+
 
     try {
       // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
-      const res = await getTransactiion({ page, limit, search,filters });
-console.log("paymentssss",res);
+      const res = await getTransactiion({ page, limit, search, filters });
       return res.data;
-       // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
+      // 👈 res.data nahi likho, kyunki getUsersData already .data return kar raha hai
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -23,7 +22,7 @@ console.log("paymentssss",res);
 );
 export const transactionApproved = createAsyncThunk("transaction/apprvoed", async (id, thunkAPI) => {
   try {
-   const res = await  transactionApprove(id);
+    const res = await transactionApprove(id);
     return res;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
@@ -31,7 +30,7 @@ export const transactionApproved = createAsyncThunk("transaction/apprvoed", asyn
 });
 export const transactionRejected = createAsyncThunk("transaction/reject", async (id, thunkAPI) => {
   try {
-   const res = await  transactionReject(id);
+    const res = await transactionReject(id);
     return res;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
@@ -42,7 +41,7 @@ const transactionSlice = createSlice({
   name: "transactions",
   initialState: {
     transactions: [],
-totalPages: 1,
+    totalPages: 1,
     totalDocs: 0,
     page: 1,
     limit: 5,          // 👈 default page size
@@ -60,8 +59,6 @@ totalPages: 1,
         state.error = null;
       })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
-        console.log("action",action);
-        console.log("first",action.payload)
         state.status = "succeeded";
         state.transactions = action.payload;
         state.totalPages = action.payload.pages;
@@ -74,20 +71,20 @@ totalPages: 1,
         state.error = action.payload || action.error.message;
       })
 
-      // .addCase(transactionApproved.fulfilled, (state, action) => {
-      //   const updated = action.payload;
-      //   state.transactions = state.transactions.map((t) =>
-      //     t._id === updated._id ? updated : t
-      //   );
-      // })
+    // .addCase(transactionApproved.fulfilled, (state, action) => {
+    //   const updated = action.payload;
+    //   state.transactions = state.transactions.map((t) =>
+    //     t._id === updated._id ? updated : t
+    //   );
+    // })
 
-      // reject
-      // .addCase(transactionRejected.fulfilled, (state, action) => {
-      //   const updated = action.payload;
-      //   state.transactions = state.transactions.map((t) =>
-      //     t._id === updated._id ? updated : t
-      //   );
-      // });
+    // reject
+    // .addCase(transactionRejected.fulfilled, (state, action) => {
+    //   const updated = action.payload;
+    //   state.transactions = state.transactions.map((t) =>
+    //     t._id === updated._id ? updated : t
+    //   );
+    // });
   },
 });
 

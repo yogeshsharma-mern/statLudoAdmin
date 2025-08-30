@@ -8,7 +8,6 @@ import { getUserCreditData } from "@/library/apicall";
 export const fetchuserCreditData = createAsyncThunk(
     "users/gamedata",
     async ({ page = 1, limit = 5, search = "", id,filters={}} = {}, thunkAPI) => {
-        console.log("hh", { page, limit, search });
 
         try {
             // ✅ object pass karo, getUsersData khud hi URLSearchParams banayega
@@ -46,8 +45,6 @@ const usercreditSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchuserCreditData.fulfilled, (state, action) => {
-                console.log("action", action);
-                console.log("first", action.payload)
                 state.status = "succeeded";
                 state.usergamedata = action.payload.users;
                 state.totalPages = action.payload.pages;

@@ -83,6 +83,22 @@ export default function Modal({ open, onClose, userDetail }) {
           );
         },
       },
+      // {
+      //   accessorKey: "winner",
+      //   header: "Winner",
+      //   cell: ({ getValue }) => `₹${getValue()}`,
+      // },
+      {
+    accessorKey: "winner",
+    header: "Winner",
+    cell: ({ row }) => {
+      const winner = row?.original?.winner?.username;
+   
+      // find winner name
+    
+      return winner;
+    },
+  },
       {
         accessorKey: "betAmount",
         header: "Bet Amount",
