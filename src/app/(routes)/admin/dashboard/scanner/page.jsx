@@ -8,6 +8,7 @@ import { IoIosAdd, IoIosArrowRoundBack } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
 import { axiosApiInstance } from "@/library/helper";
 import { getScanner } from "@/library/apicall";
+import Image from "next/image";
 
 export default function Page() {
   const [scanners, setScanners] = useState([]);
@@ -150,7 +151,9 @@ export default function Page() {
               className="bg-white w-full shadow-md rounded-2xl p-6 max-w-md w-full text-center mb-4"
             >
               <h1 className="text-2xl font-bold mb-4">📷 Scanner</h1>
-              <img
+              <Image
+              width={200}
+              height={200}
                 src={process.env.NEXT_PUBLIC_API_BASE_URL_Image+s.url}
                 alt="Scanner QR"
                 className="w-60 h-60 object-cover rounded-lg mx-auto mb-4 border"
