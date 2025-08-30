@@ -38,7 +38,7 @@ const socket = io(process.env.NEXT_PUBLIC_API_SOCKET_URL, {
   transports: ["websocket"],
   withCredentials: true,
   autoConnect: false,
-  path:"/api/socket.io" // don't auto connect
+  path:"/socket.io" // don't auto connect
 });
 
 export default socket;

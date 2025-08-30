@@ -266,6 +266,7 @@ import Table from "@/components/Table";
 import socket from "@/library/socket";
 import {gameresult} from "@/redux/features/activeCompletedGamesSlice";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 
 export default function Page() {
@@ -336,9 +337,11 @@ setCompletedGames((prev) => {
     
     if (res.meta.requestStatus === "fulfilled") {
       setSelectedGameApi(null);
-      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
-
       toast.success("game result successfully delivered");
+      setReloadKey(prev => prev + 1);
+  // 🔄 table reload trigger
+      console.log("reloadkey",reloadKey)
+
 
       // setReloadKey(prev => prev + 1); // 🔄 table reload trigger
       // const res = await dispatcher(
@@ -539,6 +542,7 @@ const columns = useMemo(() => [
             .slice(0, 2) // ✅ keep only 2
             .map((s) => (
               <img
+              unoptimized
                 key={s._id}
                 src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${s.screenshot}`}
                 alt={`${s.username}'s screenshot`}
@@ -642,7 +646,7 @@ const columns = useMemo(() => [
                   {selectedGameApi.winningScreenshots.map((shot) => (
                     <img
                       key={shot._id}
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}${shot.screenshot}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${shot.screenshot}`}
                       alt="Winning Screenshot"
                       className="w-full h-32 object-cover rounded border"
                     />
