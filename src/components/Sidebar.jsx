@@ -18,6 +18,8 @@ import { IoGameController } from "react-icons/io5";
 import { FaWallet } from "react-icons/fa";
 import { TbReport } from "react-icons/tb";
 import { TbLockPassword } from "react-icons/tb";
+import { RiAdminFill } from "react-icons/ri";
+
 
 
 export default function Sidebar({ activeTab, setActiveTab }) {

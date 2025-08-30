@@ -303,7 +303,7 @@ const [paymentInfo,setpaymentInfo] = useState({});
             {/* Close button */}
             <button
               onClick={() => setmodalOpen(false)}
-              className="absolute top-3 right-3 text-gray-700 hover:text-black text-2xl"
+              className="absolute top-3 right-3 text-gray-700 cursor-pointer hover:text-black text-2xl"
             >
               &times;
             </button>

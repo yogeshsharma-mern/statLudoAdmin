@@ -627,72 +627,90 @@ const columns = useMemo(() => [
           /> */}
         </>
       } fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
-        {selectedGameApi && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center  bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Game Details</h2>
+    {selectedGameApi && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
+      <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
-            <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>
-            <p><strong>Created By:</strong> {selectedGameApi.createdBy?.username}</p>
-            <p><strong>Accepted By:</strong> {selectedGameApi.acceptedBy?.username}</p>
-            <p><strong>Status:</strong> {selectedGameApi.status}</p>
-            <p><strong>Bet Amount:</strong> ₹{selectedGameApi.betAmount}</p>
-            <p><strong>Winning Amount:</strong> ₹{selectedGameApi.winningAmount}</p>
+      <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>
+      <p><strong>Created By:</strong> {selectedGameApi.createdBy?.username}</p>
+      <p><strong>Accepted By:</strong> {selectedGameApi.acceptedBy?.username}</p>
+      <p><strong>Status:</strong> {selectedGameApi.status}</p>
+      <p><strong>Bet Amount:</strong> ₹{selectedGameApi.betAmount}</p>
+      <p><strong>Winning Amount:</strong> ₹{selectedGameApi.winningAmount}</p>
 
-            <div className="mt-4">
-              <h3 className="font-medium">Winning Screenshots</h3>
-              {selectedGameApi.winningScreenshots?.length > 0 ? (
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {selectedGameApi.winningScreenshots.map((shot) => (
-                    <img
-                      key={shot._id}
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${shot.screenshot}`}
-                      alt="Winning Screenshot"
-                      className="w-full h-32 object-cover rounded border"
-                    />
-                  ))}
+      <div className="mt-4">
+        <h3 className="font-medium">Winning Screenshots</h3>
+        {selectedGameApi.winningScreenshots?.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {selectedGameApi.winningScreenshots.map((shot) => {
+              // 🔑 Find username from userId
+              const username =
+                shot.user === selectedGameApi.createdBy?._id
+                  ? selectedGameApi.createdBy?.username
+                  : shot.user === selectedGameApi.acceptedBy?._id
+                  ? selectedGameApi.acceptedBy?.username
+                  : "Unknown";
+
+              return (
+                <div key={shot._id} className="relative">
+                  {/* Screenshot */}
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${shot.screenshot}`}
+                    alt={`${username}'s screenshot`}
+                    className="w-full h-32 object-cover rounded border"
+                  />
+
+                  {/* Username overlay */}
+                  <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs text-center py-1 rounded-b">
+                    {username}
+                  </span>
                 </div>
-              ) : (
-                <p className="text-gray-500 text-sm">No screenshots uploaded</p>
-              )}
-            </div>
-
-            {/* Select Winner */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium">Select Winner</label>
-              <select
-                value={winnderapi}
-                onChange={(e) => setWinnderApi(e.target.value)}
-                className="mt-1 w-full border rounded px-2 py-1"
-              >
-                <option value="">-- Select Winner --</option>
-                <option value={selectedGameApi.createdBy?._id}>
-                  Created By ({selectedGameApi.createdBy?.username})
-                </option>
-                <option value={selectedGameApi.acceptedBy?._id}>
-                  Accepted By ({selectedGameApi.acceptedBy?.username})
-                </option>
-              </select>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex justify-end gap-2 mt-6">
-              <button
-                onClick={() => setSelectedGameApi(null)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={()=>handleWinnerSubmitApi()}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Submit Winner
-              </button>
-            </div>
+              );
+            })}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-gray-500 text-sm">No screenshots uploaded</p>
+        )}
+      </div>
+
+      {/* Select Winner */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium">Select Winner</label>
+        <select
+          value={winnderapi}
+          onChange={(e) => setWinnderApi(e.target.value)}
+          className="mt-1 w-full border rounded px-2 py-1"
+        >
+          <option value="">-- Select Winner --</option>
+          <option value={selectedGameApi.createdBy?._id}>
+            Created By ({selectedGameApi.createdBy?.username})
+          </option>
+          <option value={selectedGameApi.acceptedBy?._id}>
+            Accepted By ({selectedGameApi.acceptedBy?.username})
+          </option>
+        </select>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex justify-end gap-2 mt-6">
+        <button
+          onClick={() => setSelectedGameApi(null)}
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => handleWinnerSubmitApi()}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Submit Winner
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
