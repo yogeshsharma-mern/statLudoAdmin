@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { disconnectSocket } from "@/library/socket";
+
 
 export default function Header() {
   const router = useRouter();
@@ -9,7 +11,10 @@ export default function Header() {
 
   const handleLogout = () => {
     Cookies.remove("adminToken");
+    Cookies.remove("adminId");
     router.push("/admin/login");
+    disconnectSocket();
+
   };
 
   // Detect system theme and set default

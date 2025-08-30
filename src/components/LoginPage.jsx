@@ -9,7 +9,8 @@ import { loginAdmin } from "@/redux/features/adminSlice";
 import { useDispatch } from "react-redux";
 import { FaRegEye } from "react-icons/fa";
 import { GrHide } from "react-icons/gr";
-import socket from "@/library/socket";
+import {connectSocket} from "@/library/socket";
+
 
 
 export default function AdminLoginPage() {
@@ -45,31 +46,36 @@ export default function AdminLoginPage() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!validate()) return;
 
-    try {
-      setLoading(true); // start loader
+//     try {
+//       setLoading(true); // start loader
 
-      const res = await dispatcher(loginAdmin({ email, password }));
+//       const res = await dispatcher(loginAdmin({ email, password }));
      
-// const Id = res.payload?.data?.admin?._id; // ✅ correct path
-//   console.log("id", Id, res.payload);
-      if (loginAdmin.fulfilled.match(res)) {
-        toast.success("Login successful!");
-        // handleLogin(Id);
-        router.push("/admin/dashboard");
-      } else {
-        toast.error(res.payload || "Login failed");
-      }
-    } catch (error) {
-      toast.error("Something went wrong!");
-      // console.error("Login error:", error);
-    } finally {
-      setLoading(false); // stop loader in all cases
-    }
-  };
+// // const Id = res.payload?.data?.admin?._id; // ✅ correct path
+// //   console.log("id", Id, res.payload);
+//       if (loginAdmin.fulfilled.match(res)) {
+//         toast.success("Login successful!");
+//         const adminId = Cookies.get("adminId");
+// console.log("Admin ID from cookies:", adminId);
+//         connectSocket(adminId);
+//          socket.emit("register_admin", adminId);
+
+//         // handleLogin(Id);
+//         router.push("/admin/dashboard");
+//       } else {
+//         toast.error(res.payload || "Login failed");
+//       }
+//     } catch (error) {
+//       toast.error("Something went wrong!");
+//       // console.error("Login error:", error);
+//     } finally {
+//       setLoading(false); // stop loader in all cases
+//     }
+//   };
 
   // try {
   //   setLoading(true);
@@ -90,6 +96,35 @@ export default function AdminLoginPage() {
   // } finally {
   //   setLoading(false);
   // }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validate()) return;
+
+  setLoading(true);
+  try {
+    const res = await dispatcher(loginAdmin({ email, password }));
+
+    if (loginAdmin.fulfilled.match(res)) {
+      toast.success("Login successful!");
+
+      const adminId = Cookies.get("adminId");
+      console.log("Admin ID from cookies:", adminId);
+
+      // ✅ use returned socket
+      const socket = connectSocket(adminId);
+      socket.emit("register_admin", adminId);
+
+      router.push("/admin/dashboard");
+    } else {
+      toast.error(res.payload || "Login failed");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error("Something went wrong!"); // only fires if API/dispatch crashes
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   return (

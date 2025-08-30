@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import {withdrawApprove} from "@/redux/features/withdrawSlice";
 import {withdrawReject} from "@/redux/features/withdrawSlice";
+import { getSocket } from "@/library/socket";
 
 
 
@@ -44,7 +45,25 @@ export default function Page() {
   //   // remove only the approved payment from local state
   //   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
   // };
-  const handleApprove = (id) => {
+//   const handleApprove = (id) => {
+//   socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
+//   toast.success("Payment approved");
+
+//   // remove only the approved payment from local state
+//   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+
+//   // refresh backend data if needed
+//   // dispatcher(fetchTransactions(filters));
+// };
+
+
+const handleApprove = (id) => {
+  const socket = getSocket(); // ✅ always fetch active socket
+  if (!socket) {
+    console.warn("⚠ No active socket connection!");
+    return;
+  }
+
   socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
   toast.success("Payment approved");
 
@@ -55,7 +74,25 @@ export default function Page() {
   // dispatcher(fetchTransactions(filters));
 };
 
+
+// const handleReject = (id) => {
+//   socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+//   toast.success("Payment rejected");
+
+//   // remove only the rejected payment from local state
+//   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
+
+//   // refresh backend data if needed
+//   dispatcher(fetchTransactions(filters));
+// };
+
 const handleReject = (id) => {
+  const socket = getSocket(); // ✅ always fetch active socket
+  if (!socket) {
+    console.warn("⚠ No active socket connection!");
+    return;
+  }
+
   socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
   toast.success("Payment rejected");
 
@@ -216,32 +253,47 @@ const columns = useMemo(
   ],
   []
 );
-  useEffect(() => {
-    socket.connect();
+  // useEffect(() => {
+  //   socket.connect();
 
-    socket.on("connect", () => console.log("✅ Connected:", socket.id));
-    socket.on("disconnect", () => console.log("❌ Disconnected"));
+  //   socket.on("connect", () => console.log("✅ Connected:", socket.id));
+  //   socket.on("disconnect", () => console.log("❌ Disconnected"));
 
-    // socket.on("pending_payments_list", (data) => {
-    //   console.log("📩 Pending payments:", data);
-    //   setPayments(data);
-    // });
+  //   // socket.on("pending_payments_list", (data) => {
+  //   //   console.log("📩 Pending payments:", data);
+  //   //   setPayments(data);
+  //   // });
 
-    socket.on("new_withdraw", (data) => {
-      console.log("📩 New withdraw request:", data);
+  //   socket.on("new_withdraw", (data) => {
+  //     console.log("📩 New withdraw request:", data);
+  //     setWithdrawData((prev) => [data, ...prev]);
+  //   });
+
+  //   return () => {
+  //     console.log("🧹 Cleaning up + disconnecting...");
+  //     socket.off("connect");
+  //     socket.off("disconnect");
+  //     socket.off("pending_payments_list");
+  //     socket.off("new_withdraw");
+  //     socket.disconnect(); // 👈 IMPORTANT
+  //   };
+  // }, []);
+useEffect(() => {
+  const socket = getSocket();
+
+  if (socket) {
+    socket.on("pending_payments_list", (data) => {
+      console.log("Server says:", data);
       setWithdrawData((prev) => [data, ...prev]);
     });
+  }
 
-    return () => {
-      console.log("🧹 Cleaning up + disconnecting...");
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("pending_payments_list");
-      socket.off("new_withdraw");
-      socket.disconnect(); // 👈 IMPORTANT
-    };
-  }, []);
-
+  return () => {
+    if (socket) {
+      socket.off("pending_payments_list"); // ✅ correct event cleanup
+    }
+  };
+}, []);
   return (
     <div className=" bg-[var(--color-neutral)] h-[90vh] overflow-auto">
       <div className="overflow-x-auto p-4 mt-10">
@@ -315,7 +367,7 @@ const columns = useMemo(
               Pay
             </button>
             <button
-              onClick={() => handlereject(item._id)}
+              onClick={() => handleReject(item._id)}
               className="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
             >
               Reject

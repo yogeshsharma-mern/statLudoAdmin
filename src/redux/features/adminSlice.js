@@ -27,21 +27,22 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import api from "@/lib/api";
-import { axiosApiInstance } from "@/library/helper";
+import {axiosApiInstance} from "@/library/helper";
 import axios from "axios";
 import Cookies from "js-cookie";
-import socket from "@/library/socket";
+// import socket from "@/library/socket";
 // --- Thunks ---
 
+ 
+  // const handleLogin = (id) => {
+  //   console.log("helo",id);
+  //       if (!socket.connected) socket.connect();
 
-const handleLogin = (id) => {
-  if (!socket.connected) socket.connect();
-
-  socket.emit("register_user", { id });
+  //   socket.emit("register_user", id);
 
 
-  // remove only the approved payment from local sta
-};
+  //   // remove only the approved payment from local sta
+  // };
 
 // Login: send credentials, receive { token, user }
 export const loginAdmin = createAsyncThunk(
@@ -49,19 +50,24 @@ export const loginAdmin = createAsyncThunk(
   async ({ email, password }, thunkAPI) => {
     try {
       const res = await axiosApiInstance.post("/admin/login", { email, password });
-      const adminid = res.data.data.id;
-      handleLogin(adminid)
+     const adminid=res.data.data.id;
+     console.log("adminid",adminid)
+      // console.log("yuyuyu",res.data);
       // Expecting { token, user }
       const { token } = res.data.data;
-      const { id } = res.data.data.id;
-
-
+      const {id} = res.data.data.id;
+      console.log("IDDDD",id);
       // Persist (keep side-effects inside thunk, not reducers)
       if (typeof window !== "undefined") {
-        Cookies.set("adminToken", res.data.data.token, { expires: 1 });
+            Cookies.set("adminToken", res.data.data.token, { expires: 1 });
+            Cookies.set("adminId", adminid, { expires: 1 });
+
+
+// expires in 1 day
+
         // localStorage.setItem("token", token);
         // localStorage.setItem("user", JSON.stringify(user));
-
+    
       }
 
       return { token };
@@ -83,15 +89,20 @@ export const restoreSession = createAsyncThunk("auth/restoreSession", async () =
 // Logout
 export const logoutAdmin = createAsyncThunk("auth/logoutAdmin", async (_, thunkAPI) => {
   try {
-    Cookies.remove("adminToken");
+Cookies.remove("adminToken", { path: "/" });
+
+
+
+
+
     // Optionally tell the server
     // await api.post("/auth/logout");
   } catch (e) {
     // ignore
   } finally {
     if (typeof window !== "undefined") {
-      //   localStorage.removeItem("token");
-      //   localStorage.removeItem("user");
+    //   localStorage.removeItem("token");
+    //   localStorage.removeItem("user");
     }
     return true;
   }
@@ -123,10 +134,10 @@ const authSlice = createSlice({
       })
 
       // restore
-      //   .addCase(restoreSession.fulfilled, (s, a) => {
-      //     s.token = a.payload.token;
-      //     s.user = a.payload.user;
-      //   })
+    //   .addCase(restoreSession.fulfilled, (s, a) => {
+    //     s.token = a.payload.token;
+    //     s.user = a.payload.user;
+    //   })
 
       // logout
       .addCase(logoutAdmin.fulfilled, (s) => {

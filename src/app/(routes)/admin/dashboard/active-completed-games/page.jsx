@@ -267,6 +267,8 @@ import socket from "@/library/socket";
 import {gameresult} from "@/redux/features/activeCompletedGamesSlice";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import {getSocket} from "@/library/socket";
+
 
 
 export default function Page() {
@@ -290,41 +292,81 @@ export default function Page() {
        
 
   //   }, []);
-  useEffect(() => {
-    socket.connect();
-    socket.on("connect", () => console.log("✅ Connected:", socket.id));
-    socket.on("disconnect", () => console.log("❌ Disconnected"));
+  // useEffect(() => {
+  //   socket.connect();
+  //   socket.on("connect", () => console.log("✅ Connected:", socket.id));
+    
+  //   socket.on("disconnect", () => console.log("❌ Disconnected"));
 
+  //   socket.on("game_over", (data) => {
+  //       console.log('datasocket',data);
+  //     setCompletedGames((prev) => [data, ...prev]); 
+  //   });
+
+  //   return () => {
+  //     socket.off("connect");
+  //     socket.off("disconnect");
+  //     socket.disconnect();
+  //   };
+  // }, []);
+useEffect(() => {
+  const socket = getSocket();
+
+  if (socket) {
+    console.log("sockkkketid",socket.id);
     socket.on("game_over", (data) => {
+      console.log("Server says:", data);
       setCompletedGames((prev) => [data, ...prev]);
-      
     });
+  }
 
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.disconnect();
-    };
-  }, []);
-
-  const handleWinnerSubmit = () => {
-    if (!winner) return alert("⚠ Please select a winner first!");
-    socket.emit("admin_winner_decision", {
-      gameId: selectedGame._id,
-      winner,
-    });
-setCompletedGames((prev) => {
-  const index = prev.findIndex((g) => g._id === selectedGame._id);
-  if (index === -1) return prev;
-  return [...prev.slice(0, index), ...prev.slice(index + 1)];
-});
-
-
-
-    setSelectedGame(null); // close modal
-    setWinner("");
-
+  return () => {
+    if (socket) {
+      socket.off("game_over"); // ✅ correct event cleanup
+    }
   };
+}, []);
+
+
+
+//   const handleWinnerSubmit = () => {
+//     if (!winner) return alert("⚠ Please select a winner first!");
+//     socket.emit("admin_winner_decision", {
+//       gameId: selectedGame._id,
+//       winner,
+//     });
+// setCompletedGames((prev) => {
+//   const index = prev.findIndex((g) => g._id === selectedGame._id);
+//   if (index === -1) return prev;
+//   return [...prev.slice(0, index), ...prev.slice(index + 1)];
+// });
+
+
+
+//     setSelectedGame(null); // close modal
+//     setWinner("");
+
+//   };
+const handleWinnerSubmit = () => {
+  if (!winner) return alert("⚠ Please select a winner first!");
+
+  const socket = getSocket(); // 👈 always fetch socket here
+  if (!socket) return console.warn("⚠ No active socket connection!");
+
+  socket.emit("admin_winner_decision", {
+    gameId: selectedGame._id,
+    winner,
+  });
+
+  setCompletedGames((prev) => {
+    const index = prev.findIndex((g) => g._id === selectedGame._id);
+    if (index === -1) return prev;
+    return [...prev.slice(0, index), ...prev.slice(index + 1)];
+  });
+
+  setSelectedGame(null);
+  setWinner("");
+};
 
     const handleWinnerSubmitApi = async () => {
       

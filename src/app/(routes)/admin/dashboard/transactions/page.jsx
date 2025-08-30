@@ -15,6 +15,9 @@ import { IoMdEye } from "react-icons/io";
 import { CgUnblock } from "react-icons/cg";
 import ToggleButton from "@/components/ToggleButton";
 import Image from "next/image";
+import {getSocket} from "@/library/socket";
+
+
  
 export default function Page() {
 
@@ -33,14 +36,30 @@ const [paymentInfo,setpaymentInfo] = useState({});
   const [payments, setPayments] = useState([]);
   const { totalPages } = useSelector((state) => state.transaction);
   const dispatcher = useDispatch();
-  const handleApprove = (id) => {
-    socket.emit("update_payment_status", { paymentId: id, status: "approved" });
-    toast.success("Payment approved");
-    dispatcher(fetchTransactions(filters));
+  // const handleApprove = (id) => {
+  //   socket.emit("update_payment_status", { paymentId: id, status: "approved" });
+  //   toast.success("Payment approved");
+  //   dispatcher(fetchTransactions(filters));
 
-    // remove only the approved payment from local state
-    setPayments((prev) => prev.filter((p) => p._id !== id));
-  };
+  //   // remove only the approved payment from local state
+  //   setPayments((prev) => prev.filter((p) => p._id !== id));
+  // };
+const handleApprove = (id) => {
+  const socket = getSocket(); // ✅ always fetch active socket
+  if (!socket) {
+    console.warn("⚠ No active socket connection!");
+    return;
+  }
+
+  socket.emit("update_payment_status", { paymentId: id, status: "approved" });
+  toast.success("Payment approved");
+
+  dispatcher(fetchTransactions(filters));
+
+  // remove only the approved payment from local state
+  setPayments((prev) => prev.filter((p) => p._id !== id));
+};
+
   const handleView = (payment) => {
   // Example: open modal
   setpaymentInfo(payment);
@@ -48,14 +67,30 @@ const [paymentInfo,setpaymentInfo] = useState({});
 
   // Or navigate: router.push(`/payments/${payment._id}`);
 };
-  const handleRejected = (id) => {
-    socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
-    toast.error("Payment rejected");
+  // const handleRejected = (id) => {
+  //   socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
+  //   toast.error("Payment rejected");
 
-    // remove only the rejected payment
-    setPayments((prev) => prev.filter((p) => p._id !== id));
-    dispatcher(fetchTransactions(filters));
-  };
+  //   // remove only the rejected payment
+  //   setPayments((prev) => prev.filter((p) => p._id !== id));
+  //   dispatcher(fetchTransactions(filters));
+  // };
+  
+  const handleRejected = (id) => {
+  const socket = getSocket(); // ✅ fetch active socket
+  if (!socket) {
+    console.warn("⚠ No active socket connection!");
+    return;
+  }
+
+  socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
+  toast.error("Payment rejected");
+
+  // remove only the rejected payment
+  setPayments((prev) => prev.filter((p) => p._id !== id));
+  dispatcher(fetchTransactions(filters));
+};
+
   const handleApproveapi = async (id) => {
     const res = await dispatcher(transactionApproved(id));
 
@@ -83,34 +118,58 @@ const [paymentInfo,setpaymentInfo] = useState({});
       toast.error("Failed to reject  transaction");
     }
   }
-  useEffect(() => {
-    console.log("🔄 Connecting socket...");
-    socket.connect();
+  // useEffect(() => {
+  //   console.log("🔄 Connecting socket...");
+  //   socket.connect();
 
-    socket.on("connect", () => console.log("✅ Connected:", socket.id));
-    socket.on("disconnect", () => console.log("❌ Disconnected"));
+  //   socket.on("connect", () => console.log("✅ Connected:", socket.id));
+  //   socket.on("disconnect", () => console.log("❌ Disconnected"));
 
+  //   socket.on("pending_payments_list", (data) => {
+  //     console.log("📩 Pending payments:", data);
+  //     setPayments(data);
+  //   });
+
+  //   socket.on("new_payment", (data) => {
+  //     console.log("📩 New payment:", data);
+  //     setPayments((prev) => [data, ...prev]);
+  //   });
+
+  //   return () => {
+  //     console.log("🧹 Cleaning up + disconnecting...");
+  //     socket.off("connect");
+  //     socket.off("disconnect");
+  //     socket.off("pending_payments_list");
+  //     socket.off("new_payment");
+  //     socket.disconnect(); // 👈 IMPORTANT
+  //   };
+  // }, []);
+
+useEffect(() => {
+  const socket = getSocket();
+
+  if (socket) {
     socket.on("pending_payments_list", (data) => {
-      console.log("📩 Pending payments:", data);
-      setPayments(data);
+      console.log("Server says:", data);
+     setPayments(data);
     });
+  }
 
+  if (socket) {
     socket.on("new_payment", (data) => {
-      console.log("📩 New payment:", data);
-      setPayments((prev) => [data, ...prev]);
+      console.log("Server says:", data);
+   setPayments((prev) => [data, ...prev]);
     });
-
-    return () => {
-      console.log("🧹 Cleaning up + disconnecting...");
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("pending_payments_list");
-      socket.off("new_payment");
-      socket.disconnect(); // 👈 IMPORTANT
-    };
-  }, []);
-
-
+  }
+  return () => {
+    if (socket) {
+      socket.off("pending_payments_list"); // ✅ correct event cleanup
+    }
+      if (socket) {
+      socket.off("new_payment"); // ✅ correct event cleanup
+    }
+  };
+}, []);
 
 
   //   useEffect(() => {

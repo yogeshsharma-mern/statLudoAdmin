@@ -32,17 +32,77 @@
  
 // export default socket;
 // socket.js
+// import { io } from "socket.io-client";
+
+// const socket = io(process.env.NEXT_PUBLIC_API_SOCKET_URL, {
+//   transports: ["websocket"],
+//   withCredentials: true,
+//   autoConnect: false,
+//   path:"/socket.io" // don't auto connect
+// });
+
+// export default socket;
+
+
+
+// utils/socket.js
+// import { io } from "socket.io-client";
+
+// let socket = null;
+
+// export const connectSocket = (adminId) => {
+//   if (!socket) {
+//     socket = io("http://localhost:5000", {
+//       query: { adminId }, // id bhejne ke liye
+//       transports: ["websocket"],
+//     });
+//   }
+//   return socket;
+// };
+
+// export const getSocket = () => socket;
+
+// export const disconnectSocket = () => {
+//   if (socket) {
+//     socket.disconnect();
+//     socket = null;
+//   }
+// };
+
+
 import { io } from "socket.io-client";
 
-const socket = io(process.env.NEXT_PUBLIC_API_SOCKET_URL, {
-  transports: ["websocket"],
-  withCredentials: true,
-  autoConnect: false,
-  path:"/socket.io" // don't auto connect
-});
+let socket = null;
 
-export default socket;
+export const connectSocket = () => {
+  if (!socket) {
+    console.log("Connecting socket...");
+
+    socket = io(process.env.NEXT_PUBLIC_API_SOCKET_URL, {
+      transports: ["websocket"],
+      path: "/socket.io",
+    });
+
+    socket.on("connect", () => {
+      console.log("✅ Socket connected:", socket.id);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("❌ Socket disconnected:", reason);
+    });
+  }
+  return socket;
+};
 
 
 
 
+export const getSocket = () => socket;
+
+export const disconnectSocket = () => {
+  if (socket) {
+    console.log("Disconnecting socket:", socket.id);
+    socket.disconnect();
+    socket = null;
+  }
+};

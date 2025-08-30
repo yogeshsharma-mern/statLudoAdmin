@@ -19,6 +19,8 @@ import { FaWallet } from "react-icons/fa";
 import { TbReport } from "react-icons/tb";
 import { TbLockPassword } from "react-icons/tb";
 import { RiAdminFill } from "react-icons/ri";
+import { disconnectSocket } from "@/library/socket";
+
 
 
 
@@ -66,6 +68,9 @@ const handleCloseSidebar = () => {
 
   const handleLogout = () => {
     Cookies.remove("adminToken");
+    Cookies.remove("adminId");
+    disconnectSocket();
+
     router.push("/admin/login");
   };
 
