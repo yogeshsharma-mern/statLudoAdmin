@@ -14,6 +14,7 @@ import { MdBlock } from "react-icons/md";
 import { IoMdEye } from "react-icons/io";
 import { CgUnblock } from "react-icons/cg";
 import ToggleButton from "@/components/ToggleButton";
+import Image from "next/image";
  
 export default function Page() {
 
@@ -308,7 +309,9 @@ const [paymentInfo,setpaymentInfo] = useState({});
             </button>
 
             {/* Image */}
-            <img
+            <Image
+            height={200}
+            width={200}
               src={ process.env.NEXT_PUBLIC_API_BASE_URL_Image+  paymentInfo.screenshot}
               alt="screenshot"
               className="rounded-lg max-h-[70vh] object-contain mx-auto"

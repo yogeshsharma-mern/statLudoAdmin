@@ -28,6 +28,7 @@ export default function Modal({ open, onClose, userDetail }) {
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [creditValue, setCreditValue] = useState("");
   const [loading, setLoading] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
@@ -234,6 +235,8 @@ const transactionColumns = useMemo(
     console.log("ressssppp",res);
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User withdraw paid");
+      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
+
     } else {
       toast.error("failed to  user withdraw ");
     }
@@ -244,6 +247,8 @@ const transactionColumns = useMemo(
     const res = await dispatch(userWithdrawReject(id));
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User withdraw reject successfully");
+      setReloadKey(prev => prev + 1); // 🔄 table reload trigger
+
     } else {
       toast.error("Failed to user withdraw reject");
     }
@@ -280,6 +285,10 @@ const transactionColumns = useMemo(
       accessorKey: "ifsc",
       header: "IFSC",
     },
+       {
+      accessorKey: "upiId",
+      header: "UPIId",
+    },
     {
       accessorKey: "status",
       header: "Status",
@@ -300,35 +309,43 @@ const transactionColumns = useMemo(
         );
       },
     },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ getValue }) =>
-        new Date(getValue()).toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-    },
-    {
-      accessorKey: "updatedAt",
-      header: "Updated At",
-      cell: ({ getValue }) =>
-        new Date(getValue()).toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-    },
+    // {
+    //   accessorKey: "createdAt",
+    //   header: "Created At",
+    //   cell: ({ getValue }) =>
+    //     new Date(getValue()).toLocaleString("en-GB", {
+    //       day: "2-digit",
+    //       month: "short",
+    //       year: "numeric",
+    //       hour: "2-digit",
+    //       minute: "2-digit",
+    //     }),
+    // },
+    // {
+    //   accessorKey: "updatedAt",
+    //   header: "Updated At",
+    //   cell: ({ getValue }) =>
+    //     new Date(getValue()).toLocaleString("en-GB", {
+    //       day: "2-digit",
+    //       month: "short",
+    //       year: "numeric",
+    //       hour: "2-digit",
+    //       minute: "2-digit",
+    //     }),
+    // },
        {
              id: "actions",
              header: "Actions",
-             cell: ({ row }) => (
-               <div className="flex items-center gap-3">
+             cell: ({ row }) => 
+              
+             
+             {
+              return(
+                <div>
+                  {
+                    row.original.status !="paid" &&
+
+                      <div className="flex items-center gap-3">
                  {/* <button
                    className="rounded-md bg-indigo-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
                    onClick={() => openEdit(row.original._id)}
@@ -354,7 +371,10 @@ const transactionColumns = useMemo(
                  </button>
      
                </div>
-             ),
+                  }
+                </div>
+              )
+             }
            },
   ],
   []
@@ -381,9 +401,9 @@ const transactionColumns = useMemo(
         credit: userDetail.credit || 0,
         penalty: userDetail.penalty || 0,
         phone: userDetail.phone || "",
-        referCode: userDetail.referCode || "",
-        referRank: userDetail.referRank || "",
-        referralEarning: userDetail.referralEarning || 0,
+        // referCode: userDetail.referCode || "",
+        // referRank: userDetail.referRank || "",
+        // referralEarning: userDetail.referralEarning || 0,
         completedGames: userDetail.completedGames || 0,
         battlePlayed: userDetail.battlePlayed || 0,
         cashWon: userDetail.cashWon || 0,
@@ -409,7 +429,7 @@ const transactionColumns = useMemo(
   const validate = () => {
     const newErrors = {};
     if (!form.fullName.trim()) newErrors.fullName = "Name is required";
-    if (!form.referRank.trim()) newErrors.referRank = "Refer rank is required"
+    // if (!form.referRank.trim()) newErrors.referRank = "Refer rank is required"
     if (!form.username.trim()) newErrors.username = "Username is required";
     if (form.credit < 0) newErrors.credit = "Credit cannot be negative";
     if (form.penalty < 0) newErrors.penalty = "Penalty cannot be negative";
@@ -702,7 +722,7 @@ const transactionColumns = useMemo(
              {
             activeTab == "withdraw" && (
               <div>
-                <Table columnsDef={withdrawColumns} flag={1} pending={withdrawStatus} fetchData={fetchWithdraw} filters={filters}
+                <Table columnsDef={withdrawColumns} reloadKey={reloadKey} flag={1} pending={withdrawStatus} fetchData={fetchWithdraw} filters={filters}
                   filtersUI={
                     <>
                       <select

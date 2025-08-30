@@ -39,7 +39,7 @@ export const userBlock = async(id)=>
 export const getuserWithdraw = async(id)=>
 {
     try {
-        const response = await axiosApiInstance.patch(`/admin/withdraws/${id}/appprove`,{
+        const response = await axiosApiInstance.patch(`/admin/withdraws/${id}/approve`,{
             "status":"paid"
         });
         return response.data;

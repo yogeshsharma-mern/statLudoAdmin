@@ -10,9 +10,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",                  // since your server runs on http
-        hostname: process.env.NEXT_PUBLIC_API_BASE_URL_Image, // 164.52.197.192
-        port: "5000",                      // because your images come from port 5000
+        protocol: "http",                  // since your server runs on http
+        // hostname: process.env.NEXT_PUBLIC_API_BASE_URL_Image, // 164.52.197.192
+        hostname:"10.40.54.177",
+        port: "5000",   
+        pathname: "/**",                   // because your images come from port 5000
       },
     ],
   },
