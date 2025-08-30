@@ -170,8 +170,8 @@ export const getTransactiion = async ({ page = 1, limit = 5, search="",filters})
     params.append("page", page);
     params.append("limit", limit);
         params.append("status",filters.status);
-    // params.append("betAmountMin",filters.betAmountMin);
-    // params.append("betAmountMax",filters.betAmountMax);
+    params.append("minAmount",filters.betAmountMin);
+    params.append("maxAmount",filters.betAmountMax);
 
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
@@ -497,8 +497,8 @@ export const getwithdrawdet = async ({ page = 1, limit = 5, search="",filters={}
     params.append("page", page);
     params.append("limit", limit);
     params.append("status",filters.status);
-    params.append("betAmountMin",filters.betAmountMin);
-    params.append("betAmountMax",filters.betAmountMax);
+    params.append("minAmount",filters.betAmountMin);
+    params.append("maxAmount",filters.betAmountMax);
 
     if (search && search.trim() !== "") {
       params.append("search", search.trim());
