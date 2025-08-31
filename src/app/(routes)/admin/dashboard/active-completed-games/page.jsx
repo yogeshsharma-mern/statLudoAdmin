@@ -1,263 +1,4 @@
 
-// "use client";
-// import { useState } from "react";
-// import React, { useMemo } from "react";
-// import { useSelector } from "react-redux";
-// import { useEffect } from "react";
-// import { fetchActiveCompltedGames } from "@/redux/features/activeCompletedGamesSlice";
-// import Table from "@/components/Table";
-// import socket from "@/library/socket";
-
-// export default function Page() {
-//   const [filters, setFilters] = useState({
-//     status: "",
-//     betAmountMin: "",
-//     betAmountMax: "",
-//   });
-//   const [completedGames,setCompletedGames] = useState([]);
-//   const { totalPages } = useSelector((state) => state.gameLog);
-//   useEffect(() => {
-//     console.log("🔄 Connecting socket...");
-//     socket.connect();
-
-//     socket.on("connect", () => console.log("✅ Connected:", socket.id));
-//     socket.on("disconnect", () => console.log("❌ Disconnected"));
-
-//     // socket.on("pending_payments_list", (data) => {
-//     //   console.log("📩 Pending payments:", data);
-//     //   setPayments(data);
-//     // });
-
-//     socket.on("game_over", (data) => {
-//       console.log("📩 completed games:", data);
-//       setCompletedGames((prev) => [data, ...prev]);
-//     });
-
-//     return () => {
-//       console.log("🧹 Cleaning up + disconnecting...");
-//       socket.off("connect");
-//       socket.off("disconnect");
-//       socket.off("pending_payments_list");
-//       socket.off("new_payment");
-//       socket.disconnect(); // 👈 IMPORTANT
-//     };
-//   }, []);
-//   const columns = useMemo(
-//     () => [
-//       {
-//   accessorKey: "acceptedBy",
-//   header: "Accepted By",
-//   cell: ({ getValue }) => {
-//     const val = getValue();
-//     return val?.username ?? "—";  // sirf username render karega
-//   },
-// },
-
-//       {
-//         accessorKey: "status",
-//         header: "Status",
-//         cell: ({ getValue }) => {
-//           const val = getValue();
-//           return (
-//             <span
-//               className={`rounded-full px-2.5 py-1 text-xs font-semibold
-//                 ${val === "expired"
-//                   ? "bg-red-100 text-red-700"
-//                   : val === "active"
-//                   ? "bg-green-100 text-green-700"
-//                   : "bg-yellow-100 text-yellow-700"
-//                 }`}
-//             >
-//               {val}
-//             </span>
-//           );
-//         },
-//       },
-//       {
-//         accessorKey: "betAmount",
-//         header: "Bet Amount",
-//         cell: ({ getValue }) => `₹${getValue()}`,
-//       },
-//       {
-//         accessorKey: "winningAmount",
-//         header: "Winning Amount",
-//         cell: ({ getValue }) => `₹${getValue()}`,
-//       },
-//       {
-//         accessorKey: "createdAt",
-//         header: "Created At",
-//         cell: ({ getValue }) =>
-//           new Date(getValue()).toLocaleString("en-GB", {
-//             day: "2-digit",
-//             month: "short",
-//             year: "numeric",
-//             hour: "2-digit",
-//             minute: "2-digit",
-//           }),
-//       },
-//       {
-//         accessorKey: "updatedAt",
-//         header: "Updated At",
-//         cell: ({ getValue }) =>
-//           new Date(getValue()).toLocaleString("en-GB", {
-//             day: "2-digit",
-//             month: "short",
-//             year: "numeric",
-//             hour: "2-digit",
-//             minute: "2-digit",
-//           }),
-//       },
-//     ],
-//     []
-//   );
-
-//   return (
-//     <div className=" bg-[--color-neutral] ">
-
-//      <div className="p-8">
-//        <table className="min-w-full mt-20 text-sm text-left text-gray-600">
-//   <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
-//     <tr>
-//       <th className="px-4 py-2">Room ID</th>
-//       <th className="px-4 py-2">Created By</th>
-//       <th className="px-4 py-2">Accepted By</th>
-//       <th className="px-4 py-2">Bet Amount</th>
-//       <th className="px-4 py-2">Winning Amount</th>
-//       <th className="px-4 py-2">Status</th>
-//       <th className="px-4 py-2">Admin Status</th>
-//       <th className="px-4 py-2">Screenshot</th>
-//       <th className="px-4 py-2">Approve</th>
-//       <th className="px-4 py-2">Reject</th>
-//     </tr>
-//   </thead>
-//   <tbody>
-//     {completedGames.length > 0 ? (
-//       completedGames.map((p) => (
-//         <tr key={p._id} className="border-b hover:bg-gray-50">
-//           <td className="px-4 py-2">{p.roomId}</td>
-//           <td className="px-4 py-2">{p.createdBy}</td>
-//           <td className="px-4 py-2">{p.acceptedBy ?? "—"}</td>
-//           <td className="px-4 py-2 font-medium">₹{p.betAmount}</td>
-//           <td className="px-4 py-2 font-medium">₹{p.winningAmount}</td>
-//           <td className="px-4 py-2">
-//             <span
-//               className={`px-2 py-1 rounded-full text-xs font-semibold
-//                 ${
-//                   p.status === "completed"
-//                     ? "bg-green-100 text-green-700"
-//                     : p.status === "pending"
-//                     ? "bg-yellow-100 text-yellow-700"
-//                     : "bg-red-100 text-red-700"
-//                 }`}
-//             >
-//               {p.status}
-//             </span>
-//           </td>
-//           <td className="px-4 py-2">
-//             <span
-//               className={`px-2 py-1 rounded-full text-xs font-semibold
-//                 ${
-//                   p.adminstatus === "approved"
-//                     ? "bg-green-100 text-green-700"
-//                     : p.adminstatus === "rejected"
-//                     ? "bg-red-100 text-red-700"
-//                     : "bg-gray-200 text-gray-600"
-//                 }`}
-//             >
-//               {p.adminstatus}
-//             </span>
-//           </td>
-//           <td className="px-4 py-2">
-//             {p.winningScreenshots?.length > 0 ? (
-//               <a
-//                 href={
-//                   process.env.NEXT_PUBLIC_API_BASE_URL_Image +
-//                   p.winningScreenshots[0].url
-//                 }
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//                 className="text-blue-600 hover:underline"
-//               >
-//                 View
-//               </a>
-//             ) : (
-//               "—"
-//             )}
-//           </td>
-//           <td className="px-4 py-2">
-//             <button
-//               onClick={() => handleApprove(p._id)}
-//               className="rounded bg-green-500 cursor-pointer px-3 py-1 text-xs text-white hover:bg-green-600"
-//             >
-//               Approve
-//             </button>
-//           </td>
-//           <td className="px-4 py-2">
-//             <button
-//               onClick={() => handleRejected(p._id)}
-//               className="rounded bg-red-500 cursor-pointer px-3 py-1 text-xs text-white hover:bg-red-600"
-//             >
-//               Reject
-//             </button>
-//           </td>
-//         </tr>
-//       ))
-//     ) : (
-//       <tr>
-//         <td
-//           colSpan="10"
-//           className="px-4 py-4 text-center text-gray-500"
-//         >
-//           No completed games found
-//         </td>
-//       </tr>
-//     )}
-//   </tbody>
-// </table>
-//      </div>
-
-//       <Table 
-//       fetchData={fetchActiveCompltedGames} 
-//       columnsDef={columns} 
-//       filters={filters}
-//       filtersUI={
-//         <>
-//           <select
-//             value={filters.status}
-//             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-//             className="rounded-lg border px-2 py-1 text-sm"
-//           >
-//             <option value="">All Status</option>
-//             <option value="pending">Pending</option>
-//             <option value="completed">Completed</option>
-//           </select>
-
-//           <input
-//             type="number"
-//             placeholder="Min Bet"
-//             value={filters.betAmountMin}
-//             onChange={(e) =>
-//               setFilters({ ...filters, betAmountMin: e.target.value })
-//             }
-//             className="w-24 rounded-lg border px-2 py-1 text-sm"
-//           />
-//           <input
-//             type="number"
-//             placeholder="Max Bet"
-//             value={filters.betAmountMax}
-//             onChange={(e) =>
-//               setFilters({ ...filters, betAmountMax: e.target.value })
-//             }
-//             className="w-24 rounded-lg border px-2 py-1 text-sm"
-//           />
-//         </>
-//       }
-//     />
-  
-       
-//     </div>
-//   );
-// }
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -267,7 +8,8 @@ import socket from "@/library/socket";
 import {gameresult} from "@/redux/features/activeCompletedGamesSlice";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import {getSocket} from "@/library/socket";
+// import {getSocket} from "@/library/socket";
+import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
 
 
 
@@ -309,44 +51,70 @@ export default function Page() {
   //     socket.disconnect();
   //   };
   // }, []);
-useEffect(() => {
-  const socket = getSocket();
 
-  if (socket) {
-    console.log("sockkkketid",socket.id);
-    socket.on("game_over", (data) => {
-      console.log("Server says:", data);
-      setCompletedGames((prev) => [data, ...prev]);
-    });
-  }
+// useEffect(() => {
+
+//   const socket = getSocket();
+//   if (!socket) {
+//       console.warn("⚠ No active socket connection!");
+//       return;
+//     }
+
+//   console.log("heelovev");
+
+//     console.log("sockkkketidbeta",socket.id);
+//     socket.on("game_over", (data) => {
+//       console.log("Server says:", data);
+//       setCompletedGames((prev) => [data, ...prev]);
+//     });
+  
+
+//   return () => {
+//     if (socket) {
+//       socket.off("game_over"); // ✅ correct event cleanup
+//     }
+//   };
+// }, []);
+
+// useEffect(() => {
+//   // 👇 give your real adminId here
+//   const socket = connectSocket("68aeb1424102a546fd781973");
+// console.log("hello ram ram");
+//   socket.on("game_over", (data) => {
+//     console.log("Server says:", data);
+//       setCompletedGames((prev) => [data, ...prev]); 
+
+//   });
+//   //   socket.on("pending_payments_list", (data) => {
+//   //   console.log("Server says:", data);
+//   //   setPayments((prev) => [data, ...prev]);
+//   // });
+
+//   return () => {
+//     socket.off("game_over");
+//     // socket.off("new_payment");
+//     disconnectSocket(); // optional, only if you want to close on unmount
+//   };
+// }, []);
+
+
+
+useEffect(() => {
+  // 👇 give your real adminId here
+  const socket = connectSocket("68aeb1424102a546fd781973");
+console.log("helloooo");
+  socket.on("game_over", (data) => {
+    console.log("Server says:", data);
+    setCompletedGames((prev) => [data, ...prev]);
+  });
 
   return () => {
-    if (socket) {
-      socket.off("game_over"); // ✅ correct event cleanup
-    }
+    socket.off("game_over");
+    disconnectSocket(); // optional, only if you want to close on unmount
   };
 }, []);
 
 
-
-//   const handleWinnerSubmit = () => {
-//     if (!winner) return alert("⚠ Please select a winner first!");
-//     socket.emit("admin_winner_decision", {
-//       gameId: selectedGame._id,
-//       winner,
-//     });
-// setCompletedGames((prev) => {
-//   const index = prev.findIndex((g) => g._id === selectedGame._id);
-//   if (index === -1) return prev;
-//   return [...prev.slice(0, index), ...prev.slice(index + 1)];
-// });
-
-
-
-//     setSelectedGame(null); // close modal
-//     setWinner("");
-
-//   };
 const handleWinnerSubmit = () => {
   if (!winner) return alert("⚠ Please select a winner first!");
 
@@ -385,13 +153,7 @@ const handleWinnerSubmit = () => {
       console.log("reloadkey",reloadKey)
 
 
-      // setReloadKey(prev => prev + 1); // 🔄 table reload trigger
-      // const res = await dispatcher(
-      //   fetchData({
-      //     page: 1,
-      //     limit: 5,
-      //   })
-      // );
+ 
     } else {
       toast.error("Failed to deliver the game result");
 

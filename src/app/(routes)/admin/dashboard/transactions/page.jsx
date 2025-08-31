@@ -15,7 +15,7 @@ import { IoMdEye } from "react-icons/io";
 import { CgUnblock } from "react-icons/cg";
 import ToggleButton from "@/components/ToggleButton";
 import Image from "next/image";
-import {getSocket} from "@/library/socket";
+import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
 
 
  
@@ -98,12 +98,12 @@ const handleApprove = (id) => {
       toast.success("transaction approved successfully");
       setOpenConfirm(false);
       setReloadKey(prev => prev + 1); // 🔄 table reload trigger
-      const res = await dispatcher(
-        fetchData({
-          page: 1,
-          limit: 5,
-        })
-      );
+      // const res = await dispatcher(
+      //   fetchData({
+      //     page: 1,
+      //     limit: 5,
+      //   })
+      // );
     } else {
       toast.error("Failed to transaction approved");
       setOpenConfirm(false);
@@ -145,31 +145,53 @@ const handleApprove = (id) => {
   //   };
   // }, []);
 
+// useEffect(() => {
+//   const socket = getSocket();
+
+//   if (socket) {
+//     socket.on("pending_payments_list", (data) => {
+//       console.log("Server says:", data);
+//      setPayments(data);
+//     });
+//   }
+
+//   if (socket) {
+//     socket.on("new_payment", (data) => {
+//       console.log("Server says:", data);
+//    setPayments((prev) => [data, ...prev]);
+//     });
+//   }
+//   return () => {
+//     if (socket) {
+//       socket.off("pending_payments_list"); // ✅ correct event cleanup
+//     }
+//       if (socket) {
+//       socket.off("new_payment"); // ✅ correct event cleanup
+//     }
+//   };
+// }, []);
+
+
 useEffect(() => {
-  const socket = getSocket();
-
-  if (socket) {
+  // 👇 give your real adminId here
+  const socket = connectSocket("68aeb1424102a546fd781973");
+console.log("hello guys");
+  socket.on("new_payment", (data) => {
+    console.log("Server says:", data);
+     setPayments((prev) => [data, ...prev]);
+  });
     socket.on("pending_payments_list", (data) => {
-      console.log("Server says:", data);
-     setPayments(data);
-    });
-  }
+    console.log("Server says:", data);
+    setPayments((prev) => [data, ...prev]);
+  });
 
-  if (socket) {
-    socket.on("new_payment", (data) => {
-      console.log("Server says:", data);
-   setPayments((prev) => [data, ...prev]);
-    });
-  }
   return () => {
-    if (socket) {
-      socket.off("pending_payments_list"); // ✅ correct event cleanup
-    }
-      if (socket) {
-      socket.off("new_payment"); // ✅ correct event cleanup
-    }
+    socket.off("pending_payments_list");
+    socket.off("new_payment");
+    disconnectSocket(); // optional, only if you want to close on unmount
   };
 }, []);
+
 
 
   //   useEffect(() => {

@@ -110,9 +110,7 @@ const handleSubmit = async (e) => {
       const adminId = Cookies.get("adminId");
       console.log("Admin ID from cookies:", adminId);
 
-      // ✅ use returned socket
-      const socket = connectSocket(adminId);
-      socket.emit("register_admin", adminId);
+      connectSocket(adminId); // ✅ ek hi baar connect hoga
 
       router.push("/admin/dashboard");
     } else {
@@ -120,11 +118,12 @@ const handleSubmit = async (e) => {
     }
   } catch (error) {
     console.error("Login error:", error);
-    toast.error("Something went wrong!"); // only fires if API/dispatch crashes
+    toast.error("Something went wrong!");
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (

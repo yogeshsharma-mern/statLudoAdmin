@@ -10,7 +10,8 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import {withdrawApprove} from "@/redux/features/withdrawSlice";
 import {withdrawReject} from "@/redux/features/withdrawSlice";
-import { getSocket } from "@/library/socket";
+import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
+
 
 
 
@@ -37,10 +38,10 @@ export default function Page() {
   //   // remove only the approved payment from local state
   //   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
   // };
-  //   const handlereject = (id) => {
-  //   socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
-  //   toast.success("Payment approved");
-  //   dispatcher(fetchTransactions(filters));
+    // const handlereject = (id) => {
+    // socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+    // toast.success("Payment approved");
+    // dispatcher(fetchTransactions(filters));
 
   //   // remove only the approved payment from local state
   //   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
@@ -75,32 +76,21 @@ const handleApprove = (id) => {
 };
 
 
-// const handleReject = (id) => {
-//   socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
-//   toast.success("Payment rejected");
-
-//   // remove only the rejected payment from local state
-//   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
-
-//   // refresh backend data if needed
-//   dispatcher(fetchTransactions(filters));
-// };
-
-const handleReject = (id) => {
+const handlereject = (id) => {
   const socket = getSocket(); // ✅ always fetch active socket
   if (!socket) {
     console.warn("⚠ No active socket connection!");
     return;
   }
 
-  socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
-  toast.success("Payment rejected");
+  socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
+  toast.success("Payment approved");
 
-  // remove only the rejected payment from local state
+  // remove only the approved payment from local state
   setWithdrawData((prev) => prev.filter((p) => p._id !== id));
 
   // refresh backend data if needed
-  dispatcher(fetchTransactions(filters));
+  // dispatcher(fetchTransactions(filters));
 };
 
 const handleApproveapi = async (id) => {
@@ -253,45 +243,25 @@ const columns = useMemo(
   ],
   []
 );
-  // useEffect(() => {
-  //   socket.connect();
 
-  //   socket.on("connect", () => console.log("✅ Connected:", socket.id));
-  //   socket.on("disconnect", () => console.log("❌ Disconnected"));
-
-  //   // socket.on("pending_payments_list", (data) => {
-  //   //   console.log("📩 Pending payments:", data);
-  //   //   setPayments(data);
-  //   // });
-
-  //   socket.on("new_withdraw", (data) => {
-  //     console.log("📩 New withdraw request:", data);
-  //     setWithdrawData((prev) => [data, ...prev]);
-  //   });
-
-  //   return () => {
-  //     console.log("🧹 Cleaning up + disconnecting...");
-  //     socket.off("connect");
-  //     socket.off("disconnect");
-  //     socket.off("pending_payments_list");
-  //     socket.off("new_withdraw");
-  //     socket.disconnect(); // 👈 IMPORTANT
-  //   };
-  // }, []);
 useEffect(() => {
-  const socket = getSocket();
+  // 👇 give your real adminId here
+  const socket = connectSocket("68aeb1424102a546fd781973");
 
-  if (socket) {
-    socket.on("pending_payments_list", (data) => {
-      console.log("Server says:", data);
-      setWithdrawData((prev) => [data, ...prev]);
-    });
-  }
+  socket.on("new_withdraw", (data) => {
+    console.log("Server says:", data);
+         setWithdrawData((prev) => [data, ...prev]);
+
+  });
+  //   socket.on("pending_payments_list", (data) => {
+  //   console.log("Server says:", data);
+  //   setPayments((prev) => [data, ...prev]);
+  // });
 
   return () => {
-    if (socket) {
-      socket.off("pending_payments_list"); // ✅ correct event cleanup
-    }
+    socket.off("new_withdraw");
+    // socket.off("new_payment");
+    disconnectSocket(); // optional, only if you want to close on unmount
   };
 }, []);
   return (
@@ -367,7 +337,7 @@ useEffect(() => {
               Pay
             </button>
             <button
-              onClick={() => handleReject(item._id)}
+              onClick={() => handlereject(item._id)}
               className="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
             >
               Reject
