@@ -117,6 +117,7 @@ console.log("helloooo");
 
 const handleWinnerSubmit = () => {
   if (!winner) return alert("⚠ Please select a winner first!");
+
   const socket = getSocket(); // 👈 always fetch socket here
   if (!socket) return console.warn("⚠ No active socket connection!");
 
@@ -198,10 +199,10 @@ const columns = useMemo(() => [
     cell: ({ row }) => {
       const winnerId = row.original.winner;
       // find winner name
-      if (row.original.createdBy._id === winnerId) {
+      if (row.original.createdBy?._id === winnerId) {
         return row.original.createdBy.username;
       }
-      if (row.original.acceptedBy._id === winnerId) {
+      if (row?.original?.acceptedBy?._id === winnerId) {
         return row.original.acceptedBy.username;
       }
       return "Unknown";
