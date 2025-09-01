@@ -232,6 +232,16 @@ export default function Page() {
   header: "Accepted By",
   cell: ({ getValue }) => {
     const val = getValue();
+   
+    return val?.username ?? "—";  // sirf username render karega
+  },
+},
+     {
+  accessorKey: "createdBy",
+  header: "Created By",
+  cell: ({ getValue }) => {
+    const val = getValue();
+ console.log("valye",val);
     return val?.username ?? "—";  // sirf username render karega
   },
 },

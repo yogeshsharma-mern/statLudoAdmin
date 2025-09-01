@@ -117,7 +117,6 @@ console.log("helloooo");
 
 const handleWinnerSubmit = () => {
   if (!winner) return alert("⚠ Please select a winner first!");
-
   const socket = getSocket(); // 👈 always fetch socket here
   if (!socket) return console.warn("⚠ No active socket connection!");
 

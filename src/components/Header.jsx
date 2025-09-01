@@ -7,7 +7,7 @@ import { disconnectSocket } from "@/library/socket";
 
 export default function Header() {
   const router = useRouter();
-  // const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const handleLogout = () => {
     Cookies.remove("adminToken");
@@ -18,28 +18,28 @@ export default function Header() {
   };
 
   // Detect system theme and set default
-  // useEffect(() => {
-  //   const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  //   const savedTheme = localStorage.getItem("theme");
+  useEffect(() => {
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const savedTheme = localStorage.getItem("theme");
 
-  //   if (savedTheme) {
-  //     setDarkMode(savedTheme === "dark");
-  //   } else {
-  //     setDarkMode(systemPrefersDark);
-  //   }
-  // }, []);
+    if (savedTheme) {
+      setDarkMode(savedTheme === "dark");
+    } else {
+      setDarkMode(systemPrefersDark);
+    }
+  }, []);
 
   // Apply theme whenever darkMode changes
-  // useEffect(() => {
-  //   const root = window.document.documentElement;
-  //   if (darkMode) {
-  //     root.classList.add("dark");
-  //     localStorage.setItem("theme", "dark");
-  //   } else {
-  //     root.classList.remove("dark");
-  //     localStorage.setItem("theme", "light");
-  //   }
-  // }, [darkMode]);
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (darkMode) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   return (
     <header className="w-full bg-white dark:bg-gray-900 shadow-md transition-colors duration-300">
@@ -56,12 +56,12 @@ export default function Header() {
           <div className="flex items-center space-x-4">
 
             {/* Theme Toggle */}
-            {/* <button
+            <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 rounded-full cursor-pointer text-gray-800 dark:text-gray-200 transition-colors duration-300"
             >
               {darkMode ? "🌙" : "☀️"}
-            </button> */}
+            </button>
 
             {/* Logout Button */}
             <button

@@ -110,7 +110,7 @@ const handleSubmit = async (e) => {
       const adminId = Cookies.get("adminId");
       console.log("Admin ID from cookies:", adminId);
 
-      connectSocket(adminId); // ✅ ek hi baar connect hoga
+      // connectSocket(adminId); // ✅ ek hi baar connect hoga
 
       router.push("/admin/dashboard");
     } else {

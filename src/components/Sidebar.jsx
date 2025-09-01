@@ -92,7 +92,7 @@ const handleCloseSidebar = () => {
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden absolute top-4  right-20 flex items-center justiy-center cursor-pointer z-50 w-[22px] h-[22px] rounded-full text-black text-[20px] p-3 rounded-md"
+        className="lg:hidden absolute top-4  right-20 flex items-center justiy-center cursor-pointer z-50 w-[22px] h-[22px] rounded-full text-[var(--color-text)] text-[20px] p-3 rounded-md"
       >
         {isMobileOpen ? "" : "☰"}
       </button>
@@ -122,7 +122,7 @@ const handleCloseSidebar = () => {
             <button
               onClick={() => toggleMenu("users")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${openMenus.users
-                  ? "bg-gray-200 text-[var( --color-text)]"
+                  ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
                   : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
                 }`}
             >
@@ -156,8 +156,8 @@ const handleCloseSidebar = () => {
             <button
               onClick={() => toggleItems("management")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${opengameMangement.management
-                  ? "bg-gray-200 text-[var( --color-text)]"
-                  : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
+                  ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
+                  : "text-[var( --color-text)] hover:bg-bg-[var(--sidebar-bgs)] dark:hover:bg-black"
                 }`}
             >
               <span className="flex items-center space-x-3">
@@ -197,8 +197,8 @@ const handleCloseSidebar = () => {
             <button
               onClick={() => togglewallet("wallet")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${wallet.wallet
-                  ? "bg-gray-200 text-[var( --color-text)]"
-                  : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
+                  ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
+                  : "text-[var( --color-text)] hover:bg-[var(--sidebar-bg)] dark:hover:bg-black"
                 }`}
             >
               <span className="flex items-center space-x-3">
@@ -341,7 +341,7 @@ function SidebarItem({ icon, label, active, onClick, closeSidebar }) {
       }}
       className={`flex w-full items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium transition ${
         active
-          ? "bg-gray-200 text-[var( --color-text)]"
+          ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
           : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black cursor-pointer"
       }`}
     >
@@ -360,11 +360,14 @@ function SubMenuItem({ label, active, onClick, closeSidebar }) {
       }}
       className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${
         active
-          ? "bg-gray-100"
-          : "text-[var( --color-text)] hover:bg-gray-100 hover:text-black"
+          ? "bg-[var(--sidebar-submenu)]"
+          : "text-[var( --color-text)] hover:bg-[var(--sidebar-bgss)] hover:text-black"
       }`}
     >
       {label}
     </button>
   );
 }
+
+
+

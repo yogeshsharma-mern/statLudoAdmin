@@ -83,8 +83,8 @@ const handlereject = (id) => {
     return;
   }
 
-  socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
-  toast.success("Payment approved");
+  socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+  toast.success("Payment Rejected Successfully");
 
   // remove only the approved payment from local state
   setWithdrawData((prev) => prev.filter((p) => p._id !== id));

@@ -301,8 +301,8 @@ export default function UsersTable() {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full text-left bg-white text-sm">
-          <thead className="border-b border-gray-200 bg-gray-50 text-gray-700">
+        <table className="min-w-full text-left bg-[var(--color-neutral)] text-sm">
+          <thead className="border-b border-gray-200 bg-[var(--table-colorss)] text-[var(--color-text)]">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => (

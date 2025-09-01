@@ -12,7 +12,7 @@ const nextConfig = {
       {
         protocol: "https",                  // since your server runs on http
         hostname: "indianludoking.com", // 164.52.197.192
-        // hostname:"10.40.54.177",
+        // hostname:"192.168.2.116",
         // port: "5000",   
         pathname: "/**",                   // because your images come from port 5000
       },

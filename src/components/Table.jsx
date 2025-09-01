@@ -179,7 +179,7 @@ console.log("pagesactivegames",res.payload);
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-left bg-[--color-neutral] text-sm ">
-            <thead className="border-b border-gray-200 bg-gray-50 text-gray-700">
+            <thead className="border-b border-gray-200 bg-[var(--table-colorss)] text-[var(--color-text)]">
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
                   {hg.headers.map((header) => (
@@ -206,7 +206,7 @@ console.log("pagesactivegames",res.payload);
                   </div>}
 
               {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-gray-200 hover:bg-gray-50">
+                <tr key={row.id} className="border-b border-gray-200 hover:bg-[var(--color-hover)]">
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

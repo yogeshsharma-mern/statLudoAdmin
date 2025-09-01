@@ -109,7 +109,7 @@ export default function Page() {
   };
 
   return (
-    <div className="w-full p-10">
+    <div className="w-full bg-[var(--color-neutral)] h-screen p-10">
       {/* Top buttons */}
       <div className="flex justify-end w-full mr-5 gap-2">
         {mode !== "view" && (
@@ -144,11 +144,11 @@ export default function Page() {
 
       {/* Conditional Rendering */}
       {mode === "view" && (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center md:p-6">
+        <div className="min-h-screen  flex flex-col items-center md:p-6">
           {scanners.map((s, i) => (
             <div
               key={i}
-              className="bg-white w-full shadow-md rounded-2xl p-6 max-w-md w-full text-center mb-4"
+              className="bg-[var(--scanner-color)] w-full shadow-md rounded-2xl p-6 max-w-md w-full text-center mb-4"
             >
               <h1 className="text-2xl font-bold mb-4">📷 Scanner</h1>
               <Image
@@ -158,7 +158,7 @@ export default function Page() {
                 alt="Scanner QR"
                 className="w-60 h-60 object-cover rounded-lg mx-auto mb-4 border"
               />
-              <p className="text-lg font-medium text-gray-700">
+              <p className="text-lg font-medium text-[var(--text-color)]">
                 <span className="font-semibold">UPI ID:</span> {s.upiId}
               </p>
               {/* <button
