@@ -121,7 +121,7 @@ export default function Page() {
               setPreview(null);
               setFile(null);
             }}
-            className="px-3 mt-3 py-2 bg-blue-500 cursor-pointer rounded-md text-white"
+            className="px-3 mt-3 mb-4 py-2 bg-blue-500 cursor-pointer rounded-md text-white"
           >
             <div className="flex gap-1 items-center">
               <IoIosArrowRoundBack />
@@ -132,9 +132,9 @@ export default function Page() {
         {mode === "view" && (
           <button
             onClick={() => setMode("add")}
-            className="px-3 mt-3 py-2 bg-blue-500 cursor-pointer rounded-md text-white"
+            className="px-3 mt-3 py-2 bg-blue-500 mb-4 cursor-pointer rounded-md text-white"
           >
-            <div className="flex gap-1 items-center">
+            <div className="flex gap-1  items-center">
               <IoIosAdd />
               Add Scanner
             </div>
@@ -177,8 +177,8 @@ export default function Page() {
 
       {(mode === "add" || mode === "edit") && (
         <div className="flex justify-center md:p-6">
-          <div className="w-full max-w-xl bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-8">
-            <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          <div className="w-full max-w-xl bg-[var(--scanner-color)] backdrop-blur-lg rounded-2xl shadow-xl p-8">
+            <h1 className="text-2xl font-bold text-center text-[var(--color-text)] mb-6">
               {mode === "add" ? "📲 Upload UPI QR Code" : "✏ Edit Scanner"}
             </h1>
 

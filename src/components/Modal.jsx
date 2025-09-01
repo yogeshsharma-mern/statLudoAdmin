@@ -509,7 +509,7 @@ const transactionColumns = useMemo(
         </div>
 
         {/* Tabs */}
-        <div className="sticky top-0 flex flex-wrap gap-3 px-6 py-3 border-b border-gray-300 bg-white shadow-sm z-10">
+        <div className="sticky top-0 flex flex-wrap gap-3 px-6 py-3 border-b border-gray-300 bg-[var(--color-neutral)] shadow-sm z-10">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -525,7 +525,7 @@ const transactionColumns = useMemo(
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-2 md:px-8 py-6 bg-gray-50">
+        <div className="flex-1 overflow-y-auto px-2 md:px-8 py-6 bg-[var(--color-neutral)]">
           {activeTab === "details" && (
             <div>
               {/* Add Credit Button */}
@@ -750,7 +750,7 @@ const transactionColumns = useMemo(
       {/* Credit Modal */}
       {showCreditModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[100]">
-          <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
+          <div className="bg-[var(--color-neutral)] p-6 rounded-lg w-96 shadow-lg">
             <h3 className="text-lg font-semibold mb-4">➕ Add Credit</h3>
             <input
 
