@@ -8,7 +8,6 @@ import socket from "@/library/socket";
 import { gameresult } from "@/redux/features/activeCompletedGamesSlice";
 import toast from "react-hot-toast";
 import Image from "next/image";
-// import {getSocket} from "@/library/socket";
 import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
 
 
@@ -20,6 +19,7 @@ export default function Page() {
   const [completedGames, setCompletedGames] = useState([]);
   const dispatcher = useDispatch();
   const [selectedGame, setSelectedGame] = useState(null); // 👈 modal state
+  console.log("selectedgamesssss",selectedGame);
   const [selectedGameApi, setSelectedGameApi] = useState(null);
   const [gameId, setgameId] = useState("");
   const [winner, setWinner] = useState("");
@@ -325,75 +325,85 @@ export default function Page() {
 
       {/* 🔥 Modal */}
       {/* 🔥 Modal */}
-      {selectedGame && (
-        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[500px]">
-            <h2 className="text-lg font-semibold mb-4">Game Details</h2>
+{selectedGame && (
+  <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-[500px]">
+      <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
-            <p><strong>Room ID:</strong> {selectedGame.roomId}</p>
-            <p><strong>Created By:</strong> {selectedGame.createdByUsername}</p>
-            <p><strong>Accepted By:</strong> {selectedGame.acceptedByUsername}</p>
+      <p><strong>Room ID:</strong> {selectedGame.roomId}</p>
+      <p><strong>Created By:</strong> {selectedGame.createdByUsername}</p>
+      <p><strong>Accepted By:</strong> {selectedGame.acceptedByUsername}</p>
 
-            {/* 🖼️ Show only 2 screenshots: createdBy & acceptedBy */}
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Screenshots</h3>
-              <div className="flex gap-3">
-                {selectedGame.winningScreenshots
-                  ?.filter(
-                    (s) =>
-                      s.username === selectedGame.createdByUsername ||
-                      s.username === selectedGame.acceptedByUsername
-                  )
-                  .slice(0, 2) // ✅ keep only 2
-                  .map((s) => (
-                    <img
-                      unoptimized
-                      key={s._id}
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${s.screenshot}`}
-                      alt={`${s.username}'s screenshot`}
-                      className="h-24 w-24 object-cover rounded border cursor-pointer hover:scale-105 transition"
-                      onClick={() =>
-                        window.open(
-                          `${process.env.NEXT_PUBLIC_API_BASE_URL_Image}${s.screenshot}`,
-                          "_blank"
-                        )
-                      }
-                    />
-                  ))}
+      {/* 🖼️ Show only 2 screenshots: createdBy & acceptedBy */}
+      <div className="mt-4">
+        <h3 className="text-sm font-medium mb-2">Screenshots</h3>
+        <div className="flex gap-3">
+          {selectedGame.winningScreenshots
+            ?.filter(
+              (s) =>
+                s.username === selectedGame.createdByUsername ||
+                s.username === selectedGame.acceptedByUsername
+            )
+            .slice(0, 2) // ✅ only 2
+            .map((s) => (
+              <div key={s._id} className="relative">
+                <img
+                  unoptimized
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${s.screenshot}`}
+                  alt={`${s.username}'s screenshot`}
+                  className="h-24 w-24 object-cover rounded border cursor-pointer hover:scale-105 transition"
+                  onClick={() =>
+                    window.open(
+                      `${process.env.NEXT_PUBLIC_API_BASE_URL_Image}/${s.screenshot}`,
+                      "_blank"
+                    )
+                  }
+                />
+                {/* 🏷️ Username overlay */}
+                <div className="absolute bottom-0 left-0 w-full bg-black/60 text-white text-[12px] text-center py-0.5 rounded-b">
+                  {s.username}
+                </div>
               </div>
-            </div>
-
-            {/* Winner Select */}
-            <div className="mt-6">
-              <label className="block text-sm font-medium">Select Winner</label>
-              <select
-                value={winner}
-                onChange={(e) => setWinner(e.target.value)}
-                className="mt-1 w-full border rounded px-2 py-1"
-              >
-                <option value="">-- Select Winner --</option>
-                <option value={selectedGame.createdBy}>{selectedGame.createdByUsername}</option>
-                <option value={selectedGame.acceptedBy}>{selectedGame.acceptedByUsername}</option>
-              </select>
-            </div>
-
-            <div className="flex justify-end gap-2 mt-6">
-              <button
-                onClick={() => setSelectedGame(null)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleWinnerSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Submit Winner
-              </button>
-            </div>
-          </div>
+            ))}
         </div>
-      )}
+      </div>
+
+      {/* Winner Select */}
+      <div className="mt-6">
+        <label className="block text-sm font-medium">Select Winner</label>
+        <select
+          value={winner}
+          onChange={(e) => setWinner(e.target.value)}
+          className="mt-1 w-full border rounded px-2 py-1"
+        >
+          <option value="">-- Select Winner --</option>
+          <option value={selectedGame.createdBy}>
+            {selectedGame.createdByUsername}
+          </option>
+          <option value={selectedGame.acceptedBy}>
+            {selectedGame.acceptedByUsername}
+          </option>
+        </select>
+      </div>
+
+      <div className="flex justify-end gap-2 mt-6">
+        <button
+          onClick={() => setSelectedGame(null)}
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleWinnerSubmit}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Submit Winner
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
 
       <Table pending={status} title="All Completed Games"
