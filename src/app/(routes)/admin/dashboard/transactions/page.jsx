@@ -383,11 +383,11 @@ console.log("hello guys");
     <div className=" bg-[var(--color-neutral)] ">
         {modalOpen && (
         <div className="fixed inset-0 bg-black/20 bg-opacity-60 flex items-center justify-center z-50">
-          <div className="relative bg-white rounded-2xl shadow-lg p-4 max-w-lg w-full">
+          <div className="relative bg-[var(--sidebar-bgss)] rounded-2xl shadow-lg p-4 max-w-lg w-full">
             {/* Close button */}
             <button
               onClick={() => setmodalOpen(false)}
-              className="absolute top-3 right-3 text-gray-700 cursor-pointer hover:text-black text-2xl"
+              className="absolute top-3 right-3 text-[var(--color-text)] cursor-pointer  text-2xl"
             >
               &times;
             </button>

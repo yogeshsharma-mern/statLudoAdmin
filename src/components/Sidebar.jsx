@@ -361,7 +361,7 @@ function SubMenuItem({ label, active, onClick, closeSidebar }) {
       className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${
         active
           ? "bg-[var(--sidebar-submenu)]"
-          : "text-[var( --color-text)] hover:bg-[var(--sidebar-bgss)] hover:text-black"
+          : "text-[var( --color-text)] hover:bg-[var(--sidebar-bgss)] "
       }`}
     >
       {label}
