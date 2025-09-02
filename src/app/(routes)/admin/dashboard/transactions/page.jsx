@@ -174,7 +174,7 @@ const handleApprove = (id) => {
 
 useEffect(() => {
   // 👇 give your real adminId here
-  const socket = connectSocket("68aeb1424102a546fd781973");
+  const socket = connectSocket("68b6adbf00186adb44b0a56c");
 console.log("hello guys");
   socket.on("new_payment", (data) => {
     console.log("Server says:", data);
