@@ -336,8 +336,8 @@ export default function Modal({ open, onClose, userDetail }) {
         cell: ({ row }) => {
           return (
             <div>
-              {
-                row.original.status != "paid" &&
+              { 
+               ( row.original.status != "paid" && row.original.status != "rejected") &&
 
                 <div className="flex items-center gap-3">
                   {/* <button
@@ -540,7 +540,7 @@ export default function Modal({ open, onClose, userDetail }) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Object.entries(form).map(([key, value]) => (
                   <div key={key} className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-600 mb-1 capitalize">
+                    <label className="text-sm font-medium text-[var(--color-text)] mb-1 capitalize">
                       {key.replace(/([A-Z])/g, " $1")}
                     </label>
 

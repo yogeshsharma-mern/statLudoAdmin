@@ -414,7 +414,7 @@ console.log("hello guys");
         <div className="mb-2 font-bold text-xl">Recent Transactions</div>
 
         <table className="min-w-full text-sm text-left text-gray-600">
-          <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+          <thead className="bg-[var(--table-colorss)] text-[var(--color-text)] uppercase text-xs">
             <tr>
               <th className="px-4 py-2">User ID</th>
               <th className="px-4 py-2">UTR Number</th>

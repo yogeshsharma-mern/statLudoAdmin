@@ -270,7 +270,7 @@ export default function Page() {
       <div className="p-7 pt-14 overflow-scroll">
         <div className="mb-3 text-xl font-bold">Recent Completed Games</div>
         <table className="min-w-full  text-sm text-left text-gray-600">
-          <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+          <thead className="bg-[var(--table-colorss)] text-[var(--color-text)] uppercase text-xs">
             <tr>
               <th className="px-4 py-2">Room ID</th>
               <th className="px-4 py-2">Created By</th>

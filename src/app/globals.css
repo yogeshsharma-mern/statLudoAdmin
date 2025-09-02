@@ -54,6 +54,84 @@
 
 
 }
+/* globals.css (global file imported in app/layout.jsx) */
+
+/* default tooltip vars (light mode) */
+:root {
+  --tooltip-bg: rgba(255,255,255,0.95);
+  --tooltip-text: var(--color-text, #111); /* falls back to your token */
+}
+
+/* dark mode overrides (your .dark class should toggle this) */
+.dark {
+  --tooltip-bg: rgba(7,12,20,0.85);
+  --tooltip-text: var(--color-text, #fff);
+}
+
+/* ApexCharts main tooltip wrapper */
+.apexcharts-tooltip {
+  background: var(--tooltip-bg) !important;      /* tooltip background */
+  color: var(--tooltip-text) !important;         /* tooltip text color */
+  border: 1px solid rgba(0,0,0,0.08) !important; /* optional border for contrast */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2) !important;
+  border-radius: 6px !important;
+}
+
+/* make sure all nested text elements follow the same color
+   and remove any white BG blocks inside the tooltip */
+.apexcharts-tooltip,
+.apexcharts-tooltip * {
+  color: var(--tooltip-text) !important;
+  background: transparent !important;
+}
+
+/* specific parts inside the tooltip */
+.apexcharts-tooltip-title,
+.apexcharts-tooltip-text-y-label,
+.apexcharts-tooltip-text-value,
+.apexcharts-tooltip-series-group {
+  color: var(--tooltip-text) !important;
+}
+
+/* x/y axis small tooltips (the little axis bubble) */
+.apexcharts-xaxistooltip,
+.apexcharts-yaxistooltip {
+  background: var(--tooltip-bg) !important;
+  color: var(--tooltip-text) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: none !important;
+}
+/* Axis labels (weekdays, months, numbers) */
+.apexcharts-xaxis text,
+.apexcharts-yaxis text {
+  fill: var(--color-text) !important; /* text color */
+  font-family: inherit !important;
+}
+
+/* Axis tooltip bubbles (small labels that show on hover) */
+.apexcharts-xaxistooltip,
+.apexcharts-yaxistooltip {
+  color: var(--color-text) !important;
+}
+
+
+/* Change only tooltip text color */
+/* .apexcharts-tooltip {
+  color: var(--color-text) !important;
+} */
+
+/* Title inside tooltip */
+/* .apexcharts-tooltip-title {
+  color: var(--color-text) !important;
+} */
+
+/* Marker label text */
+/* .apexcharts-tooltip-text-y-label,
+.apexcharts-tooltip-text-value {
+  color: var(--color-text) !important;
+} */
+
+
 
 body {
   background: var(--background);

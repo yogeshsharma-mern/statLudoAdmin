@@ -97,6 +97,10 @@ import {axiosApiInstance} from "@/library/helper";
 
 // ApexCharts client-side only
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+function getCSSVar(name) {
+  if (typeof window === "undefined") return "";
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
 
 export default function DashboardCharts() {
   const [userOptions, setUserOptions] = useState({});
@@ -110,6 +114,10 @@ export default function DashboardCharts() {
 
         const data = res.data?.data;
         if (!data) return;
+        
+         const primaryColor = getCSSVar("--color-primary");
+        const neutralColor = getCSSVar("--color-neutral-dark");
+        const textColor = getCSSVar("--color-text");
 
         // Extract weekdays + totals
         const categories = data.totalUsersByWeekday.map((d) => d.weekday);
@@ -145,7 +153,7 @@ export default function DashboardCharts() {
         {userSeries.length > 0 ? (
           <Chart options={userOptions} series={userSeries} type="area" height={280} />
         ) : (
-          <p className="text-gray-500">Loading chart...</p>
+          <p className="text-[var(--color-text)]">Loading chart...</p>
         )}
       </div>
 
@@ -159,7 +167,7 @@ export default function DashboardCharts() {
             plotOptions: { bar: { borderRadius: 8, columnWidth: "40%" } },
             dataLabels: { enabled: false },
             xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"] },
-            tooltip: { theme: "light" },
+            // tooltip: { theme: "light" },
           }}
           series={[{ name: "Revenue", data: [1200, 1800, 2400, 2000, 3000, 2800] }]}
           type="bar"

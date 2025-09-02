@@ -278,7 +278,7 @@ useEffect(() => {
       <div className="overflow-x-auto p-4 mt-10">
         <div className="font-bold text-xl mb-3">Recent Withdraw Requests</div>
   <table className="min-w-full rounded-lg ">
-    <thead className="bg-gray-100">
+    <thead className="bg-[var(--table-colorss)]">
       <tr>
         <th className="px-4 py-1 text-left">ID</th>
         <th className="px-4 py-1 text-left">User ID</th>
