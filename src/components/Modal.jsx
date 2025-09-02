@@ -11,24 +11,24 @@ import toast from "react-hot-toast";
 import { useMemo } from "react";
 import { IoAddSharp } from "react-icons/io5";
 import { FaUserEdit } from "react-icons/fa";
-import {fetchUserWithdrawData} from "@/redux/features/userWithdrawSlice";
-import {fetchuserCreditData} from "@/redux/features/userCreditSlice";
-import {fetchuserTransactionData} from "@/redux/features/userTransactionSlice";
-import {userWithdrawApproved} from "@/redux/features/userWithdrawSlice";
-import {userWithdrawReject} from "@/redux/features/userWithdrawSlice";
+import { fetchUserWithdrawData } from "@/redux/features/userWithdrawSlice";
+import { fetchuserCreditData } from "@/redux/features/userCreditSlice";
+import { fetchuserTransactionData } from "@/redux/features/userTransactionSlice";
+import { userWithdrawApproved } from "@/redux/features/userWithdrawSlice";
+import { userWithdrawReject } from "@/redux/features/userWithdrawSlice";
 // import {fetchuserTransactionData}  from "@/redux/features/userTransactionSlice";
 
 
 
 export default function Modal({ open, onClose, userDetail }) {
-  const {status:gamestatus} = useSelector(state=>state.usergamedetails);
-  const {status:withdrawStatus} = useSelector(state=>state.userwithdrawdetails);
-  const {status:transactionStatus} = useSelector(state=>state.usertransaction);
+  const { status: gamestatus } = useSelector(state => state.usergamedetails);
+  const { status: withdrawStatus } = useSelector(state => state.userwithdrawdetails);
+  const { status: transactionStatus } = useSelector(state => state.usertransaction);
   const [activeTab, setActiveTab] = useState("details");
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [creditValue, setCreditValue] = useState("");
   const [loading, setLoading] = useState(false);
-    const [reloadKey, setReloadKey] = useState(0);
+  const [reloadKey, setReloadKey] = useState(0);
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
@@ -90,16 +90,16 @@ export default function Modal({ open, onClose, userDetail }) {
       //   cell: ({ getValue }) => `₹${getValue()}`,
       // },
       {
-    accessorKey: "winner",
-    header: "Winner",
-    cell: ({ row }) => {
-      const winner = row?.original?.winner?.username;
-   
-      // find winner name
-    
-      return winner;
-    },
-  },
+        accessorKey: "winner",
+        header: "Winner",
+        cell: ({ row }) => {
+          const winner = row?.original?.winner?.username;
+
+          // find winner name
+
+          return winner;
+        },
+      },
       {
         accessorKey: "betAmount",
         header: "Bet Amount",
@@ -137,102 +137,100 @@ export default function Modal({ open, onClose, userDetail }) {
     ],
     []
   );
-const transactionColumns = useMemo(
-  () => [
-    {
-      accessorKey: "userId",
-      header: "User",
-      cell: ({ getValue }) => {
-        const user = getValue();
-        return (
-          <div>
-            <div className="font-medium">{user?.username ?? "—"}</div>
-            <div className="text-xs text-gray-500">{user?.phone ?? "—"}</div>
-          </div>
-        );
+  const transactionColumns = useMemo(
+    () => [
+      {
+        accessorKey: "userId",
+        header: "User",
+        cell: ({ getValue }) => {
+          const user = getValue();
+          return (
+            <div>
+              <div className="font-medium">{user?.username ?? "—"}</div>
+              <div className="text-xs text-gray-500">{user?.phone ?? "—"}</div>
+            </div>
+          );
+        },
       },
-    },
-    {
-      accessorKey: "utrNumber",
-      header: "UTR Number",
-      cell: ({ getValue }) => getValue() || "—",
-    },
-    {
-      accessorKey: "amount",
-      header: "Amount",
-      cell: ({ getValue }) => `₹${getValue()}`,
-    },
-    {
-      accessorKey: "screenshot",
-      header: "Screenshot",
-      cell: ({ getValue }) =>
-        getValue() ? (
-          <a
-            href={process.env.NEXT_PUBLIC_API_BASE_URL_Image+getValue()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-600 underline"
-          >
-            View
-          </a>
-        ) : (
-          "—"
-        ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ getValue }) => {
-        const val = getValue();
-        return (
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-semibold
-              ${
-                val === "approved"
+      {
+        accessorKey: "utrNumber",
+        header: "UTR Number",
+        cell: ({ getValue }) => getValue() || "—",
+      },
+      {
+        accessorKey: "amount",
+        header: "Amount",
+        cell: ({ getValue }) => `₹${getValue()}`,
+      },
+      {
+        accessorKey: "screenshot",
+        header: "Screenshot",
+        cell: ({ getValue }) =>
+          getValue() ? (
+            <a
+              href={process.env.NEXT_PUBLIC_API_BASE_URL_Image + getValue()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 underline"
+            >
+              View
+            </a>
+          ) : (
+            "—"
+          ),
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ getValue }) => {
+          const val = getValue();
+          return (
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold
+              ${val === "approved"
                   ? "bg-green-100 text-green-700"
                   : val === "pending"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-          >
-            {val}
-          </span>
-        );
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+            >
+              {val}
+            </span>
+          );
+        },
       },
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ getValue }) =>
-        new Date(getValue()).toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-    },
-    {
-      accessorKey: "updatedAt",
-      header: "Updated At",
-      cell: ({ getValue }) =>
-        new Date(getValue()).toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-    },
-  ],
-  []
-);
+      {
+        accessorKey: "createdAt",
+        header: "Created At",
+        cell: ({ getValue }) =>
+          new Date(getValue()).toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+      },
+      {
+        accessorKey: "updatedAt",
+        header: "Updated At",
+        cell: ({ getValue }) =>
+          new Date(getValue()).toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+      },
+    ],
+    []
+  );
 
 
-  const handleApprovedWidhdraw=async(id)=>
-  {
+  const handleApprovedWidhdraw = async (id) => {
     const res = await dispatch(userWithdrawApproved(id));
-    console.log("ressssppp",res);
+    console.log("ressssppp", res);
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User withdraw paid");
       setReloadKey(prev => prev + 1); // 🔄 table reload trigger
@@ -242,8 +240,7 @@ const transactionColumns = useMemo(
     }
   }
 
-  const handleRejectWidhdraw=async(id)=>
-  {
+  const handleRejectWidhdraw = async (id) => {
     const res = await dispatch(userWithdrawReject(id));
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User withdraw reject successfully");
@@ -254,142 +251,139 @@ const transactionColumns = useMemo(
     }
   }
   const withdrawColumns = useMemo(
-  () => [
-    {
-      accessorKey: "userId",
-      header: "User",
-      cell: ({ getValue }) => {
-        const val = getValue();
-        return val?.username ?? "—"; // username show
+    () => [
+      {
+        accessorKey: "userId",
+        header: "User",
+        cell: ({ getValue }) => {
+          const val = getValue();
+          return val?.username ?? "—"; // username show
+        },
       },
-    },
-    {
-      accessorKey: "userId.phone",
-      header: "Phone",
-    },
-    {
-      accessorKey: "userId.credit",
-      header: "Credit",
-      cell: ({ getValue }) => `₹${getValue()}`,
-    },
-    {
-      accessorKey: "amount",
-      header: "Amount",
-      cell: ({ getValue }) => `₹${getValue()}`,
-    },
-    {
-      accessorKey: "bankAccount",
-      header: "Bank Account",
-    },
-    {
-      accessorKey: "ifsc",
-      header: "IFSC",
-    },
-       {
-      accessorKey: "upiId",
-      header: "UPIId",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ getValue }) => {
-        const val = getValue();
-        return (
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-semibold
+      {
+        accessorKey: "userId.phone",
+        header: "Phone",
+      },
+      {
+        accessorKey: "userId.credit",
+        header: "Credit",
+        cell: ({ getValue }) => `₹${getValue()}`,
+      },
+      {
+        accessorKey: "amount",
+        header: "Amount",
+        cell: ({ getValue }) => `₹${getValue()}`,
+      },
+      {
+        accessorKey: "bankAccount",
+        header: "Bank Account",
+      },
+      {
+        accessorKey: "ifsc",
+        header: "IFSC",
+      },
+      {
+        accessorKey: "upiId",
+        header: "UPIId",
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ getValue }) => {
+          const val = getValue();
+          return (
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold
               ${val === "unpaid"
-                ? "bg-red-100 text-red-700"
-                : val === "paid"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-yellow-100 text-yellow-700"
-              }`}
-          >
-            {val}
-          </span>
-        );
+                  ? "bg-red-100 text-red-700"
+                  : val === "paid"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
+                }`}
+            >
+              {val}
+            </span>
+          );
+        },
       },
-    },
-    // {
-    //   accessorKey: "createdAt",
-    //   header: "Created At",
-    //   cell: ({ getValue }) =>
-    //     new Date(getValue()).toLocaleString("en-GB", {
-    //       day: "2-digit",
-    //       month: "short",
-    //       year: "numeric",
-    //       hour: "2-digit",
-    //       minute: "2-digit",
-    //     }),
-    // },
-    // {
-    //   accessorKey: "updatedAt",
-    //   header: "Updated At",
-    //   cell: ({ getValue }) =>
-    //     new Date(getValue()).toLocaleString("en-GB", {
-    //       day: "2-digit",
-    //       month: "short",
-    //       year: "numeric",
-    //       hour: "2-digit",
-    //       minute: "2-digit",
-    //     }),
-    // },
-       {
-             id: "actions",
-             header: "Actions",
-             cell: ({ row }) => 
-              
-             
-             {
-              return(
-                <div>
-                  {
-                    row.original.status !="paid" &&
+      // {
+      //   accessorKey: "createdAt",
+      //   header: "Created At",
+      //   cell: ({ getValue }) =>
+      //     new Date(getValue()).toLocaleString("en-GB", {
+      //       day: "2-digit",
+      //       month: "short",
+      //       year: "numeric",
+      //       hour: "2-digit",
+      //       minute: "2-digit",
+      //     }),
+      // },
+      // {
+      //   accessorKey: "updatedAt",
+      //   header: "Updated At",
+      //   cell: ({ getValue }) =>
+      //     new Date(getValue()).toLocaleString("en-GB", {
+      //       day: "2-digit",
+      //       month: "short",
+      //       year: "numeric",
+      //       hour: "2-digit",
+      //       minute: "2-digit",
+      //     }),
+      // },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          return (
+            <div>
+              {
+                row.original.status != "paid" &&
 
-                      <div className="flex items-center gap-3">
-                 {/* <button
+                <div className="flex items-center gap-3">
+                  {/* <button
                    className="rounded-md bg-indigo-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
                    onClick={() => openEdit(row.original._id)}
                    title="Edit"
                  >
                    <FiEdit2 />
                  </button> */}
-                 <button
-                   className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
-                   onClick={() => handleApprovedWidhdraw(row.original._id)}
-                   title="viewuser"
-                 >
-                <span className="" >Approved</span>
-                {/* <MdDashboard className="md:hidden" /> */}
-                 </button>
-                     <button
-                   className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
-                   onClick={() => handleRejectWidhdraw(row.original._id)}
-                   title="viewuser"
-                 >
-                <span className="" >Reject</span>
-                {/* <MdDashboard className="md:hidden" /> */}
-                 </button>
-     
-               </div>
-                  }
+                  <button
+                    className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
+                    onClick={() => handleApprovedWidhdraw(row.original._id)}
+                    title="viewuser"
+                  >
+                    <span className="" >Approved</span>
+                    {/* <MdDashboard className="md:hidden" /> */}
+                  </button>
+                  <button
+                    className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
+                    onClick={() => handleRejectWidhdraw(row.original._id)}
+                    title="viewuser"
+                  >
+                    <span className="" >Reject</span>
+                    {/* <MdDashboard className="md:hidden" /> */}
+                  </button>
+
                 </div>
-              )
-             }
-           },
-  ],
-  []
-);
+              }
+            </div>
+          )
+        }
+      },
+    ],
+    []
+  );
 
   const fetchUserGames = (params = {}) => {
     return fetchuserGameData({ id: userDetail._id, ...params });
   };
-    const fetchuserCredit = (params = {}) => {
+  const fetchuserCredit = (params = {}) => {
     return fetchuserCreditData({ id: userDetail._id, ...params });
   };
-      const fetchWithdraw = (params = {}) => {
+  const fetchWithdraw = (params = {}) => {
     return fetchUserWithdrawData({ id: userDetail._id, ...params });
   };
-      const fetchTransaction = (params = {}) => {
+  const fetchTransaction = (params = {}) => {
     return fetchuserTransactionData({ id: userDetail._id, ...params });
   };
   // initialize form
@@ -644,7 +638,7 @@ const transactionColumns = useMemo(
                   filtersUI={
                     <>
 
-                    
+
                       <select
                         value={filters.status}
                         onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -668,7 +662,7 @@ const transactionColumns = useMemo(
               </div>
             )
           }
-           {/* {
+          {/* {
             activeTab == "credits" && (
               <div>
                 <Table columnsDef={columns} fetchData={fetchuserCredit} filters={filters}
@@ -694,7 +688,7 @@ const transactionColumns = useMemo(
               </div>
             )
           } */}
-              {
+          {
             activeTab == "transactions" && (
               <div>
                 <Table columnsDef={transactionColumns} flag={1} fetchData={fetchTransaction} pending={transactionStatus} filters={filters}
@@ -719,7 +713,7 @@ const transactionColumns = useMemo(
                   } />
               </div>
             )}
-             {
+          {
             activeTab == "withdraw" && (
               <div>
                 <Table columnsDef={withdrawColumns} reloadKey={reloadKey} flag={1} pending={withdrawStatus} fetchData={fetchWithdraw} filters={filters}
@@ -734,7 +728,7 @@ const transactionColumns = useMemo(
                         <option value="paid">Paid</option>
                         <option value="unpaid">Unpaid</option>
                         <option value="rejected">Rejected</option>
-    
+
 
                       </select>
 
