@@ -16,6 +16,7 @@ import { CgUnblock } from "react-icons/cg";
 import ToggleButton from "@/components/ToggleButton";
 import Image from "next/image";
 import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
+import Cookies from "js-cookie";
 
 
  
@@ -36,6 +37,8 @@ const [paymentInfo,setpaymentInfo] = useState({});
   const [payments, setPayments] = useState([]);
   const { totalPages } = useSelector((state) => state.transaction);
   const dispatcher = useDispatch();
+    const adminId = Cookies.get("adminId");
+  
   // const handleApprove = (id) => {
   //   socket.emit("update_payment_status", { paymentId: id, status: "approved" });
   //   toast.success("Payment approved");
@@ -174,7 +177,7 @@ const handleApprove = (id) => {
 
 useEffect(() => {
   // 👇 give your real adminId here
-  const socket = connectSocket("68b6adbf00186adb44b0a56c");
+  const socket = connectSocket(adminId);
 console.log("hello guys");
   socket.on("new_payment", (data) => {
     console.log("Server says:", data);

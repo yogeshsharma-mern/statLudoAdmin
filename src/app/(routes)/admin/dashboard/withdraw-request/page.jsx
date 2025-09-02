@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import {withdrawApprove} from "@/redux/features/withdrawSlice";
 import {withdrawReject} from "@/redux/features/withdrawSlice";
 import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
+import Cookies from "js-cookie";
 
 
 
@@ -29,6 +30,9 @@ export default function Page() {
   console.log("withdrawstatus",withdrawStatus);
     const [reloadKey, setReloadKey] = useState(0);
   const { totalPages } = useSelector((state) => state.gameLog);
+  const adminId = Cookies.get("adminId");
+  console.log("adminIdOnwithdraw",adminId);
+  
   //   const handleApprove = (id) => {
   //   socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
   //   toast.success("Payment approved");
@@ -140,6 +144,11 @@ const columns = useMemo(
       header: "Amount",
       cell: ({ getValue }) => `₹${getValue()}`,
     },
+       {
+      accessorKey: "userAmount",
+      header: "Payable Amount",
+      cell: ({ getValue }) => `₹${getValue()}`,
+    },
     {
       accessorKey: "upiId",
       header: "UPIId",
@@ -246,7 +255,7 @@ const columns = useMemo(
 
 useEffect(() => {
   // 👇 give your real adminId here
-  const socket = connectSocket("68b6adbf00186adb44b0a56c");
+  const socket = connectSocket(adminId);
 
   socket.on("new_withdraw", (data) => {
     console.log("Server says:", data);
@@ -275,6 +284,7 @@ useEffect(() => {
         <th className="px-4 py-1 text-left">User ID</th>
         <th className="px-4 py-1 text-left">UPI ID</th>
         <th className="px-4 py-1 text-left">Amount</th>
+        <th className="px-4 py-1 text-left">Payable Amount</th>
         <th className="px-4 py-1 text-left">Status</th>
         <th className="px-4 py-1 text-left">Created At</th>
         <th className="px-4 py-1 text-left">Updated At</th>
@@ -291,6 +301,8 @@ useEffect(() => {
       <td className="px-4 py-3 text-sm text-gray-700">{item.userId}</td>
       <td className="px-4 py-3 text-sm text-gray-700">{item.upiId}</td>
       <td className="px-4 py-3 font-medium text-gray-900">₹{item.amount}</td>
+      <td className="px-4 py-3 font-medium text-gray-900">₹{item.userAmount}</td>
+
 
       <td className="px-4 py-3">
         <span

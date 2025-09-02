@@ -9,7 +9,7 @@ import { gameresult } from "@/redux/features/activeCompletedGamesSlice";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
-
+import Cookies from "js-cookie";
 
 
 export default function Page() {
@@ -25,6 +25,7 @@ export default function Page() {
   const [winner, setWinner] = useState("");
   const [winnderapi, setWinnderApi] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+      const adminId = Cookies.get("adminId");
 
   const { totalPages } = useSelector((state) => state.gameLog);
   // useEffect(() => {
@@ -101,7 +102,7 @@ export default function Page() {
 
   useEffect(() => {
     // 👇 give your real adminId here
-    const socket = connectSocket("68b6adbf00186adb44b0a56c");
+    const socket = connectSocket(adminId);
     console.log("helloooo");
     socket.on("game_over", (data) => {
       console.log("Server says:", data);
@@ -125,6 +126,7 @@ export default function Page() {
       gameId: selectedGame._id,
       winner,
     });
+      setReloadKey(prev => prev + 1);
 
     setCompletedGames((prev) => {
       const index = prev.findIndex((g) => g._id === selectedGame._id);
