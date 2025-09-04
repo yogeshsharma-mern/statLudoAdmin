@@ -70,6 +70,7 @@ const handleApprove = (id) => {
   }
 
   socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
+      setReloadKey(prev => prev + 1);
   toast.success("Payment approved");
 
   // remove only the approved payment from local state
@@ -88,6 +89,7 @@ const handlereject = (id) => {
   }
 
   socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+      setReloadKey(prev => prev + 1);
   toast.success("Payment Rejected Successfully");
 
   // remove only the approved payment from local state

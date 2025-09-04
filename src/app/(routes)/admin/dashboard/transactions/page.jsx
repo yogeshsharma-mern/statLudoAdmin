@@ -55,6 +55,7 @@ const handleApprove = (id) => {
   }
 
   socket.emit("update_payment_status", { paymentId: id, status: "approved" });
+      setReloadKey(prev => prev + 1);
   toast.success("Payment approved");
 
   dispatcher(fetchTransactions(filters));
@@ -87,6 +88,7 @@ const handleApprove = (id) => {
   }
 
   socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
+      setReloadKey(prev => prev + 1);
   toast.error("Payment rejected");
 
   // remove only the rejected payment
