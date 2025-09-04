@@ -79,7 +79,7 @@
   border-radius: 6px !important;
 }
 
-/* make sure all nested text elements follow the same color
+/* make sure all nested text elements follow the same 
    and remove any white BG blocks inside the tooltip */
 .apexcharts-tooltip,
 .apexcharts-tooltip * {
