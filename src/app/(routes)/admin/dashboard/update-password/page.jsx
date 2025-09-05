@@ -46,11 +46,10 @@ export default function UpdatePasswordPage({setshowpasswordModal,userId}) {
  try {
     setLoading(true);
 
-    const res = await axiosApiInstance.put(
-      `/admin/users/update-password/${userId}`,
+    const res = await axiosApiInstance.post(
+      `/admin/user/${userId}/change-password`,
       {
-        newPassword, 
-        confirmPassword
+        newPassword:newPassword
       }
     );
 
@@ -74,13 +73,13 @@ export default function UpdatePasswordPage({setshowpasswordModal,userId}) {
   };
 
   return (
-   <div className="fixed w-full h-screen z-100 bg-black/20">
+   <div   className="fixed w-full h-screen   z-100 bg-black/20">
      <div
      className="fixed top-1/2 left-1/2 max-md:w-full transform -translate-x-1/2 -translate-y-1/2 bg-black/30 z-[100]"
       style={{ backgroundColor: "var(--color-neutral)" }}
     >
-     <div onClick={()=>setshowpasswordModal(false)} className="flex  justify-end mr-3 mt-3 cursor-pointer">
-       <RxCross2  />
+     <div  className="flex  justify-end mr-3 mt-3 ">
+       <RxCross2 onClick={()=>setshowpasswordModal(false)} className="w-6 h-6 cursor-pointer" />
      </div>
       {/* <ToggleButton initial={false} onChange={handleToggleChange}/> */}
       <div className="w-full max-w-md  backdrop-blur-lg rounded-2xl shadow-xl p-8">
