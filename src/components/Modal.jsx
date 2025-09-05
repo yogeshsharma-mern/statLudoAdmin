@@ -16,16 +16,22 @@ import { fetchuserCreditData } from "@/redux/features/userCreditSlice";
 import { fetchuserTransactionData } from "@/redux/features/userTransactionSlice";
 import { userWithdrawApproved } from "@/redux/features/userWithdrawSlice";
 import { userWithdrawReject } from "@/redux/features/userWithdrawSlice";
+import UpdatePasswordPage from "@/app/(routes)/admin/dashboard/update-password/page";
+import { TbLockPassword } from "react-icons/tb";
+
 // import {fetchuserTransactionData}  from "@/redux/features/userTransactionSlice";
 
 
 
 export default function Modal({ open, onClose, userDetail }) {
+  const userId=userDetail._id;
+  console.log("userId",userId);
   const { status: gamestatus } = useSelector(state => state.usergamedetails);
   const { status: withdrawStatus } = useSelector(state => state.userwithdrawdetails);
   const { status: transactionStatus } = useSelector(state => state.usertransaction);
   const [activeTab, setActiveTab] = useState("details");
   const [showCreditModal, setShowCreditModal] = useState(false);
+  const [passwordModal,setshowpasswordModal] = useState(false);
   const [creditValue, setCreditValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -523,7 +529,17 @@ export default function Modal({ open, onClose, userDetail }) {
           {activeTab === "details" && (
             <div>
               {/* Add Credit Button */}
-              <div className="flex justify-end items-center mb-3">
+              <div className="flex justify-end items-center gap-2 mb-3">
+                <button
+                  onClick={() => setshowpasswordModal(true)}
+                  className="bg-blue-500 text-white px-3 py-1 rounded-md cursor-pointer hover:bg-blue-600"
+                >
+                  <div className="flex items-center gap-1">
+                   <TbLockPassword />
+          Change Password
+                  </div>
+
+                </button>
                 <button
                   onClick={() => setShowCreditModal(true)}
                   className="bg-blue-500 text-white px-3 py-1 rounded-md cursor-pointer hover:bg-blue-600"
@@ -568,7 +584,12 @@ export default function Modal({ open, onClose, userDetail }) {
                         disabled={key === "phone"} // phone not editable
                         onChange={(e) => {
                           const val = e.target.value;
-
+  if (
+      ["battlePlayed", "penalty", "referralEarning", "cashWon", "winningAmount", "credit", "completedGames", "referRank"]
+        .includes(key)
+    ) {
+      if (val.length > 6) return; // ❌ Stop if length exceeds 5
+    }
                           // ✅ Validation for Full Name (no numbers allowed)
                           if (key === "fullName") {
                             if (/[^a-zA-Z\s]/.test(val)) {
@@ -742,18 +763,31 @@ export default function Modal({ open, onClose, userDetail }) {
       </div>
 
       {/* Credit Modal */}
+      {
+        passwordModal && (
+          <UpdatePasswordPage setshowpasswordModal={setshowpasswordModal} userId={userId}/>
+        )
+      }
       {showCreditModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[100]">
           <div className="bg-[var(--color-neutral)] p-6 rounded-lg w-96 shadow-lg">
             <h3 className="text-lg font-semibold mb-4">➕ Add Credit</h3>
-            <input
+          <input
+  type="number"
+  value={creditValue}
+  onChange={(e) => {
+    let val = e.target.value;
 
-              type="number"
-              value={creditValue}
-              onChange={(e) => setCreditValue(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 mb-4"
-              placeholder="Enter credit amount"
-            />
+    // sirf digits allow + 5 digit se zyada cut
+    if (/[^0-9]/.test(val)) return; 
+    if (val.length > 6) val = val.slice(0, 6);
+
+    setCreditValue(val);
+  }}
+  className="w-full border rounded-lg px-3 py-2 mb-4"
+  placeholder="Enter credit amount"
+/>
+
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowCreditModal(false)}

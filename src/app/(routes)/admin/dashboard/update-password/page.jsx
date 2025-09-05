@@ -2,9 +2,14 @@
 import { useState } from "react";
 import { RiLockPasswordLine } from "react-icons/ri";
 // import ToggleButton from "@/components/ToggleButton";
+import { RxCross2 } from "react-icons/rx";
+import { axiosApiInstance } from "@/library/helper";
+import toast from "react-hot-toast";
 
-export default function UpdatePasswordPage() {
+
+export default function UpdatePasswordPage({setshowpasswordModal,userId}) {
   const [currentPassword, setCurrentPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState({
@@ -26,7 +31,7 @@ export default function UpdatePasswordPage() {
 // {
 // console.log("seconoddddd",state);
 // }
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
     if (!validatePassword(newPassword)) {
       setError(
@@ -38,8 +43,29 @@ export default function UpdatePasswordPage() {
       setError("Confirm password must match the new password.");
       return;
     }
-    setError("");
-    alert("✅ Password updated successfully!");
+ try {
+    setLoading(true);
+
+    const res = await axiosApiInstance.put(
+      `/admin/users/update-password/${userId}`,
+      {
+        newPassword, 
+        confirmPassword
+      }
+    );
+
+    console.log("Updated user:", res.data);
+
+    if (res.data.status === 200) {
+      toast.success(res.data.message);
+      setshowpasswordModal(false);
+    }
+  } catch (err) {
+    console.error("API error:", err.response?.data || err.message);
+    toast.error(err.response?.data?.message || "Failed to update user");
+  } finally {
+    setLoading(false);
+  }
     // 👉 Call your API here
   };
 
@@ -48,10 +74,14 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <div
-      className="min-h-[90vh] flex items-center justify-center px-6"
+   <div className="fixed w-full h-screen z-100 bg-black/20">
+     <div
+     className="fixed top-1/2 left-1/2 max-md:w-full transform -translate-x-1/2 -translate-y-1/2 bg-black/30 z-[100]"
       style={{ backgroundColor: "var(--color-neutral)" }}
     >
+     <div onClick={()=>setshowpasswordModal(false)} className="flex  justify-end mr-3 mt-3 cursor-pointer">
+       <RxCross2  />
+     </div>
       {/* <ToggleButton initial={false} onChange={handleToggleChange}/> */}
       <div className="w-full max-w-md  backdrop-blur-lg rounded-2xl shadow-xl p-8">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
@@ -66,7 +96,7 @@ export default function UpdatePasswordPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Current Password */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Current Password
             </label>
@@ -86,7 +116,7 @@ export default function UpdatePasswordPage() {
                 {showPassword.current ? "🙈" : "👁️"}
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* New Password */}
           <div>
@@ -153,5 +183,6 @@ export default function UpdatePasswordPage() {
         </form>
       </div>
     </div>
+   </div>
   );
 }

@@ -295,16 +295,16 @@ const handleCloseSidebar = () => {
 
             />
           </Link>
-                 <Link href="/admin/dashboard/update-password">
-            {/* <SidebarItem
+                 {/* <Link href="/admin/dashboard/update-password">
+            <SidebarItem
               icon={<TbLockPassword />}
               label="Update Password"
               active={activeTab === "updatepassword"}
               onClick={() => setActiveTab("updatepassword")}
                    closeSidebar={() => setIsMobileOpen(false)} 
 
-            /> */}
-          </Link>
+            />
+          </Link> */}
           </div>
           
             
