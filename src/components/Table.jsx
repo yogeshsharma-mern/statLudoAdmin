@@ -217,6 +217,12 @@ if (filters?.betAmountMax) {
     (item) => item.winningAmount <= Number(filters.betAmountMax)
   );
 }
+if (debounceSearch) {
+  const query = debounceSearch.toLowerCase();
+  flattened = flattened.filter(
+    (item) => item.referred_by?.username?.toLowerCase().includes(query)
+  );
+}
           // 3. Manual frontend pagination
           const start = (currentPage - 1) * pageSize;
           const end = start + pageSize;
