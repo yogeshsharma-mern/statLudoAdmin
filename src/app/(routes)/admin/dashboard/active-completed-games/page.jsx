@@ -334,7 +334,7 @@ export default function Page() {
       {/* 🔥 Modal */}
       {selectedGame && (
         <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[500px]">
+          <div className="bg-(--color-neutral)  rounded-lg shadow-lg p-6 w-[500px]">
             <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
             <p><strong>Room ID:</strong> {selectedGame.roomId}</p>
@@ -458,7 +458,7 @@ export default function Page() {
         } fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
       {selectedGameApi && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
+          <div className="bg-(--color-neutral)  p-6 rounded-lg w-[500px] shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
             <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>
@@ -531,7 +531,7 @@ export default function Page() {
             <div className="flex justify-end gap-2 mt-6">
               <button
                 onClick={() => setSelectedGameApi(null)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-400 rounded hover:bg-gray-400"
               >
                 Cancel
               </button>
