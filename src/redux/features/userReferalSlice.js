@@ -4,8 +4,8 @@ import { fetchReferalTransactionData } from "@/library/apicall";
 // ------- Thunks (redux-thunk via RTK) -------
 
 
-export const fetchuserTransactionData = createAsyncThunk(
-    "users/transactions",
+export const fetchuserReferals = createAsyncThunk(
+    "users/referals",
     async ({ page = 1, limit = 5, search = "", id,filters={}} = {}, thunkAPI) => {
         console.log("hh", { page, limit, search });
 
@@ -22,10 +22,10 @@ export const fetchuserTransactionData = createAsyncThunk(
 
 
 // ------- Slice -------
-const usertransactionSlice = createSlice({
-    name: "transactiondata",
+const userReferalSlice = createSlice({
+    name: "userReferals",
     initialState: {
-        usertransactiondata: [],
+        userReferaldata: [],
         totalPages: 1,
         totalDocs: 0,
         page: 1,
@@ -39,21 +39,21 @@ const usertransactionSlice = createSlice({
     extraReducers: (builder) => {
         builder
             // fetch
-            .addCase(fetchuserTransactionData.pending, (state) => {
+            .addCase(fetchuserReferals.pending, (state) => {
                 state.status = "loading";
                 state.error = null;
             })
-            .addCase(fetchuserTransactionData.fulfilled, (state, action) => {
+            .addCase(fetchuserReferals.fulfilled, (state, action) => {
                 console.log("action", action);
                 console.log("first", action.payload)
                 state.status = "succeeded";
-                state.usertransactiondata = action.payload.users;
+                state.userReferaldata = action.payload.users;
                 state.totalPages = action.payload.pages;
                 state.totalDocs = action.payload.totalDocs;
                 state.page = action.payload.page;
                 state.limit = action.payload.limit ?? state.limit;
             })
-            .addCase(fetchuserTransactionData.rejected, (state, action) => {
+            .addCase(fetchuserReferals.rejected, (state, action) => {
                 state.status = "failed";
                 state.error = action.payload || action.error.message;
             })
@@ -61,4 +61,4 @@ const usertransactionSlice = createSlice({
     },
 });
 
-export default usertransactionSlice.reducer;
+export default userReferalSlice.reducer;

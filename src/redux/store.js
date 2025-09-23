@@ -12,6 +12,8 @@ import widhdrawReducer from "@/redux/features/withdrawSlice";
 import usercreditslice from "@/redux/features/userCreditSlice";
 import userwithdrawslice from "@/redux/features/userWithdrawSlice";
 import userTransactiionReducer from "@/redux/features/userTransactionSlice";
+import userReferal from "@/redux/features/referalSlice";
+import userReferalSlice from "@/redux/features/userReferalSlice";
 
 
 
@@ -29,7 +31,9 @@ const store = configureStore({
         withdraw:widhdrawReducer,
         usercreditdetails:usercreditslice,
         userwithdrawdetails:userwithdrawslice,
-        usertransaction:userTransactiionReducer
+        usertransaction:userTransactiionReducer,
+        referal:userReferal,
+        userReferal:userReferalSlice
     }
 })
 

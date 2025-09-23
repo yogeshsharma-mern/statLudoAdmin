@@ -18,6 +18,7 @@ import { userWithdrawApproved } from "@/redux/features/userWithdrawSlice";
 import { userWithdrawReject } from "@/redux/features/userWithdrawSlice";
 import UpdatePasswordPage from "@/app/(routes)/admin/dashboard/update-password/page";
 import { TbLockPassword } from "react-icons/tb";
+import {fetchuserReferals} from "@/redux/features/userReferalSlice";
 
 // import {fetchuserTransactionData}  from "@/redux/features/userTransactionSlice";
 
@@ -45,6 +46,9 @@ export default function Modal({ open, onClose, userDetail }) {
     { key: "withdraw", label: "Withdraw" },
     // { key: "referral", label: "Referral" },
     { key: "transactions", label: "Transactions" },
+    // {
+    //   key:"referal", label:"Referals"
+    // }
   ];
   const [filters, setFilters] = useState({
     status: "",
@@ -392,6 +396,9 @@ export default function Modal({ open, onClose, userDetail }) {
   const fetchTransaction = (params = {}) => {
     return fetchuserTransactionData({ id: userDetail._id, ...params });
   };
+    const fetchReferaldata = (params = {}) => {
+    return fetchuserReferals({ id: userDetail._id, ...params });
+  };
   // initialize form
   useEffect(() => {
     if (userDetail) {
@@ -525,6 +532,7 @@ export default function Modal({ open, onClose, userDetail }) {
         </div>
 
         {/* Content */}
+
         <div className="flex-1 overflow-y-auto px-2 md:px-8 py-6 bg-[var(--color-neutral)]">
           {activeTab === "details" && (
             <div>
@@ -734,6 +742,31 @@ export default function Modal({ open, onClose, userDetail }) {
                   } />
               </div>
             )}
+             {/* {
+            activeTab == "referal" && (
+              <div>
+                <Table columnsDef={transactionColumns} flag={1} fetchData={fetchReferaldata} pending={transactionStatus} filters={filters}
+                  filtersUI={
+                    // <>
+                    //   <select
+                    //     value={filters.status}
+                    //     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                    //     className="rounded-lg border px-2 py-1 text-sm"
+                    //   >
+                    //     <option value="">All Games</option>
+                    //     <option value="accepted">Accepted</option>
+                    //     <option value="quit">quit</option>
+                    //     <option value="lost">lost</option>
+                    //     <option value="created">created</option>
+                    //     <option value="played">played</option>
+                    //   </select>
+
+
+                    // </>
+                    ""
+                  } />
+              </div>
+            )} */}
           {
             activeTab == "withdraw" && (
               <div>

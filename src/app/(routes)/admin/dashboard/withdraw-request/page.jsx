@@ -69,7 +69,9 @@ const handleApprove = (id) => {
     return;
   }
 
-  socket.emit("update_withdraw_status", { withdrawId: id, status: "paid" });
+  const withdrawData = { withdrawId: id, status: "paid" }
+
+  socket.emit("update_withdraw_status", withdrawData);
       setReloadKey(prev => prev + 1);
   toast.success("Payment approved");
 
@@ -88,7 +90,9 @@ const handlereject = (id) => {
     return;
   }
 
-  socket.emit("update_withdraw_status", { withdrawId: id, status: "reject" });
+   const withdrawData = { withdrawId: id, status: "reject" }
+
+  socket.emit("update_withdraw_status",withdrawData );
       setReloadKey(prev => prev + 1);
   toast.success("Payment Rejected Successfully");
 

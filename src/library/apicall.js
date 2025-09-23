@@ -184,7 +184,29 @@ export const getTransactiion = async ({ page = 1, limit = 5, search="",filters})
   }
 }; 
 
+export const getReferals = async ({ page = 1, limit = 5, search="",filters}) => {
+  console.log(
+  "filters",filters
+  )
+  try {
+    const params = new URLSearchParams();
 
+    params.append("page", page);
+    params.append("limit", limit);
+        params.append("status",filters.status);
+    params.append("minWinningAmount",filters.betAmountMin);
+    params.append("maxWinningAmount",filters.betAmountMax);
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+    const response = await axiosApiInstance.get(`/admin/referrals?${params.toString()}`);
+    return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+}; 
 export const getGameLogs = async ({ page = 1, limit = 5, search="", isBanned, isActive,filters={}}) => {
   console.log("getlogfilter",filters);
   try {
@@ -297,6 +319,43 @@ export const getUserCreditData = async ({
 };
 
 export const getUserTransactionData = async ({
+  page = 1,
+  limit = 5,
+  search = "",
+  id,
+  filters = {}
+}) => {
+  console.log("filters", filters);
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("filter",filters.status);
+
+
+    // status mapping (frontend → backend filter values)
+ 
+
+    // if (filters.status && statusMap[filters.status]) {
+    //   params.append("filter", statusMap[filters.status]);
+    // }
+
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+
+    const response = await axiosApiInstance.get(
+      `/admin/users/${id}/payments?${params.toString()}`
+    );
+
+    return response.data; // ✅ returns API response data
+  } catch (error) {
+    console.error("Error fetching user games:", error);
+    return null; // or throw error if you want to handle it in component
+  }
+};
+export const fetchReferalTransactionData = async ({
   page = 1,
   limit = 5,
   search = "",

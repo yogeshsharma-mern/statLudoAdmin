@@ -20,6 +20,7 @@ import { TbReport } from "react-icons/tb";
 import { TbLockPassword } from "react-icons/tb";
 import { RiAdminFill } from "react-icons/ri";
 import { disconnectSocket } from "@/library/socket";
+import { FaShareFromSquare } from "react-icons/fa6";
 
 
 
@@ -295,16 +296,16 @@ const handleCloseSidebar = () => {
 
             />
           </Link>
-                 {/* <Link href="/admin/dashboard/update-password">
+                 <Link href="/admin/dashboard/referal-history">
             <SidebarItem
-              icon={<TbLockPassword />}
-              label="Update Password"
-              active={activeTab === "updatepassword"}
-              onClick={() => setActiveTab("updatepassword")}
-                   closeSidebar={() => setIsMobileOpen(false)} 
+              icon={<FaShareFromSquare />}
+              label="Referal History"
+              active={activeTab === "refferalhistory"}
+              onClick={() => setActiveTab("referalhisstory")}
+   
 
             />
-          </Link> */}
+          </Link>
           </div>
           
             

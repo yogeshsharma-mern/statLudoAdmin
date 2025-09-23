@@ -87,6 +87,43 @@ console.log("pagesize",pageSize);
 //   loadData();
 // }, [dispatcher, currentPage, pageSize,debounceSearch,filters,reloadKey]);
 
+// useEffect(() => {
+//   const loadData = async () => {
+//     try {
+//       const res = await dispatcher(
+//         fetchData({
+//           page: currentPage,
+//           limit: pageSize,
+//           search: debounceSearch,
+//           sort,
+//           filters,
+//         })
+//       );
+
+//       console.log("respppppp", res);
+
+//       if (res.payload) {
+//         // 🔹 Normalize response
+//         const data =
+//           res.payload.payments || // if API gives { payments: [...] }
+//           res.payload.games ||  
+//           res.payload.referrals ||
+//           res.payload.withdraws || 
+//             // if API gives { games: [...] }
+//           (Array.isArray(res.payload) ? res.payload : []); // if API gives []
+// console.log("pagesactivegames",res.payload);
+//         const totalPages = res.payload.pages || 1;
+
+//         setData(data);
+//         setTotalPages(totalPages);
+//       }
+//     } catch (error) {
+//       console.error("Error loading data:", error);
+//     }
+//   };
+
+//   loadData();
+// }, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher,reloadKey]);
 useEffect(() => {
   const loadData = async () => {
     try {
@@ -103,17 +140,26 @@ useEffect(() => {
       console.log("respppppp", res);
 
       if (res.payload) {
-        // 🔹 Normalize response
-        const data =
-          res.payload.payments || // if API gives { payments: [...] }
-          res.payload.games ||  
-          res.payload.withdraws ||  // if API gives { games: [...] }
-          (Array.isArray(res.payload) ? res.payload : []); // if API gives []
-console.log("pagesactivegames",res.payload);
-        const totalPages = res.payload.pages || 1;
+        let rawData =
+          res.payload.referrals || // our case
+          res.payload.payments ||
+          res.payload.games ||
+          res.payload.withdraws ||
+          (Array.isArray(res.payload) ? res.payload : []);
 
-        setData(data);
-        setTotalPages(totalPages);
+        // 🔹 Flatten referrals into rows with wins
+        if (res.payload.referrals) {
+          rawData = res.payload.referrals.flatMap(referral =>
+            referral.wins.map(win => ({
+              winner: referral.winner,
+              referred_by: referral.referred_by,
+              ...win, // winningAmount, referralEarning, roomId, createdAt, gameId
+            }))
+          );
+        }
+
+        setData(rawData);
+        setTotalPages(res.payload.pages || 1);
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -121,7 +167,7 @@ console.log("pagesactivegames",res.payload);
   };
 
   loadData();
-}, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher,reloadKey]);
+}, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher, reloadKey]);
 
 
   const columns = useMemo(() => columnsDef, [columnsDef]);

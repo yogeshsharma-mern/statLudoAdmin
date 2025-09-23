@@ -19,7 +19,7 @@ import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
 import Cookies from "js-cookie";
 
 
- 
+
 export default function Page() {
 
   const [filters, setFilters] = useState({
@@ -30,15 +30,15 @@ export default function Page() {
   // const { status } = useSelector(store => store.transaction);
   const { transactions, status, error, totalPages: rawTotalPages } = useSelector((state) => state.transaction);
   const [reloadKey, setReloadKey] = useState(0);
-const [openConfirm,setOpenConfirm] = useState(false);
-const [modalOpen,setmodalOpen] = useState(false);
-const [approveId,setApproveId] = useState(null);
-const [paymentInfo,setpaymentInfo] = useState({});
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [modalOpen, setmodalOpen] = useState(false);
+  const [approveId, setApproveId] = useState(null);
+  const [paymentInfo, setpaymentInfo] = useState({});
   const [payments, setPayments] = useState([]);
   const { totalPages } = useSelector((state) => state.transaction);
   const dispatcher = useDispatch();
-    const adminId = Cookies.get("adminId");
-  
+  const adminId = Cookies.get("adminId");
+
   // const handleApprove = (id) => {
   //   socket.emit("update_payment_status", { paymentId: id, status: "approved" });
   //   toast.success("Payment approved");
@@ -47,30 +47,30 @@ const [paymentInfo,setpaymentInfo] = useState({});
   //   // remove only the approved payment from local state
   //   setPayments((prev) => prev.filter((p) => p._id !== id));
   // };
-const handleApprove = (id) => {
-  const socket = getSocket(); // ✅ always fetch active socket
-  if (!socket) {
-    console.warn("⚠ No active socket connection!");
-    return;
-  }
+  const handleApprove = (id) => {
+    const socket = getSocket(); // ✅ always fetch active socket
+    if (!socket) {
+      console.warn("⚠ No active socket connection!");
+      return;
+    }
+    const paymentdata = { paymentId: id, status: "approved" }
+    socket.emit("update_payment_status", paymentdata);
+    setReloadKey(prev => prev + 1);
+    toast.success("Payment approved");
 
-  socket.emit("update_payment_status", { paymentId: id, status: "approved" });
-      setReloadKey(prev => prev + 1);
-  toast.success("Payment approved");
+    dispatcher(fetchTransactions(filters));
 
-  dispatcher(fetchTransactions(filters));
-
-  // remove only the approved payment from local state
-  setPayments((prev) => prev.filter((p) => p._id !== id));
-};
+    // remove only the approved payment from local state
+    setPayments((prev) => prev.filter((p) => p._id !== id));
+  };
 
   const handleView = (payment) => {
-  // Example: open modal
-  setpaymentInfo(payment);
-  setmodalOpen(true);
+    // Example: open modal
+    setpaymentInfo(payment);
+    setmodalOpen(true);
 
-  // Or navigate: router.push(`/payments/${payment._id}`);
-};
+    // Or navigate: router.push(`/payments/${payment._id}`);
+  };
   // const handleRejected = (id) => {
   //   socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
   //   toast.error("Payment rejected");
@@ -79,22 +79,22 @@ const handleApprove = (id) => {
   //   setPayments((prev) => prev.filter((p) => p._id !== id));
   //   dispatcher(fetchTransactions(filters));
   // };
-  
+
   const handleRejected = (id) => {
-  const socket = getSocket(); // ✅ fetch active socket
-  if (!socket) {
-    console.warn("⚠ No active socket connection!");
-    return;
-  }
+    const socket = getSocket(); // ✅ fetch active socket
+    if (!socket) {
+      console.warn("⚠ No active socket connection!");
+      return;
+    }
+    const paymentdata = { paymentId: id, status: "rejected" }
+    socket.emit("update_payment_status", paymentdata);
+    setReloadKey(prev => prev + 1);
+    toast.error("Payment rejected");
 
-  socket.emit("update_payment_status", { paymentId: id, status: "rejected" });
-      setReloadKey(prev => prev + 1);
-  toast.error("Payment rejected");
-
-  // remove only the rejected payment
-  setPayments((prev) => prev.filter((p) => p._id !== id));
-  dispatcher(fetchTransactions(filters));
-};
+    // remove only the rejected payment
+    setPayments((prev) => prev.filter((p) => p._id !== id));
+    dispatcher(fetchTransactions(filters));
+  };
 
   const handleApproveapi = async (id) => {
     const res = await dispatcher(transactionApproved(id));
@@ -150,52 +150,52 @@ const handleApprove = (id) => {
   //   };
   // }, []);
 
-// useEffect(() => {
-//   const socket = getSocket();
+  // useEffect(() => {
+  //   const socket = getSocket();
 
-//   if (socket) {
-//     socket.on("pending_payments_list", (data) => {
-//       console.log("Server says:", data);
-//      setPayments(data);
-//     });
-//   }
+  //   if (socket) {
+  //     socket.on("pending_payments_list", (data) => {
+  //       console.log("Server says:", data);
+  //      setPayments(data);
+  //     });
+  //   }
 
-//   if (socket) {
-//     socket.on("new_payment", (data) => {
-//       console.log("Server says:", data);
-//    setPayments((prev) => [data, ...prev]);
-//     });
-//   }
-//   return () => {
-//     if (socket) {
-//       socket.off("pending_payments_list"); // ✅ correct event cleanup
-//     }
-//       if (socket) {
-//       socket.off("new_payment"); // ✅ correct event cleanup
-//     }
-//   };
-// }, []);
+  //   if (socket) {
+  //     socket.on("new_payment", (data) => {
+  //       console.log("Server says:", data);
+  //    setPayments((prev) => [data, ...prev]);
+  //     });
+  //   }
+  //   return () => {
+  //     if (socket) {
+  //       socket.off("pending_payments_list"); // ✅ correct event cleanup
+  //     }
+  //       if (socket) {
+  //       socket.off("new_payment"); // ✅ correct event cleanup
+  //     }
+  //   };
+  // }, []);
 
 
-useEffect(() => {
-  // 👇 give your real adminId here
-  const socket = connectSocket(adminId);
-console.log("hello guys");
-  socket.on("new_payment", (data) => {
-    console.log("Server says:", data);
-     setPayments((prev) => [data, ...prev]);
-  });
+  useEffect(() => {
+    // 👇 give your real adminId here
+    const socket = connectSocket(adminId);
+    console.log("hello guys");
+    socket.on("new_payment", (data) => {
+      console.log("Server says:", data);
+      setPayments((prev) => [data, ...prev]);
+    });
     socket.on("pending_payments_list", (data) => {
-    console.log("Server says:", data);
-    setPayments((prev) => [data, ...prev]);
-  });
+      console.log("Server says:", data);
+      setPayments((prev) => [data, ...prev]);
+    });
 
-  return () => {
-    socket.off("pending_payments_list");
-    socket.off("new_payment");
-    disconnectSocket(); // optional, only if you want to close on unmount
-  };
-}, []);
+    return () => {
+      socket.off("pending_payments_list");
+      socket.off("new_payment");
+      disconnectSocket(); // optional, only if you want to close on unmount
+    };
+  }, []);
 
 
 
@@ -321,58 +321,58 @@ console.log("hello guys");
             minute: "2-digit",
           }),
       },
-     {
-  id: "actions",
-  header: "Actions",
-  cell: ({ row }) => {
-    const payment = row.original;
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const payment = row.original;
 
-    return (
-      <div className="flex items-center gap-3">
-      
-        {/* ✅ View Button - Always Visible */}
-        <button
-          className="rounded-md cursor-pointer bg-blue-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-600"
-          onClick={() => handleView(payment)}  // 👈 define this function
-        >
-          View
-        </button>
+          return (
+            <div className="flex items-center gap-3">
 
-        {/* ✅ Status-based buttons */}
-        {payment.status === "approved" ? (
-          <button
-            disabled
-            className="rounded-md bg-blue-100 px-2.5 py-1.5 text-xs font-semibold text-blue-700 cursor-default"
-          >
-            Not Available
-          </button>
-        ) : payment.status === "rejected" ? (
-          <button
-            disabled
-            className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 cursor-default"
-          >
-            Rejected
-          </button>
-        ) : (
-          <>
-            <button
-              className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
-              onClick={() => (setOpenConfirm(true), setApproveId(payment._id))}
-            >
-              Approve
-            </button>
-            <button
-              className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
-              onClick={() => handleRejectedapi(payment._id)}
-            >
-              Reject
-            </button>
-          </>
-        )}
-      </div>
-    );
-  },
-}
+              {/* ✅ View Button - Always Visible */}
+              <button
+                className="rounded-md cursor-pointer bg-blue-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-600"
+                onClick={() => handleView(payment)}  // 👈 define this function
+              >
+                View
+              </button>
+
+              {/* ✅ Status-based buttons */}
+              {payment.status === "approved" ? (
+                <button
+                  disabled
+                  className="rounded-md bg-blue-100 px-2.5 py-1.5 text-xs font-semibold text-blue-700 cursor-default"
+                >
+                  Not Available
+                </button>
+              ) : payment.status === "rejected" ? (
+                <button
+                  disabled
+                  className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 cursor-default"
+                >
+                  Rejected
+                </button>
+              ) : (
+                <>
+                  <button
+                    className="rounded-md cursor-pointer bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600"
+                    onClick={() => (setOpenConfirm(true), setApproveId(payment._id))}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    className="rounded-md cursor-pointer bg-red-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-600"
+                    onClick={() => handleRejectedapi(payment._id)}
+                  >
+                    Reject
+                  </button>
+                </>
+              )}
+            </div>
+          );
+        },
+      }
 
 
 
@@ -383,7 +383,7 @@ console.log("hello guys");
 
   return (
     <div className=" bg-[var(--color-neutral)] ">
-        {modalOpen && (
+      {modalOpen && (
         <div className="fixed inset-0 bg-black/20 bg-opacity-60 flex items-center justify-center z-50">
           <div className="relative bg-[var(--sidebar-bgss)] rounded-2xl shadow-lg p-4 max-w-lg w-full">
             {/* Close button */}
@@ -396,9 +396,9 @@ console.log("hello guys");
 
             {/* Image */}
             <Image
-            height={200}
-            width={200}
-              src={ process.env.NEXT_PUBLIC_API_BASE_URL_Image+  paymentInfo.screenshot}
+              height={200}
+              width={200}
+              src={process.env.NEXT_PUBLIC_API_BASE_URL_Image + paymentInfo.screenshot}
               alt="screenshot"
               className="rounded-lg max-h-[70vh] object-contain mx-auto"
             />
@@ -406,12 +406,12 @@ console.log("hello guys");
         </div>
       )}
       <ConfirmBox
-              isOpen={openConfirm}
-              onClose={() => setOpenConfirm(false)}
-              onConfirm={()=>handleApproveapi(approveId)}
-              title="Are you sure you want to approve this transaction?"
-              message="This action cannot be undone. Do you really want to approve this transaction?"
-            />
+        isOpen={openConfirm}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={() => handleApproveapi(approveId)}
+        title="Are you sure you want to approve this transaction?"
+        message="This action cannot be undone. Do you really want to approve this transaction?"
+      />
       <div className="overflow-x-auto pt-10 p-8 rounded-lg shadow">
         <div className="mb-2 font-bold text-xl">Recent Transactions</div>
 
@@ -449,7 +449,7 @@ console.log("hello guys");
                   </td>
                   <td className="px-4 py-2">
                     <a
-                      href={process.env.NEXT_PUBLIC_API_BASE_URL_Image+p.screenshot}
+                      href={process.env.NEXT_PUBLIC_API_BASE_URL_Image + p.screenshot}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
@@ -537,3 +537,5 @@ console.log("hello guys");
     </div>
   );
 }
+
+
