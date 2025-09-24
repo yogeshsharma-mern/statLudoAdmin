@@ -283,7 +283,7 @@ useEffect(() => {
     <div className=" bg-[var(--color-neutral)] h-[90vh] overflow-auto">
       <div className="overflow-x-auto p-4 mt-10">
         <div className="font-bold text-xl mb-3">Recent Withdraw Requests</div>
-  <table className="min-w-full rounded-lg ">
+  <table className="min-w-full rounded-lg text-[var(--color-text)]">
     <thead className="bg-[var(--table-colorss)]">
       <tr>
         <th className="px-4 py-1 text-left">ID</th>
@@ -301,7 +301,7 @@ useEffect(() => {
   {withdrawData.map((item) => (
     <tr
       key={item._id}
-      className="border-b transition hover:bg-gray-50"
+      className="border-b transition "
     >
       <td className="px-4 py-3 text-sm text-gray-700">{item._id}</td>
       <td className="px-4 py-3 text-sm text-gray-700">{item.userId}</td>
@@ -325,7 +325,7 @@ useEffect(() => {
         </span>
       </td>
 
-      <td className="px-4 py-3 text-sm text-gray-600">
+      <td className="px-4 py-3 text-sm text-[var(--color-text)]">
         {new Date(item.createdAt).toLocaleString("en-GB", {
           day: "2-digit",
           month: "short",
@@ -335,7 +335,7 @@ useEffect(() => {
         })}
       </td>
 
-      <td className="px-4 py-3 text-sm text-gray-600">
+      <td className="px-4 py-3 text-sm text-[var(--color-text)]">
         {new Date(item.updatedAt).toLocaleString("en-GB", {
           day: "2-digit",
           month: "short",

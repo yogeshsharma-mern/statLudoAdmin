@@ -415,7 +415,7 @@ export default function Page() {
       <div className="overflow-x-auto pt-10 p-8 rounded-lg shadow">
         <div className="mb-2 font-bold text-xl">Recent Transactions</div>
 
-        <table className="min-w-full text-sm text-left text-gray-600">
+        <table className="min-w-full text-sm text-left text-[var(--color-text)]">
           <thead className="bg-[var(--table-colorss)] text-[var(--color-text)] uppercase text-xs">
             <tr>
               <th className="px-4 py-2">User ID</th>
@@ -430,7 +430,7 @@ export default function Page() {
           <tbody>
             {payments.length > 0 ? (
               payments.map((p) => (
-                <tr key={p._id} className="border-b hover:bg-gray-50">
+                <tr key={p._id} className="border-b ">
                   <td className="px-4 py-2">{p.userId}</td>
                   <td className="px-4 py-2">{p.utrNumber}</td>
                   <td className="px-4 py-2 font-medium">₹{p.amount}</td>
@@ -479,7 +479,7 @@ export default function Page() {
               <tr>
                 <td
                   colSpan="7"
-                  className="px-4 py-4 text-center text-gray-500"
+                  className="px-4 py-4 text-center text-[var(--color-text)]"
                 >
                   No payments found
                 </td>
