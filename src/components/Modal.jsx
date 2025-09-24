@@ -410,7 +410,7 @@ export default function Modal({ open, onClose, userDetail }) {
         phone: userDetail.phone || "",
         // referCode: userDetail.referCode || "",
         // referRank: userDetail.referRank || "",
-        // referralEarning: userDetail.referralEarning || 0,
+        referralEarning: userDetail.referralEarning || 0,
         completedGames: userDetail.completedGames || 0,
         battlePlayed: userDetail.battlePlayed || 0,
         cashWon: userDetail.cashWon || 0,
