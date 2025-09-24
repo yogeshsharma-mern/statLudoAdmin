@@ -303,11 +303,11 @@ useEffect(() => {
       key={item._id}
       className="border-b transition "
     >
-      <td className="px-4 py-3 text-sm text-gray-700">{item._id}</td>
-      <td className="px-4 py-3 text-sm text-gray-700">{item.userId}</td>
-      <td className="px-4 py-3 text-sm text-gray-700">{item.upiId}</td>
-      <td className="px-4 py-3 font-medium text-gray-900">₹{item.amount}</td>
-      <td className="px-4 py-3 font-medium text-gray-900">₹{item.userAmount}</td>
+      <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item._id}</td>
+      <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.userId}</td>
+      <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.upiId}</td>
+      <td className="px-4 py-3 font-medium text-[var(--color-text)]">₹{item.amount}</td>
+      <td className="px-4 py-3 font-medium text-[var(--color-text)]">₹{item.userAmount}</td>
 
 
       <td className="px-4 py-3">
