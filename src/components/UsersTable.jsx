@@ -35,25 +35,25 @@ export default function UsersTable() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [viewModal, setViewModal] = useState(false);
   const [userDetail, setUserDetails] = useState([]);
-  const [blockId,setBlockId]= useState(null);
-    const [filters, setFilters] = useState({
-      status: "",
-      
-    });
-     const debouncedSearch = useDebounce(query, 1000);
+  const [blockId, setBlockId] = useState(null);
+  const [filters, setFilters] = useState({
+    status: "",
 
-  console.log("blockid",blockId);
-  console.log("filters",filters);
+  });
+  const debouncedSearch = useDebounce(query, 1000);
+
+  console.log("blockid", blockId);
+  console.log("filters", filters);
 
   const [editing, setEditing] = useState("");
-
+  console.log("users>>>>>>", users);
   // fetch users initially
   useEffect(() => {
-    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: debouncedSearch,filters }));
-  }, [dispatch, currentPage, pageSize, debouncedSearch,filters]);
+    dispatch(fetchUsers({ page: currentPage, limit: pageSize, search: debouncedSearch, filters }));
+  }, [dispatch, currentPage, pageSize, debouncedSearch, filters]);
   console.log("gg", { page: currentPage, limit: pageSize, search: query })
   // Search filter
   // const filtered = useMemo(() => {
@@ -72,10 +72,10 @@ export default function UsersTable() {
       { accessorKey: "username", header: "Username" },
       { accessorKey: "phone", header: "Phone" },
       // { accessorKey: "referCode", header: "Refer Code" },
-        {
-        accessorKey:"credit",header:"Credit"
+      {
+        accessorKey: "credit", header: "Credit"
       },
-      {accessorKey:"penalty", header:"Penalty"},
+      { accessorKey: "penalty", header: "Penalty" },
       // {
       //   accessorKey: "kycStatus",
       //   header: "KYC Status",
@@ -95,7 +95,7 @@ export default function UsersTable() {
       //     );
       //   },
       // },
-    
+
       {
         accessorKey: "isBanned",
         header: "Blocked",
@@ -110,8 +110,8 @@ export default function UsersTable() {
             </span>
           ),
       },
-      { accessorKey: "battlePlayed", header: "Battles" },
-      { accessorKey: "cashWon", header: "Cash Won" },
+      // { accessorKey: "battlePlayed", header: "Battles" },
+      { accessorKey: "winningAmount", header: "Cash Won" },
       {
         id: "actions",
         header: "Actions",
@@ -129,8 +129,8 @@ export default function UsersTable() {
               onClick={() => handleView(row.original._id)}
               title="viewuser"
             >
-           <span className="hidden md:block" >User Dashboard</span>
-           <MdDashboard className="md:hidden" />
+              <span className="hidden md:block" >User Dashboard</span>
+              <MdDashboard className="md:hidden" />
             </button>
             {row.original.isBanned ? (
               <button
@@ -144,7 +144,7 @@ export default function UsersTable() {
               <button
                 className="rounded-md bg-rose-600 cursor-pointer px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
                 onClick={() => (setOpenConfirm(true),
-                setBlockId(row.original._id)
+                  setBlockId(row.original._id)
                 )}
                 title="Block"
               >
@@ -179,12 +179,12 @@ export default function UsersTable() {
 
 
   const updateUser = async (formData) => {
-    console.log("Updated Data:", formData); // ✅ yaha aa gaya pura data
+    console.log("Updated Data:", formData);
 
     // API / Redux call karna hai
     const id = editing;
     const res = await dispatch(updateUsers({ id, data: formData }));
-    console.log("resssssss", res)
+    console.log("resssssss>>>>>>", res)
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("User updated successfully");
       setModalOpen(false);
@@ -235,15 +235,15 @@ export default function UsersTable() {
 
   return (
     <div className="rounded-2xl w-full p-6 h-[90vh] overflow-auto shadow">
-       <ConfirmBox
+      <ConfirmBox
         isOpen={openConfirm}
         onClose={() => setOpenConfirm(false)}
-        onConfirm={()=>handleBlock(blockId)}
+        onConfirm={() => handleBlock(blockId)}
         title="Are you sure you want to block this user?"
         message="This action cannot be undone. Do you really want to block this user?"
       />
       <div className="text-xl font-semibold mt-8 md:mt-auto ">Users</div>
- 
+
       {/* {status === "failed" && <p className="text-red-400">{error}</p>} */}
 
       {/* Header row */}
@@ -256,9 +256,9 @@ export default function UsersTable() {
             placeholder="Search users…"
             className="w-full rounded-xl border border-gray-400 py-2 pl-9 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-       
+
         </div>
-            <>
+        <>
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -319,11 +319,11 @@ export default function UsersTable() {
             ))}
           </thead>
           <tbody>
-                 {status === "loading" && <div className="flex items-center justify-center w-[70vw] h-[30vh]">
-                  <div className="flex w-full justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-                  </div>}
+            {status === "loading" && <div className="flex items-center justify-center w-[70vw] h-[30vh]">
+              <div className="flex w-full justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              </div>
+            </div>}
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-200 hover:bg-(--color-neutral)">
                 {row.getVisibleCells().map((cell) => (
@@ -388,7 +388,7 @@ export default function UsersTable() {
       <UserFormModal
         open={modalOpen}
         initial={editing}
-            userDetail={userDetail}
+        userDetail={userDetail}
         onClose={() => setModalOpen(false)}
         onSubmit={updateUser}
       />
