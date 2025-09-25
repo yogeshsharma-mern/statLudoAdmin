@@ -313,7 +313,7 @@ ifsc
 "HDFC0001234" */}
               <th className="px-4 py-1 text-left">bankAccount</th>
               <th className="px-4 py-1 text-left">ifsc</th>
-              <th className="px-4 py-1 text-left">upiId</th>
+              {/* <th className="px-4 py-1 text-left">upiId</th> */}
 
               <th className="px-4 py-1 text-left">Status</th>
               <th className="px-4 py-1 text-left">Created At</th>
@@ -329,7 +329,7 @@ ifsc
               >
                 <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item._id}</td>
                 <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.userId}</td>
-                <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.upiId}</td>
+                {/* <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.upiId}</td> */}
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">₹{item.amount}</td>
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">₹{item.userAmount}</td>
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">{item.bankAccount || 'NA'}</td>
