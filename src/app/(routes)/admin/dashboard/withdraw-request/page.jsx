@@ -298,19 +298,10 @@ export default function Page() {
             <tr>
               <th className="px-4 py-1 text-left">ID</th>
               <th className="px-4 py-1 text-left">User ID</th>
-              <th className="px-4 py-1 text-left">UPI ID</th>
+
               <th className="px-4 py-1 text-left">Amount</th>
               <th className="px-4 py-1 text-left">Payable Amount</th>
-
-              {/* bankAccount
-: 
-"123434343456456545"
-createdAt
-: 
-"2025-09-25T08:48:03.162Z"
-ifsc
-: 
-"HDFC0001234" */}
+              <th className="px-4 py-1 text-left">UPI ID</th>
               <th className="px-4 py-1 text-left">bankAccount</th>
               <th className="px-4 py-1 text-left">ifsc</th>
               {/* <th className="px-4 py-1 text-left">upiId</th> */}
@@ -329,12 +320,11 @@ ifsc
               >
                 <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item._id}</td>
                 <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.userId}</td>
-                {/* <td className="px-4 py-3 text-sm text-[var(--color-text)]">{item.upiId}</td> */}
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">₹{item.amount}</td>
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">₹{item.userAmount}</td>
+                <td className="px-4 py-3 font-medium text-[var(--color-text)]">{item.upiId || 'NA'}</td>
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">{item.bankAccount || 'NA'}</td>
                 <td className="px-4 py-3 font-medium text-[var(--color-text)]">{item.ifsc || 'NA'}</td>
-                <td className="px-4 py-3 font-medium text-[var(--color-text)]">{item.upiId || 'NA'}</td>
 
 
 
