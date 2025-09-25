@@ -12,6 +12,7 @@ import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import React from "react"
+import { activeComplteGames } from "@/library/apicall";
 
 export default function Page() {
 
@@ -135,6 +136,7 @@ useEffect(() => {
   };
 
   socket.emit("admin_winner_decision", gameObj);
+  setReloadKey(1)
 
   // // ✅ Refresh UI
   // router.refresh();
@@ -151,7 +153,6 @@ useEffect(() => {
   setSelectedGame(null);
   setWinner("");
   setupSocketListeners(adminId);
-  await dispatcher(fetchActiveCompltedGames());
   // ✅ Re-setup socket after winner is decided
 };
 
@@ -414,7 +415,7 @@ useEffect(() => {
                 <option value={selectedGame.acceptedBy}>
                   {selectedGame.acceptedByUsername}
                 </option>
-                <option value={'none'}>
+                <option value={null}>
                   none
                 </option>
 
