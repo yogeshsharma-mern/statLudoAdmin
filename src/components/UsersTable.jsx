@@ -111,7 +111,7 @@ export default function UsersTable() {
           ),
       },
       // { accessorKey: "battlePlayed", header: "Battles" },
-      { accessorKey: "winningAmount", header: "Cash Won" },
+      { accessorKey: "winningAmount", header: "``Cash Won``" },
       {
         id: "actions",
         header: "Actions",
