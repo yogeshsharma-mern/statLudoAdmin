@@ -10,7 +10,8 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import { connectSocket, getSocket, disconnectSocket } from "@/library/socket";
 import Cookies from "js-cookie";
-
+import { useRouter } from "next/navigation";
+import React from "react"
 
 export default function Page() {
 
@@ -26,7 +27,8 @@ export default function Page() {
   const [winnderapi, setWinnderApi] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const adminId = Cookies.get("adminId");
-
+const [adminStatus,setAdminStatus] = useState(false);
+const router = useRouter();
   const { totalPages } = useSelector((state) => state.gameLog);
   // console.log("selectedGameApi", selectedGameApi)
   // useEffect(() => {
@@ -99,49 +101,60 @@ export default function Page() {
   //   };
   // }, []);
 
+// socket setup function
+const setupSocketListeners = (adminId) => {
+  const socket = connectSocket(adminId);
 
+  socket.on("game_over", (data) => {
+    console.log("Server says:", data);
+    setCompletedGames((prev) => [data, ...prev]);
+  });
 
-  useEffect(() => {
-    // 👇 give your real adminId here
-    const socket = connectSocket(adminId);
-    console.log("helloooo");
-    socket.on("game_over", (data) => {
-      console.log("Server says:", data);
-      setCompletedGames((prev) => [data, ...prev]);
-    });
-
-    return () => {
-      socket.off("game_over");
-      disconnectSocket(); // optional, only if you want to close on unmount
-    };
-  }, []);
-
-
-  const handleWinnerSubmit = () => {
-    console.log("winner>>>>", winner)
-    // if (!winner) return alert("⚠ Please select a winner first!");
-    const socket = getSocket(); // 👈 always fetch socket here
-    if (!socket) return console.warn("⚠ No active socket connection!");
-
-    const gameObj = {
-      gameId: selectedGame._id,
-      winner,
-    }
-
-    console.log("gameOb>>>j", gameObj)
-
-    socket.emit("admin_winner_decision", gameObj);
-    setReloadKey(prev => prev + 1);
-
-    setCompletedGames((prev) => {
-      const index = prev.findIndex((g) => g._id === selectedGame._id);
-      if (index === -1) return prev;
-      return [...prev.slice(0, index), ...prev.slice(index + 1)];
-    });
-
-    setSelectedGame(null);
-    setWinner("");
+  return () => {
+    socket.off("game_over");
+    disconnectSocket();
   };
+};
+
+
+useEffect(() => {
+  const cleanup = setupSocketListeners(adminId);
+  return cleanup; // cleanup on unmount
+}, [adminId]);
+
+
+
+ const handleWinnerSubmit = async() => {
+  console.log("winner>>>>", winner);
+  const socket = getSocket();
+  if (!socket) return console.warn("⚠ No active socket connection!");
+
+  const gameObj = {
+    gameId: selectedGame._id,
+    winner,
+  };
+
+  socket.emit("admin_winner_decision", gameObj);
+
+  // // ✅ Refresh UI
+  // router.refresh();
+  // setReloadKey(prev => prev + 1);
+
+  // ✅ Update state instantly
+  setCompletedGames((prev) => {
+    const index = prev.findIndex((g) => g._id === selectedGame._id);
+    if (index === -1) return prev;
+    return [...prev.slice(0, index), ...prev.slice(index + 1)];
+  });
+
+  setAdminStatus(true);
+  setSelectedGame(null);
+  setWinner("");
+  setupSocketListeners(adminId);
+  await dispatcher(fetchActiveCompltedGames());
+  // ✅ Re-setup socket after winner is decided
+};
+
 
   const handleWinnerSubmitApi = async () => {
 
@@ -226,32 +239,40 @@ export default function Page() {
       cell: (info) => new Date(info.getValue()).toLocaleString(),
     },
     {
-      header: "Actions",
-      cell: ({ row }) => {
-        return (
-          <div>
-            {
-              row.original.adminstatus != "decided" &&
-              <button
-                onClick={() => {
-                  setSelectedGameApi(row.original)
-                  setgameId(row.original._id);
-                }}
-                className="px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600"
-              >
-                View
-              </button>
-            }
-          </div>
+  header: "Actions",
+  cell: ({ row }) => {
+    const [loading, setLoading] = React.useState(false);
 
-        )
-      }
+    const handleClick = async () => {
+      setLoading(true);
 
+      // simulate async (e.g., waiting for adminstatus update from backend)
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
+      setSelectedGameApi(row.original);
+      setgameId(row.original._id);
 
+      setLoading(false);
+    };
 
+    return (
+      <div>
+        {row.original.adminstatus !== "decided" && (
+          <button
+            onClick={handleClick}
+            disabled={loading}
+            className={`px-3 py-1 text-xs rounded text-white ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {loading ? "Loading..." : "View"}
+          </button>
+        )}
+      </div>
+    );
+  },
+}
 
-    }
     // {
     //   row.orignal.adminstatus!="decided" &&
     //     <button
@@ -274,7 +295,7 @@ export default function Page() {
     <div className="bg-[var(--color-neutral)]">
       <div className="p-7 pt-14 overflow-scroll">
         <div className="mb-3 text-xl font-bold">Recent Completed Games</div>
-        <table className="min-w-full  text-sm text-left text-gray-600">
+        <table className="min-w-full  text-sm text-left text-[var(--color-text)]">
           <thead className="bg-[var(--table-colorss)] text-[var(--color-text)] uppercase text-xs">
             <tr>
               <th className="px-4 py-2">Room ID</th>
@@ -291,7 +312,7 @@ export default function Page() {
           <tbody>
             {completedGames.length > 0 ? (
               completedGames.map((p) => (
-                <tr key={p._id} className="border-b hover:bg-gray-50">
+                <tr key={p._id} className="border-b text-[var(--color-text)]">
                   <td className="px-4 py-2">{p.roomId}</td>
                   <td className="px-4 py-2">{p.createdByUsername}</td>
                   <td className="px-4 py-2">{p.acceptedByUsername ?? "—"}</td>
@@ -321,7 +342,7 @@ export default function Page() {
               ))
             ) : (
               <tr>
-                <td colSpan="10" className="px-4 py-4 text-center text-gray-500">
+                <td colSpan="10" className="px-4 py-4 text-center text-[var(--color-text)]">
                   No completed games found
                 </td>
               </tr>
@@ -334,7 +355,7 @@ export default function Page() {
       {/* 🔥 Modal */}
       {selectedGame && (
         <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[500px]">
+          <div className="bg-(--color-neutral)  rounded-lg shadow-lg p-6 w-[500px]">
             <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
             <p><strong>Room ID:</strong> {selectedGame.roomId}</p>
@@ -458,7 +479,7 @@ export default function Page() {
         } fetchData={fetchActiveCompltedGames} columnsDef={columns} filters={filters} />
       {selectedGameApi && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[500px] shadow-lg">
+          <div className="bg-(--color-neutral)  p-6 rounded-lg w-[500px] shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Game Details</h2>
 
             <p><strong>Room ID:</strong> {selectedGameApi.roomId}</p>
@@ -531,7 +552,7 @@ export default function Page() {
             <div className="flex justify-end gap-2 mt-6">
               <button
                 onClick={() => setSelectedGameApi(null)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-400 rounded hover:bg-gray-400"
               >
                 Cancel
               </button>

@@ -124,6 +124,51 @@ console.log("pagesize",pageSize);
 
 //   loadData();
 // }, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher,reloadKey]);
+// useEffect(() => {
+//   const loadData = async () => {
+//     try {
+//       const res = await dispatcher(
+//         fetchData({
+//           page: currentPage,
+//           limit: pageSize,
+//           search: debounceSearch,
+//           sort,
+//           filters,
+//         })
+//       );
+
+//       console.log("respppppp", res);
+
+//       if (res.payload) {
+//         let rawData =
+//           res.payload.referrals || // our case
+//           res.payload.payments ||
+//           res.payload.games ||
+//           res.payload.withdraws ||
+//           (Array.isArray(res.payload) ? res.payload : []);
+
+//         // 🔹 Flatten referrals into rows with wins
+//         if (res.payload.referrals) {
+//           rawData = res.payload.referrals.flatMap(referral =>
+//             referral.wins.map(win => ({
+//               winner: referral.winner,
+//               referred_by: referral.referred_by,
+//               ...win, // winningAmount, referralEarning, roomId, createdAt, gameId
+//             }))
+//           );
+//         }
+
+//         setData(rawData);
+//         setTotalPages(res.payload.pages || 1);
+//       }
+//     } catch (error) {
+//       console.error("Error loading data:", error);
+//     }
+//   };
+
+//   loadData();
+// }, [currentPage, pageSize, debounceSearch, sort, filters, dispatcher, reloadKey]);
+
 useEffect(() => {
   const loadData = async () => {
     try {
@@ -141,25 +186,55 @@ useEffect(() => {
 
       if (res.payload) {
         let rawData =
-          res.payload.referrals || // our case
+          res.payload.referrals ||
           res.payload.payments ||
           res.payload.games ||
           res.payload.withdraws ||
           (Array.isArray(res.payload) ? res.payload : []);
 
-        // 🔹 Flatten referrals into rows with wins
+        // ✅ Special handling only for referrals
         if (res.payload.referrals) {
-          rawData = res.payload.referrals.flatMap(referral =>
+          // 1. Flatten wins
+          let flattened = res.payload.referrals.flatMap(referral =>
             referral.wins.map(win => ({
               winner: referral.winner,
               referred_by: referral.referred_by,
-              ...win, // winningAmount, referralEarning, roomId, createdAt, gameId
+              ...win,
             }))
           );
-        }
 
-        setData(rawData);
-        setTotalPages(res.payload.pages || 1);
+          // 2. Sort by latest createdAt
+          flattened = flattened.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+if (filters?.betAmountMin) {
+  flattened = flattened.filter(
+    (item) => item.winningAmount >= Number(filters.betAmountMin)
+  );
+}
+if (filters?.betAmountMax) {
+  flattened = flattened.filter(
+    (item) => item.winningAmount <= Number(filters.betAmountMax)
+  );
+}
+if (debounceSearch) {
+  const query = debounceSearch.toLowerCase();
+  flattened = flattened.filter(
+    (item) => item.referred_by?.username?.toLowerCase().includes(query)
+  );
+}
+          // 3. Manual frontend pagination
+          const start = (currentPage - 1) * pageSize;
+          const end = start + pageSize;
+          const paginated = flattened.slice(start, end);
+
+          setData(paginated);
+          setTotalPages(Math.ceil(flattened.length / pageSize));
+        } else {
+          // For all other APIs use backend pagination as is
+          setData(rawData);
+          setTotalPages(res.payload.pages || 1);
+        }
       }
     } catch (error) {
       console.error("Error loading data:", error);
