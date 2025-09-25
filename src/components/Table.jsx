@@ -296,83 +296,66 @@ if (debounceSearch) {
 
       {/* Table */}
       {loading ? (
-     <GlobalLoading/>
+    //  <GlobalLoading />
+    ""
+     
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left bg-[--color-neutral] text-sm ">
-            <thead className="border-b border-gray-200 bg-[var(--table-colorss)] text-[var(--color-text)]">
-              {table.getHeaderGroups().map((hg) => (
-                <tr key={hg.id}>
-                  {hg.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      className="cursor-pointer px-4 py-3 font-semibold"
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {{ asc: " ▲", desc: " ▼" }[header.column.getIsSorted()] ?? null}
-                    </th>
-                  ))}
-                  {actions.view || actions.edit || actions.delete ? (
-                    <th className="px-4 py-3">Actions</th>
-                  ) : null}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {pending === "loading" && <div className="flex items-center justify-center w-[70vw] h-[30vh]">
-                  <div className="flex w-full justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-                  </div>}
+       <div className="relative overflow-x-auto">
+  <table className="min-w-full text-left bg-[--color-neutral] text-sm">
+    <thead className="border-b border-gray-200 bg-[var(--table-colorss)] text-[var(--color-text)]">
+      {table.getHeaderGroups().map(hg => (
+        <tr key={hg.id}>
+          {hg.headers.map(header => (
+            <th
+              key={header.id}
+              onClick={header.column.getToggleSortingHandler()}
+              className="cursor-pointer px-4 py-3 font-semibold"
+            >
+              {flexRender(header.column.columnDef.header, header.getContext())}
+              {{ asc: " ▲", desc: " ▼" }[header.column.getIsSorted()] ?? null}
+            </th>
+          ))}
+          {(actions.view || actions.edit || actions.delete) && (
+            <th className="px-4 py-3">Actions</th>
+          )}
+        </tr>
+      ))}
+    </thead>
+    <tbody>
+      {table.getRowModel().rows.map(row => (
+        <tr key={row.id} className="border-b border-gray-200 hover:bg-[var(--color-hover)]">
+          {row.getVisibleCells().map(cell => (
+            <td key={cell.id} className="px-4 py-3">
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </td>
+          ))}
+          {(actions.view || actions.edit || actions.delete) && (
+            <td className="px-4 py-3 flex gap-2">
+              {actions.view && <button onClick={() => actions.view(row.original)} className="text-green-600 hover:text-green-800">View</button>}
+              {actions.edit && <button onClick={() => actions.edit(row.original)} className="text-blue-600 hover:text-blue-800">Edit</button>}
+              {actions.delete && <button onClick={() => actions.delete(row.original)} className="text-red-600 hover:text-red-800">Delete</button>}
+            </td>
+          )}
+        </tr>
+      ))}
+      {table.getRowModel().rows.length === 0 && (
+        <tr>
+          <td colSpan={columns.length + 1} className="px-4 py-10 text-center text-gray-500">
+            No data found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
 
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-gray-200 hover:bg-[var(--color-hover)]">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                  {(actions.view || actions.edit || actions.delete) && (
-                    <td className="px-4 py-3 flex gap-2">
-                      {actions.view && (
-                        <button
-                          onClick={() => actions.view(row?.original)}
-                          className="text-green-600 hover:text-green-800"
-                        >
-                          View
-                        </button>
-                      )}
-                      {actions.edit && (
-                        <button
-                          onClick={() => actions.edit(row?.original)}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          Edit
-                        </button>
-                      )}
-                      {actions.delete && (
-                        <button
-                          onClick={() => actions.delete(row?.original)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              ))}
-              {table.getRowModel().rows.length === 0 && (
-                <tr>
-                  <td colSpan={columns.length + 1} className="px-4 py-10 text-center text-gray-500">
-                    No data found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+  {/* Loader overlay */}
+  {pending === "loading" && (
+    <div className="absolute inset-0 bg-white/50 flex justify-center items-center pointer-events-none">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  )}
+</div>
+
       )}
 
       {/* Pagination */}

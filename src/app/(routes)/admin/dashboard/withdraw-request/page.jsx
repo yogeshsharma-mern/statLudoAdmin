@@ -90,8 +90,8 @@ export default function Page() {
       return;
     }
 
-    const withdrawData = { withdrawId: id, status: "reject" }
-
+    const withdrawData = { withdrawId: id, status: "rejected" }
+console.log("radheradhe")
     socket.emit("update_withdraw_status", withdrawData);
     setReloadKey(prev => prev + 1);
     toast.success("Payment Rejected Successfully");
