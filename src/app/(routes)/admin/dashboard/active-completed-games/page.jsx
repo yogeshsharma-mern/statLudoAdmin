@@ -136,10 +136,9 @@ useEffect(() => {
   };
 
   socket.emit("admin_winner_decision", gameObj);
-  setReloadKey(1)
-
+  setReloadKey(selectedGame._id);
   // // ✅ Refresh UI
-  // router.refresh();
+  router.refresh();
   // setReloadKey(prev => prev + 1);
 
   // ✅ Update state instantly
