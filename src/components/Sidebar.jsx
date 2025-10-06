@@ -20,7 +20,7 @@ import { TbReport } from "react-icons/tb";
 import { TbLockPassword } from "react-icons/tb";
 import { RiAdminFill } from "react-icons/ri";
 import { disconnectSocket } from "@/library/socket";
-import { FaShareFromSquare } from "react-icons/fa6";
+import { FaPassport, FaShareFromSquare } from "react-icons/fa6";
 
 
 
@@ -37,34 +37,34 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   })
   const [report, setReport] = useState({ report: false });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-const handleCloseSidebar = () => {
-  if (typeof window !== "undefined" && window.innerWidth < 1024) {
-    setIsMobileOpen(false); // Sirf mobile pe close hoga
-  }
-};
+  const handleCloseSidebar = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setIsMobileOpen(false); // Sirf mobile pe close hoga
+    }
+  };
   const router = useRouter();
 
-//  useEffect(() => {
-//   const handleClickOutside = (event) => {
-//     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-//       // Close all menus
-//       setOpenMenus({ users: false });
-//       setOpenGameManagement({ management: false });
-//       setwallet({ wallet: false });
-//       setReport({ report: false });
+  //  useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+  //       // Close all menus
+  //       setOpenMenus({ users: false });
+  //       setOpenGameManagement({ management: false });
+  //       setwallet({ wallet: false });
+  //       setReport({ report: false });
 
-//       if (window.innerWidth < 1024) {   // 👈 only close sidebar on mobile
-//         setIsMobileOpen(false);
-//       }
-//     }
-//   };
+  //       if (window.innerWidth < 1024) {   // 👈 only close sidebar on mobile
+  //         setIsMobileOpen(false);
+  //       }
+  //     }
+  //   };
 
-//   document.addEventListener("mousedown", handleClickOutside);
+  //   document.addEventListener("mousedown", handleClickOutside);
 
-//   return () => {
-//     document.removeEventListener("mousedown", handleClickOutside);
-//   };
-// }, []);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
 
   const handleLogout = () => {
@@ -114,7 +114,7 @@ const handleCloseSidebar = () => {
               label="Dashboard"
               active={activeTab === "dashboard"}
               onClick={() => setActiveTab("dashboard")}
-               closeSidebar={() => setIsMobileOpen(false)} 
+              closeSidebar={() => setIsMobileOpen(false)}
             />
           </Link>
 
@@ -123,8 +123,8 @@ const handleCloseSidebar = () => {
             <button
               onClick={() => toggleMenu("users")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${openMenus.users
-                  ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
-                  : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
+                ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
+                : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black"
                 }`}
             >
               <span className="flex items-center space-x-3">
@@ -144,7 +144,7 @@ const handleCloseSidebar = () => {
                     label="Users"
                     active={activeTab === "ludo-users"}
                     onClick={() => setActiveTab("ludo-users")}
-                   closeSidebar={handleCloseSidebar} 
+                    closeSidebar={handleCloseSidebar}
 
                   />
                 </Link>
@@ -157,8 +157,8 @@ const handleCloseSidebar = () => {
             <button
               onClick={() => toggleItems("management")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${opengameMangement.management
-                  ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
-                  : "text-[var( --color-text)] hover:bg-bg-[var(--sidebar-bgs)] dark:hover:bg-black"
+                ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
+                : "text-[var( --color-text)] hover:bg-bg-[var(--sidebar-bgs)] dark:hover:bg-black"
                 }`}
             >
               <span className="flex items-center space-x-3">
@@ -178,18 +178,18 @@ const handleCloseSidebar = () => {
                     label="Active/Completed Games"
                     active={activeTab === "Active/completed Games"}
                     onClick={() => setActiveTab("Active/completed Games")}
-                   closeSidebar={handleCloseSidebar} 
+                    closeSidebar={handleCloseSidebar}
 
                   />
                 </Link>
-              <Link href="/admin/dashboard/game-logs">
-                <SubMenuItem
-                  label="Game Logs"
-                  active={activeTab === "Game-Logs"}
-                  onClick={() => setActiveTab("Game-Logs")}
-                   closeSidebar={handleCloseSidebar} 
-                />
-              </Link>
+                <Link href="/admin/dashboard/game-logs">
+                  <SubMenuItem
+                    label="Game Logs"
+                    active={activeTab === "Game-Logs"}
+                    onClick={() => setActiveTab("Game-Logs")}
+                    closeSidebar={handleCloseSidebar}
+                  />
+                </Link>
               </div>
             )}
           </div>
@@ -198,8 +198,8 @@ const handleCloseSidebar = () => {
             <button
               onClick={() => togglewallet("wallet")}
               className={`flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium transition ${wallet.wallet
-                  ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
-                  : "text-[var( --color-text)] hover:bg-[var(--sidebar-bg)] dark:hover:bg-black"
+                ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
+                : "text-[var( --color-text)] hover:bg-[var(--sidebar-bg)] dark:hover:bg-black"
                 }`}
             >
               <span className="flex items-center space-x-3">
@@ -223,23 +223,23 @@ const handleCloseSidebar = () => {
 
                   />
                 </Link> */}
-               <Link href="/admin/dashboard/transactions">
-                <SubMenuItem
-                  label="Transactions"
-                  active={activeTab === "Transactions"}
-                  onClick={() => setActiveTab("Transactions")}
-                   closeSidebar={handleCloseSidebar} 
+                <Link href="/admin/dashboard/transactions">
+                  <SubMenuItem
+                    label="Transactions"
+                    active={activeTab === "Transactions"}
+                    onClick={() => setActiveTab("Transactions")}
+                    closeSidebar={handleCloseSidebar}
 
-                /></Link>
-              <Link href="/admin/dashboard/withdraw-request">
-                <SubMenuItem
-                  label="Withdraw Request"
-                  active={activeTab === "withdraw-request"}
-                  onClick={() => setActiveTab("withdraw-request")}
-                   closeSidebar={handleCloseSidebar} 
+                  /></Link>
+                <Link href="/admin/dashboard/withdraw-request">
+                  <SubMenuItem
+                    label="Withdraw Request"
+                    active={activeTab === "withdraw-request"}
+                    onClick={() => setActiveTab("withdraw-request")}
+                    closeSidebar={handleCloseSidebar}
 
-                />
-              </Link>
+                  />
+                </Link>
               </div>
             )}
           </div>
@@ -286,35 +286,44 @@ const handleCloseSidebar = () => {
               </div>
               
             )} */}
-             <Link href="/admin/dashboard/scanner">
-            <SidebarItem
-              icon={<FaTachometerAlt />}
-              label="Upload Scanner"
-              active={activeTab === "scanner"}
-              onClick={() => setActiveTab("scanner")}
-                   closeSidebar={handleCloseSidebar} 
+            <Link href="/admin/dashboard/scanner">
+              <SidebarItem
+                icon={<FaTachometerAlt />}
+                label="Upload Scanner"
+                active={activeTab === "scanner"}
+                onClick={() => setActiveTab("scanner")}
+                closeSidebar={handleCloseSidebar}
 
-            />
-          </Link>
-                 <Link href="/admin/dashboard/referal-history">
-            <SidebarItem
-              icon={<FaShareFromSquare />}
-              label="Referal History"
-              active={activeTab === "refferalhistory"}
-              onClick={() => setActiveTab("referalhisstory")}
-   
+              />
+            </Link>
+            <Link href="/admin/dashboard/referal-history">
+              <SidebarItem
+                icon={<FaShareFromSquare />}
+                label="Referal History"
+                active={activeTab === "refferalhistory"}
+                onClick={() => setActiveTab("referalhisstory")}
 
-            />
-          </Link>
+
+              />
+            </Link>
+            <Link href="/admin/dashboard/update-password">
+              <SidebarItem
+                icon={<FaPassport />}
+                label="Change Password"
+                active={activeTab === "=changePassword"}
+                onClick={() => setActiveTab("changePassword")}
+                closeSidebar={() => setIsMobileOpen(false)}
+              />
+            </Link>
           </div>
-          
-            
-              
+
+
+
         </nav>
 
         {/* Bottom buttons */}
         <div className="mt-auto space-y-2">
-         {/* <Link href="/admin/dashboard/update-password">
+          {/* <Link href="/admin/dashboard/update-password">
           <button className="flex cursor-pointer w-full items-center space-x-2 rounded-lg px-4 py-2 bg-blue-500 text-[var( --color-text)]">
             <FaLock />
             <span>Change Password</span>
@@ -340,11 +349,10 @@ function SidebarItem({ icon, label, active, onClick, closeSidebar }) {
         onClick?.();
         closeSidebar?.(); // 👈 sidebar close hoga
       }}
-      className={`flex w-full items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium transition ${
-        active
-          ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
-          : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black cursor-pointer"
-      }`}
+      className={`flex w-full items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium transition ${active
+        ? "bg-[var(--sidebar-bg)] text-[var( --color-text)]"
+        : "text-[var( --color-text)] hover:bg-gray-100 dark:hover:bg-black cursor-pointer"
+        }`}
     >
       {icon}
       <span>{label}</span>
@@ -359,11 +367,10 @@ function SubMenuItem({ label, active, onClick, closeSidebar }) {
         onClick?.();
         closeSidebar?.(); // 👈 sidebar close hoga
       }}
-      className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${
-        active
-          ? "bg-[var(--sidebar-submenu)]"
-          : "text-[var( --color-text)] hover:bg-[var(--sidebar-bgss)] "
-      }`}
+      className={`block w-full text-left rounded-lg px-3 py-2 text-sm transition ${active
+        ? "bg-[var(--sidebar-submenu)]"
+        : "text-[var( --color-text)] hover:bg-[var(--sidebar-bgss)] "
+        }`}
     >
       {label}
     </button>

@@ -28,8 +28,8 @@ export default function Page() {
   const [winnderapi, setWinnderApi] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const adminId = Cookies.get("adminId");
-const [adminStatus,setAdminStatus] = useState(false);
-const router = useRouter();
+  const [adminStatus, setAdminStatus] = useState(false);
+  const router = useRouter();
   const { totalPages } = useSelector((state) => state.gameLog);
   // console.log("selectedGameApi", selectedGameApi)
   // useEffect(() => {
@@ -102,59 +102,59 @@ const router = useRouter();
   //   };
   // }, []);
 
-// socket setup function
-const setupSocketListeners = (adminId) => {
-  const socket = connectSocket(adminId);
+  // socket setup function
+  const setupSocketListeners = (adminId) => {
+    const socket = connectSocket(adminId);
+    console.log("socket id", socket.id);
+    socket.on("game_over", (data) => {
+      console.log("Server says:", data);
+      setCompletedGames((prev) => [data, ...prev]);
+    });
 
-  socket.on("game_over", (data) => {
-    console.log("Server says:", data);
-    setCompletedGames((prev) => [data, ...prev]);
-  });
-
-  return () => {
-    socket.off("game_over");
-    disconnectSocket();
-  };
-};
-
-
-useEffect(() => {
-  const cleanup = setupSocketListeners(adminId);
-  return cleanup; // cleanup on unmount
-}, [adminId]);
-
-
-
- const handleWinnerSubmit = async() => {
-  console.log("winner>>>>", winner);
-  const socket = getSocket();
-  if (!socket) return console.warn("⚠ No active socket connection!");
-
-  const gameObj = {
-    gameId: selectedGame._id,
-    winner,
+    return () => {
+      socket.off("game_over");
+      disconnectSocket();
+    };
   };
 
-  socket.emit("admin_winner_decision", gameObj);
-  setReloadKey(1)
 
-  // // ✅ Refresh UI
-  // router.refresh();
-  // setReloadKey(prev => prev + 1);
+  useEffect(() => {
+    const cleanup = setupSocketListeners(adminId);
+    return cleanup; // cleanup on unmount
+  }, [adminId]);
 
-  // ✅ Update state instantly
-  setCompletedGames((prev) => {
-    const index = prev.findIndex((g) => g._id === selectedGame._id);
-    if (index === -1) return prev;
-    return [...prev.slice(0, index), ...prev.slice(index + 1)];
-  });
 
-  setAdminStatus(true);
-  setSelectedGame(null);
-  setWinner("");
-  setupSocketListeners(adminId);
-  // ✅ Re-setup socket after winner is decided
-};
+
+  const handleWinnerSubmit = async () => {
+    console.log("winner>>>>", winner);
+    const socket = getSocket();
+    if (!socket) return console.warn("⚠ No active socket connection!");
+
+    const gameObj = {
+      gameId: selectedGame._id,
+      winner,
+    };
+
+    socket.emit("admin_winner_decision", gameObj);
+    setReloadKey(1)
+
+    // // ✅ Refresh UI
+    // router.refresh();
+    // setReloadKey(prev => prev + 1);
+
+    // ✅ Update state instantly
+    setCompletedGames((prev) => {
+      const index = prev.findIndex((g) => g._id === selectedGame._id);
+      if (index === -1) return prev;
+      return [...prev.slice(0, index), ...prev.slice(index + 1)];
+    });
+
+    setAdminStatus(true);
+    setSelectedGame(null);
+    setWinner("");
+    setupSocketListeners(adminId);
+    // ✅ Re-setup socket after winner is decided
+  };
 
 
   const handleWinnerSubmitApi = async () => {
@@ -240,39 +240,38 @@ useEffect(() => {
       cell: (info) => new Date(info.getValue()).toLocaleString(),
     },
     {
-  header: "Actions",
-  cell: ({ row }) => {
-    const [loading, setLoading] = React.useState(false);
+      header: "Actions",
+      cell: ({ row }) => {
+        const [loading, setLoading] = React.useState(false);
 
-    const handleClick = async () => {
-      setLoading(true);
+        const handleClick = async () => {
+          setLoading(true);
 
-      // simulate async (e.g., waiting for adminstatus update from backend)
-      await new Promise((resolve) => setTimeout(resolve, 500));
+          // simulate async (e.g., waiting for adminstatus update from backend)
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
-      setSelectedGameApi(row.original);
-      setgameId(row.original._id);
+          setSelectedGameApi(row.original);
+          setgameId(row.original._id);
 
-      setLoading(false);
-    };
+          setLoading(false);
+        };
 
-    return (
-      <div>
-        {row.original.adminstatus !== "decided" && (
-          <button
-            onClick={handleClick}
-            disabled={loading}
-            className={`px-3 py-1 text-xs rounded text-white ${
-              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            {loading ? "Loading..." : "View"}
-          </button>
-        )}
-      </div>
-    );
-  },
-}
+        return (
+          <div>
+            {row.original.adminstatus !== "decided" && (
+              <button
+                onClick={handleClick}
+                disabled={loading}
+                className={`px-3 py-1 text-xs rounded text-white ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+              >
+                {loading ? "Loading..." : "View"}
+              </button>
+            )}
+          </div>
+        );
+      },
+    }
 
     // {
     //   row.orignal.adminstatus!="decided" &&
