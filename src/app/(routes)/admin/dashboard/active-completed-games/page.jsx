@@ -117,11 +117,11 @@ export default function Page() {
     };
   };
 
-
-  useEffect(() => {
-    const cleanup = setupSocketListeners(adminId);
-    return cleanup; // cleanup on unmount
-  }, [adminId]);
+  socket.emit("admin_winner_decision", gameObj);
+  setReloadKey(selectedGame._id);
+  // // ✅ Refresh UI
+  router.refresh();
+  // setReloadKey(prev => prev + 1);
 
 
 

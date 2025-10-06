@@ -26,7 +26,7 @@ export default function Page() {
   const [withdrawData, setWithdrawData] = useState([]);
   const [withdrawDetails, setWithdrawDetails] = useState({});
   console.log("withdrawDetails", withdrawDetails);
-  const { status: withdrawStatus } = useSelector(state => state.userwithdrawdetails);
+  const { status: withdrawStatus } = useSelector(state => state.withdraw);
   console.log("withdrawstatus", withdrawStatus);
   const [reloadKey, setReloadKey] = useState(0);
   const { totalPages } = useSelector((state) => state.gameLog);
@@ -91,7 +91,7 @@ export default function Page() {
     }
 
     const withdrawData = { withdrawId: id, status: "rejected" }
-
+console.log("radheradhe")
     socket.emit("update_withdraw_status", withdrawData);
     setReloadKey(prev => prev + 1);
     toast.success("Payment Rejected Successfully");
