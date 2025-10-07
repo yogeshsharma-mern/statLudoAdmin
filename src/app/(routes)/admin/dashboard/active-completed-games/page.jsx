@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -105,7 +104,7 @@ export default function Page() {
   // socket setup function
   const setupSocketListeners = (adminId) => {
     const socket = connectSocket(adminId);
-    console.log("socket id", socket.id);
+
     socket.on("game_over", (data) => {
       console.log("Server says:", data);
       setCompletedGames((prev) => [data, ...prev]);
@@ -117,11 +116,11 @@ export default function Page() {
     };
   };
 
-  socket.emit("admin_winner_decision", gameObj);
-  setReloadKey(selectedGame._id);
-  // // ✅ Refresh UI
-  router.refresh();
-  // setReloadKey(prev => prev + 1);
+
+  useEffect(() => {
+    const cleanup = setupSocketListeners(adminId);
+    return cleanup; // cleanup on unmount
+  }, [adminId]);
 
 
 
@@ -136,10 +135,9 @@ export default function Page() {
     };
 
     socket.emit("admin_winner_decision", gameObj);
-    setReloadKey(1)
-
+    setReloadKey(selectedGame._id);
     // // ✅ Refresh UI
-    // router.refresh();
+    router.refresh();
     // setReloadKey(prev => prev + 1);
 
     // ✅ Update state instantly
@@ -570,6 +568,4 @@ export default function Page() {
     </div>
   );
 }
-
-
 
