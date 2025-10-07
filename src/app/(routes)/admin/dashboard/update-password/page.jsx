@@ -6,6 +6,7 @@ import { RxCross2 } from "react-icons/rx";
 import { axiosApiInstance } from "@/library/helper";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 
 export default function UpdatePasswordPage({ setshowpasswordModal, userId }) {
