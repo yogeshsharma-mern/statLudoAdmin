@@ -33,6 +33,15 @@ export default function UpdatePasswordPage({ setshowpasswordModal, userId }) {
   // {
   // console.log("seconoddddd",state);
   // }
+
+
+  const handleLogout = () => {
+    Cookies.remove("adminToken");
+    Cookies.remove("adminId");
+    router.push("/admin/login");
+
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validatePassword(newPassword)) {
@@ -62,7 +71,7 @@ export default function UpdatePasswordPage({ setshowpasswordModal, userId }) {
       if (res.data.status === 200) {
         toast.success(res.data.message);
         setTimeout(() => {
-          router.replace('/admin/dashboard');
+          handleLogout();
         }, 2000);
         // setshowpasswordModal(false);
       }
